@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/PDF2CASH/PDF2CASH_PDFToInvoice/badge.svg?branch=master)](https://coveralls.io/github/PDF2CASH/PDF2CASH_PDFToInvoice?branch=master)
+
 # PDF2CASH_PDFToInvoice
 
 ## Iniciando usando docker
