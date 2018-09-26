@@ -4,3 +4,7 @@ flake8
 coverage
 coveralls
 psycopg2-binary
+PyPDF2
+nltk
+
+
