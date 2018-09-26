@@ -102,6 +102,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         number = access_key[25:34]
 
+        dict_invoice['number'] = number 
         
         #---------------------Parser-CNPJ/CPF-reveiver------------------------#
         
@@ -123,9 +124,26 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         #-------------------Verifica-existencia-de-entidades------------------#
 
 
+        if Receiver.objects.filter(cpf_cnpj = cpnj_cpf_receiver).count() == 1:
+            receiver = Receiver.objects.get(cpf_cnpj = cpnj_cpf_receiver)
+            
+        else:
+            #---- Procurar os atributos do Receiver ----#
+            receiver = Receiver.objects.create(cpf_cnpj = cpnj_cpf_receiver)
+
+        dict_invoice['receiver'] = receiver
+
+        if Seller.objects.filter(cnpj = cnpj_seller).count() == 1:
+            seller = Seller.objects.get(cnpj = cnpj_seller)
+            
+        else:
+            #---- Procurar os atributos do Seller ----#
+            seller = Seller.objects.create(cnpj = cnpj_seller)
+
+        dict_invoice['seller'] = seller        
+
         serializer = InvoiceSerializer(data= dict_invoice)
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
