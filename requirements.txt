@@ -1,3 +1,7 @@
 Django==2.0
 djangorestframework==3.8
 psycopg2-binary
+PyPDF2
+nltk
+
+
