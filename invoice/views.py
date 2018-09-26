@@ -22,7 +22,9 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         dict_invoice = {}
 
+
         #-----------------salva-pdf---------------------#
+
 
         pdf = PDF()
 
@@ -32,7 +34,9 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         dict_invoice['pdf'] = pdf
 
+
         #---------------Converter-para-texto-------------#
+
 
         filename = str(pdf.pdf).split('/')[2]
         
@@ -52,6 +56,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         #--------------------VALIDAÇÃO-PDF/NF----------------#
 
+
         if text != "":
             text = text
         else:
@@ -62,10 +67,6 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         punctuations = ['(',')',';',':','[',']',',']
 
         keywords = [word for word in tokens if not word in punctuations]
-
-        print("-----------------------------")
-        print(keywords)
-        print("-----------------------------")   
 
         validation_words = [
             "WWW.NFE.FAZENDA.GOV.BR/PORTAL",
@@ -85,8 +86,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         dict_invoice['text'] = text 
 
+
         #----------------------------Parser-AccessKey------------------------#
         
+
         new_text = text.replace('\n','')
 
         access_key = re.search( r'\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}', new_text, re.M|re.I)
@@ -99,5 +102,30 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         number = access_key[25:34]
 
-
         
+        #---------------------Parser-CNPJ/CPF-reveiver------------------------#
+        
+
+        cpnj_cpf_receiver = re.findall( r'([\s+|\n]\d{11}\s+|[\s+|\n]\d{14}\s+|\d{3}\.\d{3}\.\d{3}\-\d{2}|\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2})', text, re.M|re.I)
+
+        for i in range(len(cpnj_cpf_receiver)):
+           cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('-','')
+           cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('.','')
+           cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('/','')
+           cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('\n','')
+
+        if cnpj_seller in cpnj_cpf_receiver:
+            cpnj_cpf_receiver.remove(cnpj_seller)
+
+        cpnj_cpf_receiver = cpnj_cpf_receiver[0]
+
+
+        #-------------------Verifica-existencia-de-entidades------------------#
+
+
+        serializer = InvoiceSerializer(data= dict_invoice)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
