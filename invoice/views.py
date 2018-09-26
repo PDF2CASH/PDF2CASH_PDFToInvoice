@@ -50,5 +50,39 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             text += pageObj.extractText()
 
 
+        #--------------------VALIDAÇÃO-PDF/NF----------------#
+
+        if text != "":
+            text = text
+        else:
+            return Response(status=400) 
+
+        tokens = word_tokenize(text)
+
+        punctuations = ['(',')',';',':','[',']',',']
+
+        keywords = [word for word in tokens if not word in punctuations]
+
+        print("-----------------------------")
+        print(keywords)
+        print("-----------------------------")   
+
+        validation_words = [
+            "WWW.NFE.FAZENDA.GOV.BR/PORTAL",
+            "www.nfe.fazenda.gov.br/portal",
+            "WWW.NFE.FAZENDA.GOV.BR",
+            "www.nfe.fazenda.gov.br",
+            ]
+
+        i = 0
+        
+        for word in validation_words:
+            if word in keywords:
+                i = i + 1
+
+        if i < 1:       
+            return Response(status=400)
+
+        dict_invoice['text'] = text 
 
         
