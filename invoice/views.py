@@ -85,4 +85,19 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         dict_invoice['text'] = text 
 
+        #----------------------------Parser-AccessKey------------------------#
+        
+        new_text = text.replace('\n','')
+
+        access_key = re.search( r'\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}', new_text, re.M|re.I)
+
+        access_key = str(access_key.group()).replace(' ','')
+
+        uf_code_seller = access_key[0:2]
+
+        cnpj_seller = access_key[6:20]
+
+        number = access_key[25:34]
+
+
         
