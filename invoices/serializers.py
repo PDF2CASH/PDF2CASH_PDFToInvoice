@@ -1,8 +1,16 @@
 from rest_framework import serializers
 from .models import (
+    Invoice,
     Seller,
-    Receiver
+    Receiver,
+    ProductService
 )
+
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invoice
+        fields = '__all__'
 
 
 class SellerSerializer(serializers.ModelSerializer):
@@ -14,4 +22,10 @@ class SellerSerializer(serializers.ModelSerializer):
 class ReceiverSerializer(serializers.ModelSerializer):
     class Meta:
         model = Receiver
+        fields = '__all__'
+
+
+class ProductServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductService
         fields = '__all__'
