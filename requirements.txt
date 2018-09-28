@@ -4,3 +4,5 @@ flake8
 coverage
 coveralls
 psycopg2-binary
+django-cors-headers
+mock
