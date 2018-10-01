@@ -10,19 +10,17 @@ class Invoice(models.Model):
 
     pdf = models.OneToOneField(PDF, on_delete=models.CASCADE)
 
-    file = models.FileField(upload_to= 'invoice/images/')
-
     text = models.TextField()
 
-    number = models.CharField(max_length= 9)
+    number = models.CharField(max_length= 9, blank=True)
 
-    operation_nature = models.CharField(max_length= 255) #NATUREZA DA OPERAÇÃO
+    operation_nature = models.CharField(max_length= 255, blank=True) #NATUREZA DA OPERAÇÃO
 
-    authorization_protocol = models.CharField(max_length= 255) #PROTOCOLO DE AUTORIZAÇÃO
+    authorization_protocol = models.CharField(max_length= 255, blank=True) #PROTOCOLO DE AUTORIZAÇÃO
 
     access_key = models.CharField(max_length= 44, unique=True) #CHAVE DE ACESSO
 
-    state_registration = models.CharField(max_length= 255) #INSCRIÇÃO ESTADUAL
+    state_registration = models.CharField(max_length= 255, blank=True) #INSCRIÇÃO ESTADUAL
 
     receiver = models.ForeignKey(
         'invoice.Receiver',
@@ -36,51 +34,51 @@ class Invoice(models.Model):
         on_delete=models.CASCADE
     )
 
-    emission_date = models.DateField()
+    emission_date = models.DateField(blank=True)
 
-    entry_exit_datetime = models.DateField()
+    entry_exit_datetime = models.DateTimeField(blank=True)
 
-    total_products_value = models.CharField(max_length= 30)
+    total_products_value = models.CharField(max_length= 30, blank=True)
 
-    total_invoice_value = models.CharField(max_length= 30)
+    total_invoice_value = models.CharField(max_length= 30, blank=True)
     
-    freight_value =  models.CharField(max_length= 30)
+    freight_value =  models.CharField(max_length= 30, blank=True)
 
-    icms_value = models.CharField(max_length= 30)
+    icms_value = models.CharField(max_length= 30, blank=True)
 
-    discount_value = models.CharField(max_length= 30)
+    discount_value = models.CharField(max_length= 30, blank=True)
 
 
 
 class Seller(models.Model):
 
-        name = models.CharField(max_length= 255)
+        name = models.CharField(max_length= 255, blank=True)
 
-        cnpj = models.CharField(max_length= 14)
+        cnpj = models.CharField(max_length= 14, blank=True)
 
         cep = models.CharField(max_length= 8, blank=True)
 
-        uf_code = models.IntegerField()
+        uf_code = models.IntegerField(blank=True)
 
 
 
 class Receiver(models.Model):
 
-        name = models.CharField(max_length= 255)
+        name = models.CharField(max_length= 255, blank=True)
 
         cpf_cnpj = models.CharField(max_length= 14, unique=True)
 
-        address = models.CharField(max_length= 255)
+        address = models.CharField(max_length= 255, blank=True)
 
-        neighborhood = models.CharField(max_length= 255)
+        neighborhood = models.CharField(max_length= 255, blank=True)
 
-        cep = models.CharField(max_length= 8)
+        cep = models.CharField(max_length= 8, blank=True)
 
-        county = models.CharField(max_length= 255)
+        county = models.CharField(max_length= 255, blank=True)
 
-        uf = models.CharField(max_length= 2)
+        uf = models.CharField(max_length= 2, blank=True)
 
-        phone = models.CharField(max_length= 13)
+        phone = models.CharField(max_length= 13, blank=True)
 
 
 
