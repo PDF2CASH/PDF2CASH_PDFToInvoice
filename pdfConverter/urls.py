@@ -19,6 +19,6 @@ from django.urls import path
 
 urlpatterns = [
     path('api/', include([
-        path('invoice/', include('invoice.urls')),
+        path('', include('invoice.urls')),
     ])),
 ]

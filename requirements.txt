@@ -4,7 +4,6 @@ flake8
 coverage
 coveralls
 psycopg2-binary
+pdfminer.six
 PyPDF2
 nltk
-
-
