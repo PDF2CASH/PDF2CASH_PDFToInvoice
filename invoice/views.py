@@ -136,6 +136,49 @@ def search_create_receiver(cpnj_cpf_receiver, text):
             )
 
     return receiver    
+
+
+
+def search_create_seller(cnpj_seller, text, uf_code_seller):
+    
+    if Seller.objects.filter(cnpj = cnpj_seller).count() == 1:
+            seller = Seller.objects.get(cnpj = cnpj_seller)
+    else:
+        #---- Procurar os atributos do Seller ----#
+        name_seller = re.search( r'SÉRIE[0-9\:\s]+([a-zA-Z ]+)', text, re.M|re.I)
+        name_seller = str(name_seller.group())
+        name_seller = re.search( r'(\s[a-zA-Z ]+\s)', name_seller, re.M|re.I)
+        name_seller = str(name_seller.group()).replace('\n','')
+        name_seller = name_seller.replace('SÉRIE','')
+        name_seller = name_seller.replace('LTDA','')
+
+        print("-------------------")
+        print(name_seller)
+        print("-------------------")
+
+        cep_seller = re.search( r'SÉRIE[\W|\w]+\s(\d{5}\-\d{3}|\d{2}\.\d{3}\-\d{3}|\d{8})\s[\W|\w]+NATUREZA DA OPERAÇÃO', text, re.M|re.I)
+        cep_seller = str(cep_seller.group())
+        cep_seller = re.search( r'\s(\d{5}\-\d{3}|\d{2}\.\d{3}\-\d{3}|\d{8})\s', cep_seller, re.M|re.I)
+        cep_seller = str(cep_seller.group()).replace('\n','')
+        cep_seller = cep_seller.replace('-','')
+        cep_seller = cep_seller.replace('.','')
+        cep_seller = cep_seller.replace('/','')
+        cep_seller = cep_seller.replace(' ','')
+
+        print("-------------------")
+        print(cep_seller)
+        print("-------------------")
+        
+        seller = Seller.objects.create(
+            cnpj = cnpj_seller,
+            name = name_seller,
+            cep = cep_seller,
+            uf_code = uf_code_seller,
+            )
+
+    return seller        
+ 
+
 class InvoiceViewSet(viewsets.ModelViewSet):
 
     queryset = Invoice.objects.all()
