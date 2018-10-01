@@ -200,28 +200,38 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         pdf.save()
 
-        dict_invoice['pdf'] = pdf
+        dict_invoice['pdf'] = pdf.pk
 
 
         #---------------Converter-para-texto-------------#
 
-
-        filename = str(pdf.pdf).split('/')[2]
         
-        pdfFileObj = open("invoice/images/" + filename,'rb')
-       
+
+        pdfFileObj = open(str(pdf.pdf),'rb')
+        
         pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-       
+        
         num_pages = pdfReader.numPages
         count = 0
-        text = ""
+        text1 = ""
         
         while count < num_pages:
             pageObj = pdfReader.getPage(count)
             count +=1
-            text += pageObj.extractText()
+            text1 += pageObj.extractText()
 
+        # Load your PDF
+        with open(str(pdf.pdf), "rb") as f:
+            pdf_2 = pdftotext.PDF(f)
 
+        text = convert_pdf_to_txt(str(pdf.pdf))
+
+        #text = ""
+
+        #for page in pdf_2:
+            #text += page
+    
+        #text = pdf[0]
         #--------------------VALIDAÇÃO-PDF/NF----------------#
 
 
@@ -254,13 +264,17 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         dict_invoice['text'] = text 
 
-
         #----------------------------Parser-AccessKey------------------------#
         
 
         new_text = text.replace('\n','')
 
+        print(text)
+
         access_key = re.search( r'\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}', new_text, re.M|re.I)
+
+        if not access_key:
+            return Response({'error': 'Chave de acesso da nota fiscal não encontrada no pdf!'}, status=400) 
 
         access_key = str(access_key.group()).replace(' ','')
 
@@ -270,48 +284,187 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         number = access_key[25:34]
 
-        dict_invoice['number'] = number 
+        dict_invoice['access_key'] = access_key
+        dict_invoice['number'] = number
+
+        print("-------------------")
+        print(access_key)
+        print("-------------------")
+
         
         #---------------------Parser-CNPJ/CPF-reveiver------------------------#
         
 
         cpnj_cpf_receiver = re.findall( r'([\s+|\n]\d{11}\s+|[\s+|\n]\d{14}\s+|\d{3}\.\d{3}\.\d{3}\-\d{2}|\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2})', text, re.M|re.I)
 
+        if not cpnj_cpf_receiver or len(cpnj_cpf_receiver) < 2:
+            return Response({'error': 'Cnpj ou cpf do destinatário da nota fiscal não encontrado no pdf!'}, status=400) 
+
         for i in range(len(cpnj_cpf_receiver)):
            cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('-','')
            cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('.','')
            cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('/','')
            cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('\n','')
+           cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace(' ','')
 
         if cnpj_seller in cpnj_cpf_receiver:
             cpnj_cpf_receiver.remove(cnpj_seller)
 
         cpnj_cpf_receiver = cpnj_cpf_receiver[0]
 
+        print("-------------------")
+        print(cpnj_cpf_receiver)
+        print("-------------------")
+
 
         #-------------------Verifica-existencia-de-entidades------------------#
 
 
-        if Receiver.objects.filter(cpf_cnpj = cpnj_cpf_receiver).count() == 1:
-            receiver = Receiver.objects.get(cpf_cnpj = cpnj_cpf_receiver)
-            
+        receiver = search_create_receiver(cpnj_cpf_receiver, text)
+        if not receiver:
+            return Response({'error': 'Atributos referentes ao destinatário da nota fiscal não encontrados no pdf!'}, status=400) 
+
+        dict_invoice['receiver'] = receiver.pk
+
+        seller = search_create_seller(cnpj_seller, text, uf_code_seller)
+        if not seller:
+            return Response({'error': 'Atributos referentes ao emitente da nota fiscal não encontrados no pdf!'}, status=400)
+
+        dict_invoice['seller'] = seller.pk
+
+        #-----------------NATUREZA DA OPERAÇÃO-Parser------------------------# 
+        
+
+        operation_nature = re.search( r'NATUREZA DA OPERAÇÃO\s+(.+)', text, re.M|re.I)
+        if not operation_nature:
+            return Response({'error': 'Naturaza da operação da nota fiscal não encontrada no pdf!'}, status=400)     
+        operation_nature = str(operation_nature.group()).replace('NATUREZA DA OPERAÇÃO','')
+        operation_nature = operation_nature.replace('\n','')     
+
+        print("-------------------")
+        print(operation_nature)
+        print("-------------------")
+
+        dict_invoice['operation_nature'] = operation_nature
+
+
+        #-----------------PROTOCOLO DE AUTORIZAÇÃO-Parser------------------------#
+
+        authorization_protocol = re.search( r'(\d{15}(\s|\s\-\s)\d{2}\/\d{2}\/\d{4} \d{2}\:\d{2}(\:\d{2})?)', text, re.M|re.I)
+        if not authorization_protocol:
+            return Response({'error': 'Protocolo de autorização da nota fiscal não encontrado no pdf!'}, status=400)          
+        authorization_protocol = str(authorization_protocol.group())
+        authorization_protocol = authorization_protocol.replace(' -','')    
+
+        print("-------------------")
+        print(authorization_protocol)
+        print("-------------------")
+
+        dict_invoice['authorization_protocol'] = authorization_protocol
+
+
+        #-----------------INSCRIÇÃO ESTADUAL -Parser------------------------#
+
+        state_registration = re.search( r'INSCRIÇÃO ESTADUAL\s+(\d+)\s', text, re.M|re.I)
+        if not state_registration:
+            return Response({'error': 'Inscrição estadual da nota fiscal não encontrada no pdf!'}, status=400)        
+        state_registration = str(state_registration.group())
+        state_registration = state_registration.replace('INSCRIÇÃO ESTADUAL','')
+        state_registration = state_registration.replace(' ','')
+        state_registration = state_registration.replace('\n','')
+        
+        print("-------------------")
+        print(state_registration)
+        print("-------------------")
+
+        dict_invoice['state_registration'] = state_registration
+
+        #-----------------VALOR TOTAL DOS PRODUTOS -Parser------------------------#
+
+        values = re.findall( r'\s([\d+|\.]+\,\d{2})\s', text, re.M|re.I)
+        
+        total_invoice_value = re.search( r'(\d{7}\.\d{3}\s+(\d{2}\/\d{2}\/\d{4})\s+([\d+|\.]+\,\d{2})\s)|(VALOR NOTA\s+((R\$\s)?[\d+|\.]+\,\d{2})\s)', text, re.M|re.I)
+        if not total_invoice_value or not values:
+            return Response({'error': 'Valor da nota fiscal não encontrada no pdf!'}, status=400)
+        total_invoice_value = str(total_invoice_value.group())
+        total_invoice_value = total_invoice_value.replace(' ','')
+        total_invoice_value = total_invoice_value.replace('/','')
+        total_invoice_value = total_invoice_value.replace('.','')
+
+        if "VALORNOTA" in total_invoice_value:
+            total_invoice_value = total_invoice_value.replace('VALORNOTA','')
+            total_invoice_value = total_invoice_value.replace('R$','')
         else:
-            #---- Procurar os atributos do Receiver ----#
-            receiver = Receiver.objects.create(cpf_cnpj = cpnj_cpf_receiver)
+             total_invoice_value = total_invoice_value[18:]
 
-        dict_invoice['receiver'] = receiver
+        total_invoice_value = total_invoice_value.replace(',','.')
 
-        if Seller.objects.filter(cnpj = cnpj_seller).count() == 1:
-            seller = Seller.objects.get(cnpj = cnpj_seller)
-            
-        else:
-            #---- Procurar os atributos do Seller ----#
-            seller = Seller.objects.create(cnpj = cnpj_seller)
+        print("-------------------")
+        print(total_invoice_value)
+        print("-------------------")
 
-        dict_invoice['seller'] = seller        
+        dict_invoice['total_invoice_value'] = total_invoice_value
+
+        i = 0
+
+        print("-------------------")
+        print(values)
+        print("-------------------")
+
+
+        for value in values:
+            values[i] = value.replace('.','')
+            values[i] = values[i].replace(',','.')
+            values[i] = float(values[i])
+            i += 1
+
+        bigger = 0.0
+
+        for value in values:
+            if value > bigger:
+                bigger = value
+        
+
+        #-----------------DATAS E HORAS-Parser------------------------#
+        
+        
+        dates = re.findall( r'(\d{2}\/\d{2}\/\d{4})', text1, re.M|re.I)
+        hours = re.findall( r'(\d{2}\:\d{2}(\:\d{2})?)', text, re.M|re.I)
+        if not dates or not hours:
+            return Response({'error': 'Datas não encontradas no pdf!'}, status=400)
+
+        print("-------------------")
+        print(dates)
+        print(hours)
+        print("-------------------")
+
+        emission_date = dates[1]
+        entry_exit_datetime = str(dates[2] + ' ' + hours[1][0])
+
+        print("-------------------")
+        print(emission_date)
+        print(entry_exit_datetime)
+        print("-------------------")       
+
+        emission_date = emission_date.split('/')
+        entry_exit_datetime = entry_exit_datetime.split(' ')
+        time = entry_exit_datetime[1]
+        entry_exit_datetime = entry_exit_datetime[0].split('/')
+
+        emission_date = emission_date[2] + '-' + emission_date[1] + '-' + emission_date[0]
+        entry_exit_datetime = entry_exit_datetime[2] + '-' + entry_exit_datetime[1] + '-' + entry_exit_datetime[0] + ' ' + time
+
+        dict_invoice['emission_date'] = emission_date
+        dict_invoice['entry_exit_datetime'] = entry_exit_datetime
 
         serializer = InvoiceSerializer(data= dict_invoice)
 
+        print(dict_invoice)
+
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=200)
+        else:
+            return Response(serializer.errors, status=400)  
+
+
