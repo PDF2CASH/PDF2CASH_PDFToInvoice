@@ -39,6 +39,103 @@ def convert_pdf_to_txt(path):
     device.close()
     retstr.close()
     return text  
+
+
+def search_create_receiver(cpnj_cpf_receiver, text):
+
+    if Receiver.objects.filter(cpf_cnpj = cpnj_cpf_receiver).count() == 1:
+            receiver = Receiver.objects.get(cpf_cnpj = cpnj_cpf_receiver)
+    else:
+        #---- Procurar os atributos do Receiver ----#
+        name_receiver = re.search( r'NOME\/RAZÃO\s+SOCIAL\s+([\w+| |\.]+\w)', text, re.M|re.I)
+        name_receiver = str(name_receiver.group()).replace('NOME/RAZÃO SOCIAL','')
+        name_receiver = name_receiver.replace('\n','')
+
+        print("---------------")
+        print(name_receiver)
+        print("---------------")
+
+        address_receiver = re.search( r'ENDEREÇO\s+(.+)', text, re.M|re.I)
+        address_receiver = str(address_receiver.group()).replace('ENDEREÇO','')
+        address_receiver = address_receiver.replace('\n','')
+
+        print("---------------")
+        print(address_receiver)
+        print("---------------")    
+        
+        neighborhood_receiver = re.search( r'BAIRRO\/DISTRITO\s+(.+)', text, re.M|re.I)
+        neighborhood_receiver = str(neighborhood_receiver.group()).replace('BAIRRO/DISTRITO','')
+        neighborhood_receiver = neighborhood_receiver.replace('\n','')
+
+        print("---------------")
+        print(neighborhood_receiver)
+        print("---------------")
+
+        cep_receiver = re.search( r'DESTINATÁRIO[\W|\w]+CEP[\W|\w]+\s(\d{5}\-\d{3}|\d{2}\.\d{3}\-\d{3}|\d{8})\s[\W|\w]+CÁLCULO DO IMPOSTO', text, re.M|re.I)
+        cep_receiver = str(cep_receiver.group())
+        cep_receiver = re.search( r'CEP[\W|\w]+\s(\d{5}\-\d{3}|\d{2}\.\d{3}\-\d{3}|\d{8})', cep_receiver, re.M|re.I)
+        cep_receiver = str(cep_receiver.group()).replace('\n','')
+        cep_receiver = cep_receiver.replace('-','')
+        cep_receiver = cep_receiver.replace('.','')
+        cep_receiver = cep_receiver.replace('/','')
+        cep_receiver = cep_receiver.replace(' ','')
+        cep_receiver = cep_receiver.replace('CEP','')
+        cep_receiver = cep_receiver[-8:]
+
+        print("---------------")
+        print(cep_receiver)
+        print("---------------") 
+
+        county_receiver = re.search( r'MUNICÍPIO\s+(FONE\/FAX\s+)?(.+)', text, re.M|re.I)
+        county_receiver = str(county_receiver.group()).replace('MUNICÍPIO','')
+        county_receiver = county_receiver.replace('\n','')
+        county_receiver = county_receiver.replace('FONE/FAX','')
+
+        print("---------------")
+        print(county_receiver)
+        print("---------------")
+
+        uf_receiver = re.search( r'DESTINATÁRIO[\W|\w]+UF\s+([a-zA-Z]{2})\s[\W|\w]+CÁLCULO DO IMPOSTO', text, re.M|re.I)
+        uf_receiver = str(uf_receiver.group())
+        uf_receiver = re.search( r'UF\s+([a-zA-Z]{2})', uf_receiver, re.M|re.I)
+        uf_receiver = str(uf_receiver.group()).replace('\n','')
+        uf_receiver = uf_receiver.replace('\n','')
+        uf_receiver = uf_receiver.replace('UF','')
+        uf_receiver = uf_receiver[-2:]
+        print("---------------")
+        print(uf_receiver)
+        print("---------------")
+
+
+        phone_receiver = re.search( r'DESTINATÁRIO[\W|\w]+FONE\/FAX[\W|\w]*\s(\(\d{2}\)\s?\d{5}\-\d{3}|\(\d{2}\)\s?\d{5}\-\d{4}|\d{10})\s[\W|\w]+CÁLCULO DO IMPOSTO', text, re.M|re.I)
+        if phone_receiver:
+            phone_receiver = str(phone_receiver.group()).replace('FONE/FAX','')
+            phone_receiver = re.search( r'(\(\d{2}\)\s?\d{5}\-\d{3}|\(\d{2}\)\s?\d{5}\-\d{4}|\d{10})', phone_receiver, re.M|re.I)
+            phone_receiver = str(phone_receiver.group()).replace('\n','')
+            phone_receiver = phone_receiver.replace('(','')
+            phone_receiver = phone_receiver.replace(')','')
+            phone_receiver = phone_receiver.replace('-','')
+            phone_receiver = phone_receiver.replace(' ','')
+            phone_receiver = phone_receiver[-10:]
+        else:
+            phone_receiver = ''
+
+        print("---------------")
+        print(phone_receiver)
+        print("---------------")
+        
+        receiver = Receiver.objects.create(
+            cpf_cnpj = cpnj_cpf_receiver,
+            name= name_receiver,
+            address= address_receiver,
+            neighborhood =neighborhood_receiver,
+            cep = cep_receiver,
+            county = county_receiver,
+            uf = uf_receiver,
+            phone = phone_receiver,
+            )
+
+    return receiver    
 class InvoiceViewSet(viewsets.ModelViewSet):
 
     queryset = Invoice.objects.all()
