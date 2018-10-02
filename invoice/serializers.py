@@ -3,7 +3,7 @@ from .models import (
     Invoice,
     Seller,
     Receiver,
-    ProductService
+    Product_Service
 )
 
 
@@ -27,5 +27,5 @@ class ReceiverSerializer(serializers.ModelSerializer):
 
 class ProductServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProductService
+        model = Product_Service
         fields = '__all__'

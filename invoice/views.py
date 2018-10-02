@@ -10,7 +10,7 @@ from .models import (
     Invoice,
     Seller,
     Receiver,
-    ProductService
+    Product_Service
 )
 # Create your views here.
 
@@ -49,7 +49,7 @@ class ReceiverViewSet(viewsets.ModelViewSet):
 
 
 class ProductServiceViewSet(viewsets.ModelViewSet):
-    queryset = ProductService.objects.all()
+    queryset = Product_Service.objects.all()
     serializer_class = ProductServiceSerializer
 
     def update(self, request, pk=None):
