@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from .models import Invoice, PDF, Seller, Receiver
+from .models import Invoice, Seller, Receiver
 from .serializers import InvoiceSerializer
 from rest_framework import viewsets
 import PyPDF2
@@ -10,16 +10,20 @@ from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 from io import StringIO
+from rest_framework.parsers import FileUploadParser
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from rest_framework.views import APIView
+import io
 
 
-def convert_pdf_to_txt(path):
+def convert_pdf_to_txt(file):
 
     rsrcmgr = PDFResourceManager()
     retstr = StringIO()
     codec = 'utf-8'
     laparams = LAParams()
     device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
-    fp = open(path, 'rb')
+    fp = file
     interpreter = PDFPageInterpreter(rsrcmgr, device)
     password = ""
     maxpages = 0
@@ -38,7 +42,6 @@ def convert_pdf_to_txt(path):
 
     text = retstr.getvalue()
 
-    fp.close()
     device.close()
     retstr.close()
     return text
@@ -210,32 +213,19 @@ def search_create_seller(cnpj_seller, text, uf_code_seller):
     return seller
 
 
-class InvoiceViewSet(viewsets.ModelViewSet):
+class InvoiceView(APIView):
 
-    queryset = Invoice.objects.all()
-    serializer_class = InvoiceSerializer
+    parser_classes = (MultiPartParser,)
 
-    def create(self, request):
-
-        data = request.data
+    def post(self, request, format=None):
 
         dict_invoice = {}
 
-        # Salva-pdf
+        pdf = request.FILES['file']
 
-        pdf = PDF()
+        dict_invoice['file'] = pdf
 
-        pdf.pdf = data.get('file')
-
-        pdf.save()
-
-        dict_invoice['pdf'] = pdf.pk
-
-        # Converter para texto
-
-        pdfFileObj = open(str(pdf.pdf), 'rb')
-
-        pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+        pdfReader = PyPDF2.PdfFileReader(pdf)
 
         num_pages = pdfReader.numPages
         count = 0
@@ -246,10 +236,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             count += 1
             text1 += pageObj.extractText()
 
-        # with open(str(pdf.pdf), "rb") as f:
-            # pdf_2 = pdftotext.PDF(f)
-
-        text = convert_pdf_to_txt(str(pdf.pdf))
+        text = convert_pdf_to_txt(pdf)
 
         # VALIDAÇÃO-PDF/NF
 
@@ -441,7 +428,15 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         else:
             total_invoice_value = total_invoice_value[18:]
 
+
+        total_invoice_value = total_invoice_value.replace('\n', '.')    
         total_invoice_value = total_invoice_value.replace(',', '.')
+
+        if total_invoice_value[0] == '.':
+            total_invoice_value = total_invoice_value[1:]
+        if total_invoice_value[-1] == '.':
+            total_invoice_value = total_invoice_value[:-1]
+
 
         print("-------------------")
         print(total_invoice_value)

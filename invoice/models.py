@@ -1,14 +1,8 @@
 from django.db import models
 
-
-class PDF(models.Model):
-
-    pdf = models.FileField(upload_to='invoice/images/')
-
-
 class Invoice(models.Model):
 
-    pdf = models.OneToOneField(PDF, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='invoice/images/', blank=True)
 
     text = models.TextField()
 

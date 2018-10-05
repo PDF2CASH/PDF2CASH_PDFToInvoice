@@ -8,8 +8,6 @@ do
     sudo rm -rf $app/migrations/__pycache__
 done
 
-
-docker rm $(docker ps -aq) -f
-docker-compose up
-docker-compose run web ./manage.py makemigrations
-docker-compose run web ./manage.py migrate
+rm -rf mydatabase
+python manage.py makemigrations
+python manage.py migrate
