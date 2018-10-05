@@ -1,7 +1,6 @@
 from rest_framework.response import Response
-from .models import Invoice, Seller, Receiver
+from .models import Seller, Receiver
 from .serializers import InvoiceSerializer
-from rest_framework import viewsets
 import PyPDF2
 from nltk.tokenize import word_tokenize
 import re
@@ -10,10 +9,8 @@ from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 from io import StringIO
-from rest_framework.parsers import FileUploadParser
-from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser
 from rest_framework.views import APIView
-import io
 
 
 def convert_pdf_to_txt(file):
@@ -428,15 +425,13 @@ class InvoiceView(APIView):
         else:
             total_invoice_value = total_invoice_value[18:]
 
-
-        total_invoice_value = total_invoice_value.replace('\n', '.')    
+        total_invoice_value = total_invoice_value.replace('\n', '.')
         total_invoice_value = total_invoice_value.replace(',', '.')
 
         if total_invoice_value[0] == '.':
             total_invoice_value = total_invoice_value[1:]
         if total_invoice_value[-1] == '.':
             total_invoice_value = total_invoice_value[:-1]
-
 
         print("-------------------")
         print(total_invoice_value)

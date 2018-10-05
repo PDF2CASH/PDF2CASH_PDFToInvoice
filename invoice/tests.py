@@ -1,14 +1,5 @@
 
 from django.test import TestCase
-from django.core.files import File
-import json
-import datetime
-from .models import (
-    Invoice
-)
-import io
-from django.core.files.uploadedfile import SimpleUploadedFile
-
 
 
 class InvoiceTest(TestCase):
