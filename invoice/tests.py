@@ -8,7 +8,6 @@ from .models import (
     Seller,
     Receiver,
     Product_Service,
-    PDF
 )
 
 # Create your tests here.
@@ -274,12 +273,7 @@ class InvoiceTest(TestCase):
             phone='6133430264'
         )
 
-        self.pdf1 = PDF.objects.create(
-            pdf=file_mock
-        )
-
         self.invoice1 = Invoice.objects.create(
-            pdf=self.pdf1,
             text='QualquerCoisa - Pegar com o Matias',
             number='000441407',
             operation_nature='DFVENDA ACESSORIOS EM VN',
@@ -299,9 +293,9 @@ class InvoiceTest(TestCase):
     def as_dict(self):
         return {
             'id': self.invoice1.id,
-            'pdf': self.pdf1.id,
             'text': self.invoice1.text,
             'number': self.invoice1.number,
+            'file': None,
             'operation_nature': self.invoice1.operation_nature,
             'authorization_protocol': self.invoice1.authorization_protocol,
             'access_key': self.invoice1.access_key,
@@ -352,6 +346,11 @@ class InvoiceTest(TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
+
+    def test_invoice_object_create(self):
+        file = open("invoice/test.pdf", 'rb')
+        response = self.client.post('/api/invoice/invoice/', {'file': file}, format='multipart')
+        self.assertEqual(response.status_code, 200)
 
     def tearDown(self):
         Invoice.objects.all().delete()

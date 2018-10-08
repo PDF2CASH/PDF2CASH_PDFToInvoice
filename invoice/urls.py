@@ -9,5 +9,5 @@ router.register(r'receiver', views.ReceiverViewSet)
 router.register(r'product-service', views.ProductServiceViewSet)
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
+    url(r'/', include(router.urls)),
 ]

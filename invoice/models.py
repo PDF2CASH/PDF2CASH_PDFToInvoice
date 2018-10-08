@@ -1,36 +1,33 @@
 from django.db import models
 
 
-class PDF(models.Model):
-
-    pdf = models.FileField(upload_to='invoice/images/')
-
-
 class Invoice(models.Model):
 
-    pdf = models.OneToOneField(PDF, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='invoice/images/', blank=True)
 
     text = models.TextField()
 
     number = models.CharField(max_length=9, blank=True)
 
-    operation_nature = models.CharField(
-        max_length=255, blank=True)  # NATUREZA DA OPERAÇÃO
+    operation_nature = models.CharField(max_length=255, blank=True)  # NATUREZA DA OPERAÇÃO
 
-    authorization_protocol = models.CharField(
-        max_length=255, blank=True)  # PROTOCOLO DE AUTORIZAÇÃO
+    authorization_protocol = models.CharField(max_length=255, blank=True)  # PROTOCOLO DE AUTORIZAÇÃO
 
-    access_key = models.CharField(
-        max_length=44, unique=True)  # CHAVE DE ACESSO
+    access_key = models.CharField(max_length=44, unique=True)  # CHAVE DE ACESSO
 
-    state_registration = models.CharField(
-        max_length=255, blank=True)  # INSCRIÇÃO ESTADUAL
+    state_registration = models.CharField(max_length=255, blank=True)  # INSCRIÇÃO ESTADUAL
 
     receiver = models.ForeignKey(
-        'invoice.Receiver', related_name='invoices', on_delete=models.CASCADE)
+            'invoice.Receiver',
+            related_name='invoices',
+            on_delete=models.CASCADE
+            )
 
     seller = models.ForeignKey(
-        'invoice.Seller', related_name='invoices', on_delete=models.CASCADE)
+            'invoice.Seller',
+            related_name='invoices',
+            on_delete=models.CASCADE
+            )
 
     emission_date = models.DateField(blank=True)
 
