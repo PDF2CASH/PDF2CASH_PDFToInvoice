@@ -1,6 +1,17 @@
 from rest_framework.response import Response
-from .models import Seller, Receiver
-from .serializers import InvoiceSerializer
+from rest_framework import viewsets, status
+from .models import (
+        Invoice,
+        Seller,
+        Receiver,
+        Product_Service
+        )
+from .serializers import (
+        InvoiceSerializer,
+        SellerSerializer,
+        ReceiverSerializer,
+        ProductServiceSerializer
+        )
 import PyPDF2
 from nltk.tokenize import word_tokenize
 import re
@@ -10,7 +21,6 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 from io import StringIO
 from rest_framework.parsers import MultiPartParser
-from rest_framework.views import APIView
 
 
 def convert_pdf_to_txt(file):
@@ -210,11 +220,18 @@ def search_create_seller(cnpj_seller, text, uf_code_seller):
     return seller
 
 
-class InvoiceView(APIView):
-
+class InvoiceViewSet(viewsets.ModelViewSet):
+    queryset = Invoice.objects.all()
+    serializer_class = InvoiceSerializer
     parser_classes = (MultiPartParser,)
 
-    def post(self, request, format=None):
+    def update(self, request, pk=None):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, pk=None):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def create(self, request, format=None):
 
         dict_invoice = {}
 
@@ -249,11 +266,11 @@ class InvoiceView(APIView):
         keywords = [word for word in tokens if not (word in punctuations)]
 
         validation_words = [
-            "WWW.NFE.FAZENDA.GOV.BR/PORTAL",
-            "www.nfe.fazenda.gov.br/portal",
-            "WWW.NFE.FAZENDA.GOV.BR",
-            "www.nfe.fazenda.gov.br",
-        ]
+                "WWW.NFE.FAZENDA.GOV.BR/PORTAL",
+                "www.nfe.fazenda.gov.br/portal",
+                "WWW.NFE.FAZENDA.GOV.BR",
+                "www.nfe.fazenda.gov.br",
+                ]
 
         i = 0
 
@@ -273,10 +290,10 @@ class InvoiceView(APIView):
         print(text)
 
         access_key = re.search(
-            r'\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}',
-            new_text,
-            re.M | re.I
-        )
+                r'\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}',
+                new_text,
+                re.M | re.I
+                )
 
         if not access_key:
             return Response({'error': 'Chave de acesso da nota fiscal não encontrada no pdf!'}, status=400)
@@ -299,10 +316,10 @@ class InvoiceView(APIView):
         # Parser CNPJ/CPF reveiver
 
         cpnj_cpf_receiver = re.findall(
-            r'([\s+|\n]\d{11}\s+|[\s+|\n]\d{14}\s+|\d{3}\.\d{3}\.\d{3}\-\d{2}|\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2})',
-            text,
-            re.M | re.I
-        )
+                r'([\s+|\n]\d{11}\s+|[\s+|\n]\d{14}\s+|\d{3}\.\d{3}\.\d{3}\-\d{2}|\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2})',
+                text,
+                re.M | re.I
+                )
 
         if not cpnj_cpf_receiver or len(cpnj_cpf_receiver) < 2:
             return Response({'error': 'Cnpj ou cpf do destinatário da nota fiscal não encontrado no pdf!'}, status=400)
@@ -328,33 +345,33 @@ class InvoiceView(APIView):
         receiver = search_create_receiver(cpnj_cpf_receiver, text)
         if not receiver:
             return Response(
-                {'error': 'Atributos referentes ao destinatário da nota fiscal não encontrados no pdf!'},
-                status=400
-            )
+                    {'error': 'Atributos referentes ao destinatário da nota fiscal não encontrados no pdf!'},
+                    status=400
+                    )
 
         dict_invoice['receiver'] = receiver.pk
 
         seller = search_create_seller(cnpj_seller, text, uf_code_seller)
         if not seller:
             return Response(
-                {'error': 'Atributos referentes ao emitente da nota fiscal não encontrados no pdf!'},
-                status=400
-            )
+                    {'error': 'Atributos referentes ao emitente da nota fiscal não encontrados no pdf!'},
+                    status=400
+                    )
 
         dict_invoice['seller'] = seller.pk
 
         # NATUREZA DA OPERAÇÃO Parser
 
         operation_nature = re.search(
-            r'NATUREZA DA OPERAÇÃO\s+(.+)',
-            text,
-            re.M | re.I
-        )
+                r'NATUREZA DA OPERAÇÃO\s+(.+)',
+                text,
+                re.M | re.I
+                )
         if not operation_nature:
             return Response(
-                {'error': 'Naturaza da operação da nota fiscal não encontrada no pdf!'},
-                status=400
-            )
+                    {'error': 'Naturaza da operação da nota fiscal não encontrada no pdf!'},
+                    status=400
+                    )
         operation_nature = str(operation_nature.group()).replace('NATUREZA DA OPERAÇÃO', '')
         operation_nature = operation_nature.replace('\n', '')
 
@@ -367,15 +384,15 @@ class InvoiceView(APIView):
         # PROTOCOLO DE AUTORIZAÇÃO Parser
 
         authorization_protocol = re.search(
-            r'(\d{15}(\s|\s\-\s)\d{2}\/\d{2}\/\d{4} \d{2}\:\d{2}(\:\d{2})?)',
-            text,
-            re.M | re.I
-        )
+                r'(\d{15}(\s|\s\-\s)\d{2}\/\d{2}\/\d{4} \d{2}\:\d{2}(\:\d{2})?)',
+                text,
+                re.M | re.I
+                )
         if not authorization_protocol:
             return Response(
-                {'error': 'Protocolo de autorização da nota fiscal não encontrado no pdf!'},
-                status=400
-            )
+                    {'error': 'Protocolo de autorização da nota fiscal não encontrado no pdf!'},
+                    status=400
+                    )
         authorization_protocol = str(authorization_protocol.group())
         authorization_protocol = authorization_protocol.replace(' -', '')
 
@@ -408,10 +425,10 @@ class InvoiceView(APIView):
         re_nfv1 = r'(\d{7}\.\d{3}\s+(\d{2}\/\d{2}\/\d{4})'
         re_nfv2 = r'\s+([\d+|\.]+\,\d{2})\s)|(VALOR NOTA\s+((R\$\s)?[\d+|\.]+\,\d{2})\s)'
         total_invoice_value = re.search(
-            re_nfv1+re_nfv2,
-            text,
-            re.M | re.I
-        )
+                re_nfv1+re_nfv2,
+                text,
+                re.M | re.I
+                )
         if not total_invoice_value or not values:
             return Response({'error': 'Valor da nota fiscal não encontrada no pdf!'}, status=400)
         total_invoice_value = str(total_invoice_value.group())
@@ -498,3 +515,36 @@ class InvoiceView(APIView):
             return Response(serializer.data, status=200)
         else:
             return Response(serializer.errors, status=400)
+
+
+class SellerViewSet(viewsets.ModelViewSet):
+    queryset = Seller.objects.all()
+    serializer_class = SellerSerializer
+
+    def update(self, request, pk=None):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, pk=None):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReceiverViewSet(viewsets.ModelViewSet):
+    queryset = Receiver.objects.all()
+    serializer_class = ReceiverSerializer
+
+    def update(self, request, pk=None):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, pk=None):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProductServiceViewSet(viewsets.ModelViewSet):
+    queryset = Product_Service.objects.all()
+    serializer_class = ProductServiceSerializer
+
+    def update(self, request, pk=None):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, pk=None):
+        return Response(status=status.HTTP_400_BAD_REQUEST)

@@ -18,16 +18,16 @@ class Invoice(models.Model):
     state_registration = models.CharField(max_length=255, blank=True)  # INSCRIÇÃO ESTADUAL
 
     receiver = models.ForeignKey(
-        'invoice.Receiver',
-        related_name='invoices',
-        on_delete=models.CASCADE
-    )
+            'invoice.Receiver',
+            related_name='invoices',
+            on_delete=models.CASCADE
+            )
 
     seller = models.ForeignKey(
-        'invoice.Seller',
-        related_name='invoices',
-        on_delete=models.CASCADE
-    )
+            'invoice.Seller',
+            related_name='invoices',
+            on_delete=models.CASCADE
+            )
 
     emission_date = models.DateField(blank=True)
 
@@ -46,44 +46,44 @@ class Invoice(models.Model):
 
 class Seller(models.Model):
 
-        name = models.CharField(max_length=255, blank=True)
+    name = models.CharField(max_length=255, blank=True)
 
-        cnpj = models.CharField(max_length=14, blank=True)
+    cnpj = models.CharField(max_length=14, blank=True)
 
-        cep = models.CharField(max_length=8, blank=True)
+    cep = models.CharField(max_length=8, blank=True)
 
-        uf_code = models.IntegerField(blank=True)
+    uf_code = models.IntegerField(blank=True)
 
 
 class Receiver(models.Model):
 
-        name = models.CharField(max_length=255, blank=True)
+    name = models.CharField(max_length=255, blank=True)
 
-        cpf_cnpj = models.CharField(max_length=14, unique=True)
+    cpf_cnpj = models.CharField(max_length=14, unique=True)
 
-        address = models.CharField(max_length=255, blank=True)
+    address = models.CharField(max_length=255, blank=True)
 
-        neighborhood = models.CharField(max_length=255, blank=True)
+    neighborhood = models.CharField(max_length=255, blank=True)
 
-        cep = models.CharField(max_length=8, blank=True)
+    cep = models.CharField(max_length=8, blank=True)
 
-        county = models.CharField(max_length=255, blank=True)
+    county = models.CharField(max_length=255, blank=True)
 
-        uf = models.CharField(max_length=2, blank=True)
+    uf = models.CharField(max_length=2, blank=True)
 
-        phone = models.CharField(max_length=13, blank=True)
+    phone = models.CharField(max_length=13, blank=True)
 
 
 class Product_Service(models.Model):
 
-        code = models.CharField(max_length=100)
+    code = models.CharField(max_length=100)
 
-        description = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
 
-        qtd = models.IntegerField()
+    qtd = models.IntegerField()
 
-        unity_value = models.CharField(max_length=30)
+    unity_value = models.CharField(max_length=30)
 
-        total_value = models.CharField(max_length=30)
+    total_value = models.CharField(max_length=30)
 
-        discount_value = models.CharField(max_length=30)
+    discount_value = models.CharField(max_length=30)

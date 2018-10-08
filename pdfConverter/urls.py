@@ -1,4 +1,4 @@
-"""pdfConverter URL Configuration
+"""pdf2cash URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.0/topics/http/urls/
@@ -18,6 +18,6 @@ from django.urls import path
 
 urlpatterns = [
     path('api/', include([
-        path('', include('invoice.urls')),
+        path('invoice', include('invoice.urls')),
     ])),
 ]
