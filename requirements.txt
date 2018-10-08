@@ -1,5 +1,5 @@
-Django==2.0
-djangorestframework==3.8
+Django
+djangorestframework
 flake8
 coverage
 coveralls
@@ -9,3 +9,4 @@ mock
 pdfminer.six
 PyPDF2
 nltk
+django-seed
