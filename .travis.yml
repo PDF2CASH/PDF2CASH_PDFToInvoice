@@ -1,27 +1,43 @@
+sudo: required
+services:
+  - docker
+
 language: python
 
-python:
-    - "3.6"
-
 branches:
-    only:
-      - master
-      - development
-      - /^.*release.*$/
+  only:
+    - master
+    - development
+    - /^.*release.*$/
 
-install:
-    - pip install -r requirements.txt 
-    - python -c "import nltk; nltk.download('punkt')"
-    - python manage.py makemigrations
-    - python manage.py migrate
+python:
+  - "3.6"
+
+
+before_script:
+  - docker build -t pdf2invoice -f docker-homolog .
+  - docker run -d -p 8000:8000 --name pdf2invoice pdf2invoice
+   
 
 script:
-    - coverage erase
-    - coverage run --source='.' manage.py test
-    - coverage report
-    - flake8
+  - docker exec pdf2invoice coverage erase
+  - docker exec pdf2invoice coverage run --source='.' manage.py test
+  - docker exec pdf2invoice coverage report
+  - docker exec pdf2invoice flake8
 
-after_success:
-    - coveralls
+after_script:
+  - docker stop pdf2invoice
 
+after_success: 
+  - docker exec -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" pdf2invoice coveralls
 
+deploy:
+  provider: script
+  script: bash scripts/deploy.sh
+  on:
+    branch: development
+
+addons:
+  apt:
+    packages:
+      - docker-ce
