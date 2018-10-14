@@ -35,7 +35,7 @@ class Invoice(models.Model):
 
     total_products_value = models.CharField(max_length=30, blank=True)
 
-    total_invoice_value = models.CharField(max_length=30, blank=True)
+    total_invoice_value = models.FloatField(blank=True)
 
     freight_value = models.CharField(max_length=30, blank=True)
 
