@@ -285,7 +285,7 @@ class InvoiceTest(TestCase):
             emission_date=datetime.date(2018, 2, 27),
             entry_exit_datetime=datetime.datetime(2018, 2, 27, 16, 20, 55),
             total_products_value='146,00',
-            total_invoice_value='146,00',
+            total_invoice_value=146.00,
             freight_value=',00',
             icms_value=',00',
             discount_value=',00')
