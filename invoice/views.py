@@ -420,7 +420,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         dict_invoice['state_registration'] = state_registration
 
         # VALOR DOS IMPOSTOS
-        
+
         basis_calculation_icms = re.search(
             r'BASE DE CÁLCULO DE ICMS\s+([\d+|\.]+\,\d{2})\s', text,
             re.M | re.I)
@@ -467,6 +467,49 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         print("-------------------")
 
         dict_invoice['freight_value'] = freight_value
+
+        insurance_value = re.search(
+            r'VALOR DO SEGURO\s+.*\s+([\d+|\.]+\,\d{2})\s', text, re.M | re.I)
+        if not insurance_value:
+            return Response({
+                'error':
+                'Valor do Seguro da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        insurance_value = str(insurance_value.group(1))
+        insurance_value = insurance_value.replace('VALOR DO SEGURO', '')
+        insurance_value = insurance_value.replace(' ', '')
+        insurance_value = insurance_value.replace('.', '')
+        insurance_value = insurance_value.replace('\n', '')
+        insurance_value = insurance_value.replace(',', '.')
+        insurance_value = float(insurance_value)
+
+        print("-------------------")
+        print(insurance_value)
+        print("-------------------")
+
+        dict_invoice['insurance_value'] = insurance_value
+
+        icms_value = re.search(
+            r'VALOR DO ICMS\n.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})\s', text,
+            re.M | re.I)
+        if not icms_value:
+            return Response({
+                'error':
+                'Valor do ICMS da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        icms_value = str(icms_value.group(1))
+        icms_value = icms_value.replace(' ', '')
+        icms_value = icms_value.replace('.', '')
+        icms_value = icms_value.replace('\n', '')
+        icms_value = icms_value.replace(',', '.')
+        icms_value = float(icms_value)
+        print("-------------------")
+        print(icms_value)
+        print("-------------------")
+
+        dict_invoice['icms_value'] = icms_value
 
         # VALOR TOTAL DOS PRODUTOS Parser
 
