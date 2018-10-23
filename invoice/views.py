@@ -250,7 +250,6 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             count += 1
             text1 += pageObj.extractText()
 
-        print(text1)
         text = convert_pdf_to_txt(pdf)
 
         # VALIDAÇÃO-PDF/NF
@@ -288,7 +287,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         new_text = text.replace('\n', '')
 
-        # print(text)
+        print(text)
 
         access_key = re.search(
                 r'\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}',
@@ -552,6 +551,71 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         print("-------------------")
 
         dict_invoice['basis_calculation_icms_st'] = basis_calculation_icms_st
+
+        icms_value_st = re.search(
+            r'VALOR DO ICMS S.*\s+.*\s+.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})',
+            text, re.M | re.I)
+        if not icms_value_st:
+            return Response({
+                'error':
+                'Valor do ICMS ST da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        icms_value_st = str(icms_value_st.group(1))
+        icms_value_st = icms_value_st.replace(' ', '')
+        icms_value_st = icms_value_st.replace('.', '')
+        icms_value_st = icms_value_st.replace('\n', '')
+        icms_value_st = icms_value_st.replace(',', '.')
+        icms_value_st = float(icms_value_st)
+
+        print("-------------------")
+        print(icms_value_st)
+        print("-------------------")
+
+        dict_invoice['icms_value_st'] = icms_value_st
+
+        other_expenses = re.search(
+            r'DESPESAS ACESSÓRIAS.*\s+.*\s+([\d+|\.]+\,\d{2})', text,
+            re.M | re.I)
+        if not other_expenses:
+            return Response({
+                'error':
+                'Despesas Acessórias da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        other_expenses = str(other_expenses.group(1))
+        other_expenses = other_expenses.replace(' ', '')
+        other_expenses = other_expenses.replace('.', '')
+        other_expenses = other_expenses.replace('\n', '')
+        other_expenses = other_expenses.replace(',', '.')
+        other_expenses = float(other_expenses)
+
+        print("-------------------")
+        print(other_expenses)
+        print("-------------------")
+
+        dict_invoice['other_expenses'] = other_expenses
+
+        ipi_value = re.search(r'VALOR DO IPI.*\s+([\d+|\.]+\,\d{2})', text,
+                              re.M | re.I)
+        if not ipi_value:
+            return Response({
+                'error':
+                'Valor do IPI da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        ipi_value = str(ipi_value.group(1))
+        ipi_value = ipi_value.replace(' ', '')
+        ipi_value = ipi_value.replace('.', '')
+        ipi_value = ipi_value.replace('\n', '')
+        ipi_value = ipi_value.replace(',', '.')
+        ipi_value = float(ipi_value)
+
+        print("-------------------")
+        print(ipi_value)
+        print("-------------------")
+
+        dict_invoice['ipi_value'] = ipi_value
 
         # VALOR TOTAL DOS PRODUTOS Parser
 

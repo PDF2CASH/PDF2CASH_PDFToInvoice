@@ -361,7 +361,7 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_invoice_object_create(self):
-        file = open("invoice/test2.pdf", 'rb')
+        file = open("invoice/test.pdf", 'rb')
         response = self.client.post('/api/invoice/invoice/', {'file': file}, format='multipart')
         self.assertEqual(response.status_code, 200)
 
