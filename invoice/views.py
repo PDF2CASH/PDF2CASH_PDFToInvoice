@@ -57,7 +57,7 @@ def convert_pdf_to_txt(file):
 def search_create_receiver(cpnj_cpf_receiver, text):
 
     if Receiver.objects.filter(cpf_cnpj=cpnj_cpf_receiver).count() == 1:
-            receiver = Receiver.objects.get(cpf_cnpj=cpnj_cpf_receiver)
+        receiver = Receiver.objects.get(cpf_cnpj=cpnj_cpf_receiver)
     else:
         # Procurar os atributos do Receiver
 
@@ -174,7 +174,7 @@ def search_create_receiver(cpnj_cpf_receiver, text):
 def search_create_seller(cnpj_seller, text, uf_code_seller):
 
     if Seller.objects.filter(cnpj=cnpj_seller).count() == 1:
-            seller = Seller.objects.get(cnpj=cnpj_seller)
+        seller = Seller.objects.get(cnpj=cnpj_seller)
     else:
         # Procurar os atributos do Seller
 
@@ -250,6 +250,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             count += 1
             text1 += pageObj.extractText()
 
+        print(text1)
         text = convert_pdf_to_txt(pdf)
 
         # VALIDAÇÃO-PDF/NF
@@ -287,7 +288,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         new_text = text.replace('\n', '')
 
-        print(text)
+        # print(text)
 
         access_key = re.search(
                 r'\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}',
@@ -417,6 +418,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         print("-------------------")
 
         dict_invoice['state_registration'] = state_registration
+
+        # VALOR DOS IMPOSTOS
 
         # VALOR TOTAL DOS PRODUTOS Parser
 

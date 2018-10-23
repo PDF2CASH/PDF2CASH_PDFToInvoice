@@ -286,9 +286,16 @@ class InvoiceTest(TestCase):
             entry_exit_datetime=datetime.datetime(2018, 2, 27, 16, 20, 55),
             total_products_value='146,00',
             total_invoice_value='146,00',
+            basis_calculation_icms=',00',
             freight_value=',00',
+            insurance_value=',00',
             icms_value=',00',
-            discount_value=',00')
+            discount_value=',00',
+            basis_calculation_icms_st=',00',
+            icms_value_st=',00',
+            other_expenditure=',00',
+            ipi_value=',00'
+            )
 
     def as_dict(self):
         return {
@@ -306,9 +313,15 @@ class InvoiceTest(TestCase):
             'entry_exit_datetime': self.invoice1.entry_exit_datetime.strftime('%Y-%m-%dT%H:%M:%SZ'),
             'total_products_value': self.invoice1.total_products_value,
             'total_invoice_value': self.invoice1.total_invoice_value,
+            'basis_calculation_icms': self.invoice1.basis_calculation_icms,
             'freight_value': self.invoice1.freight_value,
+            'insurance_value': self.invoice1.insurance_value,
             'icms_value': self.invoice1.icms_value,
-            'discount_value': self.invoice1.discount_value
+            'discount_value': self.invoice1.discount_value,
+            'basis_calculation_icms_st': self.invoice1.basis_calculation_icms_st,
+            'icms_value_st': self.invoice1.icms_value_st,
+            'other_expenditure': self.invoice1.other_expenditure,
+            'ipi_value': self.invoice1.ipi_value
         }
 
     def test_invoice_object_get(self):
@@ -348,7 +361,7 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_invoice_object_create(self):
-        file = open("invoice/test.pdf", 'rb')
+        file = open("invoice/test2.pdf", 'rb')
         response = self.client.post('/api/invoice/invoice/', {'file': file}, format='multipart')
         self.assertEqual(response.status_code, 200)
 
