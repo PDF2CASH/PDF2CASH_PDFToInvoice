@@ -420,6 +420,53 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         dict_invoice['state_registration'] = state_registration
 
         # VALOR DOS IMPOSTOS
+        
+        basis_calculation_icms = re.search(
+            r'BASE DE CÁLCULO DE ICMS\s+([\d+|\.]+\,\d{2})\s', text,
+            re.M | re.I)
+        if not basis_calculation_icms:
+            return Response({
+                'error':
+                'Base do cálculo de ICMS da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        basis_calculation_icms = str(basis_calculation_icms.group(1))
+        basis_calculation_icms = basis_calculation_icms.replace(
+            'BASE DE CÁLCULO DE ICMS', '')
+        basis_calculation_icms = basis_calculation_icms.replace(' ', '')
+        basis_calculation_icms = basis_calculation_icms.replace('.', '')
+        basis_calculation_icms = basis_calculation_icms.replace('\n', '')
+        basis_calculation_icms = basis_calculation_icms.replace(',', '.')
+        basis_calculation_icms = float(basis_calculation_icms)
+
+        print("-------------------")
+        print(basis_calculation_icms)
+        print("-------------------")
+
+        dict_invoice['basis_calculation_icms'] = basis_calculation_icms
+
+        freight_value = re.search(
+            r'VALOR DO FRETE\s+.*\s+([\d+|\.]+\,\d{2})\s', text, re.M | re.I)
+        if not freight_value:
+            return Response({
+                'error':
+                'Valor do Frete da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        freight_value = str(freight_value.group(1))
+        freight_value = freight_value.replace('VALOR DO FRETE', '')
+        freight_value = freight_value.replace('VALOR DO SEGURO', '')
+        freight_value = freight_value.replace(' ', '')
+        freight_value = freight_value.replace('.', '')
+        freight_value = freight_value.replace('\n', '')
+        freight_value = freight_value.replace(',', '.')
+        freight_value = float(freight_value)
+
+        print("-------------------")
+        print(freight_value)
+        print("-------------------")
+
+        dict_invoice['freight_value'] = freight_value
 
         # VALOR TOTAL DOS PRODUTOS Parser
 
