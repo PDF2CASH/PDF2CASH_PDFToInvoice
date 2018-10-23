@@ -511,6 +511,48 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         dict_invoice['icms_value'] = icms_value
 
+        discount_value = re.search(r'DESCONTO\s+([\d+|\.]+\,\d{2})\s', text,
+                                   re.M | re.I)
+        if not discount_value:
+            return Response(
+                {
+                    'error': 'Desconto da nota fiscal não encontrada no pdf!'
+                },
+                status=400)
+        discount_value = str(discount_value.group(1))
+        discount_value = discount_value.replace(' ', '')
+        discount_value = discount_value.replace('.', '')
+        discount_value = discount_value.replace('\n', '')
+        discount_value = discount_value.replace(',', '.')
+        discount_value = float(discount_value)
+        print("-------------------")
+        print(discount_value)
+        print("-------------------")
+
+        dict_invoice['discount_value'] = discount_value
+
+        basis_calculation_icms_st = re.search(
+            r'BASE DE CÁLCULO ICMS S.*\s+.*\s+.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})',
+            text, re.M | re.I)
+        if not basis_calculation_icms_st:
+            return Response({
+                'error':
+                'Base do cálculo de ICMS ST da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        basis_calculation_icms_st = str(basis_calculation_icms_st.group(1))
+        basis_calculation_icms_st = basis_calculation_icms_st.replace(' ', '')
+        basis_calculation_icms_st = basis_calculation_icms_st.replace('.', '')
+        basis_calculation_icms_st = basis_calculation_icms_st.replace('\n', '')
+        basis_calculation_icms_st = basis_calculation_icms_st.replace(',', '.')
+        basis_calculation_icms_st = float(basis_calculation_icms_st)
+
+        print("-------------------")
+        print(basis_calculation_icms_st)
+        print("-------------------")
+
+        dict_invoice['basis_calculation_icms_st'] = basis_calculation_icms_st
+
         # VALOR TOTAL DOS PRODUTOS Parser
 
         values = re.findall(r'\s([\d+|\.]+\,\d{2})\s', text, re.M | re.I)
