@@ -32,10 +32,14 @@ after_success:
   - docker exec -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" pdf2invoice coveralls
 
 deploy:
-  provider: script
-  script: bash scripts/deploy.sh
-  on:
-    branch: development
+  - provider: script
+    script: bash scripts/deploy.sh
+    on:
+      branch: development
+  - provider: script
+    script: bash scripts/sendZip.sh
+    on:
+      branch: master
 
 addons:
   apt:
