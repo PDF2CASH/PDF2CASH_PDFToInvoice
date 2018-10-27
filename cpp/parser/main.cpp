@@ -38,7 +38,7 @@ static char ownerPassword[33] = "";
 static char userPassword[33] = "";
 static GBool printVersion = gFalse;
 
-void ProcessXML();
+bool ReadInvoiceXML();
 
 std::string getFileName(const std::string& s)
 {
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    ProcessXML();
+    ReadInvoiceXML();
     return a.exec();
 
     GooString* fileName = nullptr;
@@ -319,7 +319,69 @@ struct sPAGE
     QList<sTEXTDATA*> txtDataList;
 };
 
-void ProcessXML()
+bool CheckPossibleHeader(QString text)
+{
+    int len = text.size();
+    int lenNumber = 0;
+    int lenLetter = 0;
+    for(int i = 0; i < len; i++)
+    {
+        if(text[i].isDigit())
+            lenNumber++;
+        else if(text[i].isLetter())
+            lenLetter++;
+    }
+
+    return (lenNumber == 0) ? true : (lenNumber > lenLetter) ? false : true;
+}
+
+bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
+{
+    // List with possibles headers.
+    QList<sTEXTDATA*> possibleHeaders;
+
+    // Temporary variables.
+    sPAGE* page = nullptr;
+    sTEXTDATA* textData = nullptr;
+
+    // Iterator of the page map.
+    QMap<int, sPAGE*>::iterator it;
+
+    // 0. Process each page.
+    for(it = pageMap->begin(); it != pageMap->end(); ++it)
+    {
+        page = it.value();
+        if(!page) continue;
+
+        // 1. Let to get possibles headers.
+        // We will discard texts that only have values.
+        // Because it is more likely to get a possible header and try to read the value below the header.
+        for(auto itTxt = page->txtDataList.begin(); itTxt != page->txtDataList.end(); ++itTxt)
+        {
+            textData = *itTxt;
+            if(!textData) continue;
+
+            if(CheckPossibleHeader(textData->text))
+                possibleHeaders.push_back(textData);
+        }
+
+        // Check if we got possibles header, then let to process.
+        if(possibleHeaders.size() > 0)
+        {
+            // Now based on the possible header
+            // We will try to get their values from the coordinates (top and left).
+        }
+        else
+        {
+            qDebug() << "Maybe error?";
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool ReadInvoiceXML()
 {
     QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/test.xml");
     if(!file.open(QFile::ReadOnly | QFile::Text))
@@ -434,6 +496,16 @@ void ProcessXML()
                 pageMap->insert(pageData->number, pageData);
             }
         }
+    }
+
+    if(pageMap->size() > 0)
+    {
+        return GetInvoiceData(pageMap);
+    }
+    else
+    {
+        qDebug() << "page map is null!";
+        return false;
     }
 }
 
