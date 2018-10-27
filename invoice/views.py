@@ -574,27 +574,27 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         dict_invoice['icms_value_st'] = icms_value_st
 
-        other_expenses = re.search(
+        other_expenditure = re.search(
             r'DESPESAS ACESSÓRIAS.*\s+.*\s+([\d+|\.]+\,\d{2})', text,
             re.M | re.I)
-        if not other_expenses:
+        if not other_expenditure:
             return Response({
                 'error':
                 'Despesas Acessórias da nota fiscal não encontrada no pdf!'
             },
                             status=400)
-        other_expenses = str(other_expenses.group(1))
-        other_expenses = other_expenses.replace(' ', '')
-        other_expenses = other_expenses.replace('.', '')
-        other_expenses = other_expenses.replace('\n', '')
-        other_expenses = other_expenses.replace(',', '.')
-        other_expenses = float(other_expenses)
+        other_expenditure = str(other_expenditure.group(1))
+        other_expenditure = other_expenditure.replace(' ', '')
+        other_expenditure = other_expenditure.replace('.', '')
+        other_expenditure = other_expenditure.replace('\n', '')
+        other_expenditure = other_expenditure.replace(',', '.')
+        other_expenditure = float(other_expenditure)
 
         print("-------------------")
-        print(other_expenses)
+        print(other_expenditure)
         print("-------------------")
 
-        dict_invoice['other_expenses'] = other_expenses
+        dict_invoice['other_expenditure'] = other_expenditure
 
         ipi_value = re.search(r'VALOR DO IPI.*\s+([\d+|\.]+\,\d{2})', text,
                               re.M | re.I)
@@ -648,6 +648,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             total_invoice_value = total_invoice_value[1:]
         if total_invoice_value[-1] == '.':
             total_invoice_value = total_invoice_value[:-1]
+
+        total_invoice_value = float(total_invoice_value)
 
         print("-------------------")
         print(total_invoice_value)

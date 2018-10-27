@@ -31,27 +31,27 @@ class Invoice(models.Model):
 
     entry_exit_datetime = models.DateTimeField(blank=True)
 
-    total_products_value = models.CharField(max_length=30, blank=True)
+    # total_products_value = models.FloatField(max_length=30, blank=True)
 
-    total_invoice_value = models.CharField(max_length=30, blank=True)
+    total_invoice_value = models.FloatField(max_length=30, blank=True)
 
-    basis_calculation_icms = models.CharField(max_length=30, blank=True)
+    basis_calculation_icms = models.FloatField(max_length=30, blank=True)
 
-    freight_value = models.CharField(max_length=30, blank=True)
+    freight_value = models.FloatField(max_length=30, blank=True)
 
-    insurance_value = models.CharField(max_length=30, blank=True)
+    insurance_value = models.FloatField(max_length=30, blank=True)
 
-    icms_value = models.CharField(max_length=30, blank=True)
+    icms_value = models.FloatField(max_length=30, blank=True)
 
-    discount_value = models.CharField(max_length=30, blank=True)
+    discount_value = models.FloatField(max_length=30, blank=True)
 
-    basis_calculation_icms_st = models.CharField(max_length=30, blank=True)
+    basis_calculation_icms_st = models.FloatField(max_length=30, blank=True)
 
-    icms_value_st = models.CharField(max_length=30, blank=True)
+    icms_value_st = models.FloatField(max_length=30, blank=True)
 
-    other_expenditure = models.CharField(max_length=30, blank=True)
+    other_expenditure = models.FloatField(max_length=30, blank=True)
 
-    ipi_value = models.CharField(max_length=30, blank=True)
+    ipi_value = models.FloatField(max_length=30, blank=True)
 
 
 class Seller(models.Model):
@@ -92,8 +92,8 @@ class Product_Service(models.Model):
 
     qtd = models.IntegerField()
 
-    unity_value = models.CharField(max_length=30)
+    unity_value = models.FloatField(max_length=30)
 
-    total_value = models.CharField(max_length=30)
+    total_value = models.FloatField(max_length=30)
 
-    discount_value = models.CharField(max_length=30)
+    discount_value = models.FloatField(max_length=30)
