@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="${POPPLER_VERSION}">
+<page number="1" position="absolute" top="0" left="0" height="1262" width="892">
+	<fontspec id="0" size="7" family="TimesNewRoman" color="#000000"/>
+	<fontspec id="1" size="13" family="TimesNewRoman,Bold" color="#000000"/>
+	<fontspec id="2" size="13" family="TimesNewRoman" color="#000000"/>
+	<fontspec id="3" size="8" family="TimesNewRoman,Bold" color="#000000"/>
+	<fontspec id="4" size="11" family="TimesNewRoman,Bold" color="#000000"/>
+	<fontspec id="5" size="10" family="TimesNewRoman,Bold" color="#000000"/>
+	<fontspec id="6" size="16" family="TimesNewRoman,Bold" color="#000000"/>
+	<fontspec id="7" size="13" family="TimesNewRoman,BoldItalic" color="#000000"/>
+	<fontspec id="8" size="5" family="CourierNew" color="#000000"/>
+	<fontspec id="9" size="7" family="TimesNewRoman,Bold" color="#000000"/>
+	<fontspec id="10" size="11" family="TimesNewRoman" color="#000000"/>
+	<fontspec id="11" size="13" family="Arial" color="#000000"/>
+	<fontspec id="12" size="5" family="TimesNewRoman" color="#000000"/>
+	<fontspec id="13" size="7" family="CourierNew" color="#000000"/>
+<text top="261" left="45" width="114" height="8" font="0">NATUREZA DA OPERAÇÃO</text>
+<text top="296" left="45" width="98" height="8" font="0">INSCRIÇÃO ESTADUAL</text>
+<text top="296" left="293" width="177" height="8" font="0">INSCRIÇÃO ESTADUAL SUB. TRIBUTARIA</text>
+<text top="296" left="576" width="21" height="8" font="0">CNPJ</text>
+<text top="171" left="550" width="82" height="8" font="0">CHAVE DE ACESSO</text>
+<text top="173" left="399" width="73" height="14" font="1"><b>0 - Entrada</b></text>
+<text top="186" left="399" width="56" height="14" font="1"><b>1 - Saída</b></text>
+<text top="206" left="399" width="20" height="14" font="1"><b>Nº </b></text>
+<text top="222" left="399" width="54" height="14" font="1"><b>SÉRIE :</b></text>
+<text top="181" left="489" width="8" height="14" font="1"><b>1</b></text>
+<text top="206" left="445" width="75" height="14" font="1"><b>000.002.782</b></text>
+<text top="273" left="46" width="82" height="14" font="2">Venda a vista</text>
+<text top="307" left="45" width="68" height="14" font="2">100061309</text>
+<text top="307" left="577" width="122" height="14" font="2">15.129.564/0001-04</text>
+<text top="184" left="556" width="284" height="9" font="3"><b>2918  0915  1295  6400  0104  5500  1000  0027  8210  0464  0326</b></text>
+<text top="130" left="395" width="126" height="9" font="3"><b>DOCUMENTO AUXILIAR</b></text>
+<text top="143" left="414" width="92" height="9" font="3"><b>DA NOTA FISCAL </b></text>
+<text top="115" left="144" width="233" height="12" font="4"><b>PRISMA DISTRIBUIDORA LTDA ME</b></text>
+<text top="133" left="188" width="189" height="11" font="5"><b>AVENIDA DAS AMERICAS B, 231 </b></text>
+<text top="111" left="425" width="62" height="16" font="6"><b>DANFE</b></text>
+<text top="64" left="44" width="105" height="8" font="0">DATA DE RECEBIMENTO</text>
+<text top="64" left="169" width="207" height="8" font="0">IDENTIFICAÇÃO E ASSINATURA DO RECEBEDOR</text>
+<text top="36" left="780" width="32" height="14" font="1"><b>NF-e</b></text>
+<text top="75" left="740" width="43" height="11" font="5"><b>SÉRIE :</b></text>
+<text top="74" left="790" width="8" height="14" font="1"><b>1</b></text>
+<text top="55" left="767" width="75" height="14" font="1"><b>000.002.782</b></text>
+<text top="55" left="740" width="17" height="11" font="5"><b>Nº:</b></text>
+<text top="158" left="424" width="71" height="9" font="3"><b>ELETRÔNICA</b></text>
+<text top="260" left="569" width="170" height="8" font="0">PROTOCOLO DE AUTORIZAÇÃO DE USO</text>
+<text top="272" left="588" width="176" height="9" font="3"><b>129181002778754 - 22/09/2018 11:22:49</b></text>
+<text top="239" left="482" width="38" height="14" font="1"><b>1 de 2</b></text>
+<text top="222" left="511" width="8" height="14" font="1"><b>1</b></text>
+<text top="239" left="399" width="58" height="14" font="1"><b>FOLHA:</b></text>
+<text top="35" left="41" width="553" height="8" font="0">RECEBEMOS DE PRISMA DISTRIBUIDORA LTDA ME OS PRODUTOS/SERVIÇOS CONSTANTES NA NOTA FISCAL INDICADA AO LADO</text>
+<text top="146" left="284" width="93" height="11" font="5"><b>DINAH BORGES</b></text>
+<text top="160" left="325" width="51" height="11" font="5"><b>Eunapolis</b></text>
+<text top="173" left="360" width="17" height="11" font="5"><b>BA</b></text>
+<text top="186" left="257" width="119" height="11" font="5"><b>TEL/FAX: 7391003646</b></text>
+<text top="200" left="298" width="79" height="11" font="5"><b>CEP: 45826660</b></text>
+<text top="76" left="41" width="98" height="14" font="7"><i><b>____/____/____</b></i></text>
+<text top="216" left="590" width="239" height="6" font="8">Consulta de autenticidade no portal nacional da NF-e </text>
+<text top="224" left="641" width="135" height="6" font="8">www.nfe.fazenda.gov.br/portal </text>
+<text top="232" left="637" width="144" height="6" font="8">ou no site da Sefaz Autorizadora</text>
+<text top="35" left="651" width="58" height="8" font="0">VALOR NOTA</text>
+<text top="47" left="653" width="45" height="8" font="9"><b>R$ 1.300,10</b></text>
+<text top="64" left="410" width="66" height="8" font="0">DESTINATÁRIO</text>
+<text top="79" left="403" width="175" height="8" font="9"><b>FUNDO MUN. DE SAUDE DE EUNAPOLIS</b></text>
+<text top="363" left="41" width="95" height="8" font="0">NOME/RAZÃO SOCIAL</text>
+<text top="363" left="601" width="40" height="8" font="0">CNPJ/CPF</text>
+<text top="363" left="734" width="82" height="8" font="0">DATA DA EMISSÃO</text>
+<text top="396" left="653" width="17" height="8" font="0">CEP</text>
+<text top="396" left="734" width="114" height="8" font="0">DATA DE SAÍDA/ENTRADA</text>
+<text top="428" left="736" width="69" height="8" font="0">HORA DE SAÍDA</text>
+<text top="428" left="43" width="47" height="8" font="0">MUNICÍPIO</text>
+<text top="428" left="617" width="98" height="8" font="0">INSCRIÇÃO ESTADUAL</text>
+<text top="428" left="449" width="44" height="8" font="0">FONE/FAX</text>
+<text top="377" left="41" width="282" height="14" font="2">FUNDO MUN. DE SAUDE DE EUNAPOLIS</text>
+<text top="407" left="653" width="65" height="14" font="2">45821-900</text>
+<text top="440" left="44" width="60" height="14" font="2">Eunapolis</text>
+<text top="377" left="601" width="203" height="14" font="2">13.879.364/0001-35 20/09/2018</text>
+<text top="407" left="736" width="68" height="14" font="2">20/09/2018</text>
+<text top="346" left="39" width="173" height="11" font="5"><b>DESTINATÁRIO/REMETENTE</b></text>
+<text top="407" left="39" width="251" height="12" font="10">R ARQUIMEDES MARTINS TERREO, 525 </text>
+<text top="395" left="43" width="48" height="8" font="0">ENDEREÇO</text>
+<text top="428" left="574" width="12" height="8" font="0">UF</text>
+<text top="438" left="575" width="21" height="14" font="2">BA</text>
+<text top="407" left="410" width="119" height="12" font="10">CENTAURO OESTE</text>
+<text top="396" left="413" width="77" height="8" font="0">BAIRRO/DISTRITO</text>
+<text top="440" left="736" width="53" height="14" font="2">15:01:54</text>
+<text top="483" left="39" width="141" height="11" font="5"><b>CÁLCULO DO IMPOSTO</b></text>
+<text top="564" left="41" width="284" height="11" font="5"><b>TRANSPORTADOR/VOLUMES TRANSPORTADOS</b></text>
+<text top="499" left="42" width="121" height="8" font="0">BASE DE CÁLCULO DE ICMS</text>
+<text top="499" left="212" width="70" height="8" font="0">VALOR DO ICMS</text>
+<text top="499" left="378" width="119" height="8" font="0">BASE DE CÁLCULO ICMS ST</text>
+<text top="499" left="546" width="138" height="8" font="0">VALOR DO ICMS SUBSTITUIÇÃO</text>
+<text top="499" left="703" width="133" height="8" font="0">VALOR TOTAL DOS PRODUTOS</text>
+<text top="532" left="43" width="76" height="8" font="0">VALOR DO FRETE</text>
+<text top="532" left="134" width="84" height="8" font="0">VALOR DO SEGURO</text>
+<text top="532" left="254" width="48" height="8" font="0">DESCONTO</text>
+<text top="532" left="328" width="140" height="8" font="0">OUTRAS DESPESAS ACESSÓRIAS</text>
+<text top="532" left="477" width="59" height="8" font="0">VALOR DO IPI</text>
+<text top="532" left="727" width="105" height="8" font="0">VALOR TOTAL DA NOTA</text>
+<text top="580" left="42" width="66" height="8" font="0">RAZÃO SOCIAL</text>
+<text top="580" left="349" width="81" height="8" font="0">FRETE POR CONTA</text>
+<text top="580" left="438" width="61" height="8" font="0">CÓDIGO ANTT</text>
+<text top="580" left="592" width="86" height="8" font="0">PLACA DO VEÍCULO</text>
+<text top="580" left="691" width="12" height="8" font="0">UF</text>
+<text top="580" left="723" width="40" height="8" font="0">CNPJ/CPF</text>
+<text top="613" left="44" width="48" height="8" font="0">ENDEREÇO</text>
+<text top="613" left="477" width="47" height="8" font="0">MUNICÍPIO</text>
+<text top="613" left="713" width="12" height="8" font="0">UF</text>
+<text top="613" left="745" width="98" height="8" font="0">INSCRIÇÃO ESTADUAL</text>
+<text top="645" left="44" width="59" height="8" font="0">QUANTIDADE</text>
+<text top="645" left="168" width="36" height="8" font="0">ESPÉCIE</text>
+<text top="645" left="321" width="33" height="8" font="0">MARCA</text>
+<text top="645" left="484" width="58" height="8" font="0">NUMERAÇÃO</text>
+<text top="645" left="624" width="55" height="8" font="0">PESO BRUTO</text>
+<text top="645" left="741" width="62" height="8" font="0">PESO LIQUIDO</text>
+<text top="512" left="102" width="26" height="14" font="2">0,00</text>
+<text top="512" left="277" width="26" height="14" font="2">0,00</text>
+<text top="512" left="443" width="26" height="14" font="2">0,00</text>
+<text top="512" left="606" width="26" height="14" font="2">0,00</text>
+<text top="512" left="745" width="53" height="14" font="2">1.300,10</text>
+<text top="545" left="72" width="26" height="14" font="2">0,00</text>
+<text top="544" left="265" width="26" height="14" font="2">0,00</text>
+<text top="545" left="168" width="26" height="14" font="2">0,00</text>
+<text top="545" left="385" width="26" height="14" font="2">0,00</text>
+<text top="544" left="753" width="53" height="14" font="2">1.300,10</text>
+<text top="544" left="503" width="26" height="14" font="2">0,00</text>
+<text top="659" left="623" width="34" height="14" font="2">0,000</text>
+<text top="659" left="739" width="34" height="14" font="2">0,000</text>
+<text top="592" left="349" width="58" height="14" font="11">0 - Rem.</text>
+<text top="532" left="566" width="132" height="8" font="0">VALOR APROX. DOS TRIBUTOS</text>
+<text top="545" left="613" width="41" height="14" font="2">353,38</text>
+<text top="680" left="38" width="184" height="11" font="5"><b>DADOS DO PRODUTO/SERVIÇO</b></text>
+<text top="706" left="126" width="127" height="7" font="12">DESCRIÇÃO DO PRODUTO/SERVIÇO</text>
+<text top="700" left="58" width="18" height="7" font="12">COD.</text>
+<text top="701" left="280" width="17" height="7" font="12">NCM</text>
+<text top="706" left="337" width="19" height="7" font="12">CFOP</text>
+<text top="706" left="364" width="21" height="7" font="12">UNID.</text>
+<text top="706" left="403" width="28" height="7" font="12">QUANT.</text>
+<text top="701" left="459" width="26" height="7" font="12">VALOR</text>
+<text top="701" left="522" width="26" height="7" font="12">VALOR</text>
+<text top="706" left="571" width="49" height="7" font="12">B.CALC. ICMS</text>
+<text top="706" left="627" width="89" height="7" font="12">VALOR ICMS VALOR IPI</text>
+<text top="700" left="734" width="43" height="7" font="12">ALIQUOTAS</text>
+<text top="713" left="727" width="18" height="7" font="12">ICMS</text>
+<text top="713" left="767" width="9" height="7" font="12">IPI</text>
+<text top="713" left="57" width="22" height="7" font="12">PROD.</text>
+<text top="712" left="283" width="10" height="7" font="12">SH</text>
+<text top="700" left="792" width="55" height="7" font="12">VALOR APROX.</text>
+<text top="713" left="793" width="54" height="7" font="12">DOS TRIBUTOS</text>
+<text top="712" left="456" width="36" height="7" font="12">UNITARIO</text>
+<text top="712" left="522" width="26" height="7" font="12"> TOTAL</text>
+<text top="706" left="307" width="24" height="7" font="12">CSOSN</text>
+<text top="732" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="732" left="368" width="13" height="8" font="0">CX</text>
+<text top="732" left="415" width="5" height="8" font="0">1</text>
+<text top="732" left="457" width="34" height="8" font="0">16,00000</text>
+<text top="732" left="527" width="20" height="8" font="0">16,00</text>
+<text top="732" left="588" width="16" height="8" font="0">0,00</text>
+<text top="732" left="642" width="16" height="8" font="0">0,00</text>
+<text top="732" left="730" width="16" height="8" font="0">0,00</text>
+<text top="732" left="268" width="36" height="8" font="0">28289011</text>
+<text top="732" left="690" width="16" height="8" font="0">0,00</text>
+<text top="732" left="764" width="16" height="8" font="0">0,00</text>
+<text top="732" left="309" width="5" height="8" font="0">0</text>
+<text top="732" left="811" width="16" height="8" font="0">4,07</text>
+<text top="732" left="107" width="106" height="8" font="0">Agua sanitaria 1L CX 12 UN</text>
+<text top="734" left="42" width="23" height="8" font="0">04490</text>
+<text top="748" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="748" left="368" width="13" height="8" font="0">CX</text>
+<text top="748" left="415" width="5" height="8" font="0">3</text>
+<text top="748" left="457" width="34" height="8" font="0">73,00000</text>
+<text top="748" left="524" width="25" height="8" font="0">219,00</text>
+<text top="748" left="588" width="16" height="8" font="0">0,00</text>
+<text top="748" left="642" width="16" height="8" font="0">0,00</text>
+<text top="748" left="730" width="16" height="8" font="0">0,00</text>
+<text top="748" left="268" width="36" height="8" font="0">22072019</text>
+<text top="748" left="690" width="16" height="8" font="0">0,00</text>
+<text top="748" left="764" width="16" height="8" font="0">0,00</text>
+<text top="748" left="309" width="5" height="8" font="0">0</text>
+<text top="748" left="808" width="20" height="8" font="0">93,21</text>
+<text top="748" left="107" width="150" height="8" font="0">ALCOOL, etilico 96 , CX C/12 unidades.</text>
+<text top="751" left="42" width="23" height="8" font="0">04277</text>
+<text top="765" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="765" left="368" width="13" height="8" font="0">CX</text>
+<text top="765" left="415" width="5" height="8" font="0">1</text>
+<text top="765" left="457" width="34" height="8" font="0">53,00000</text>
+<text top="765" left="527" width="20" height="8" font="0">53,00</text>
+<text top="765" left="588" width="16" height="8" font="0">0,00</text>
+<text top="765" left="642" width="16" height="8" font="0">0,00</text>
+<text top="765" left="730" width="16" height="8" font="0">0,00</text>
+<text top="765" left="268" width="36" height="8" font="0">22072019</text>
+<text top="765" left="690" width="16" height="8" font="0">0,00</text>
+<text top="765" left="764" width="16" height="8" font="0">0,00</text>
+<text top="765" left="309" width="5" height="8" font="0">0</text>
+<text top="765" left="808" width="20" height="8" font="0">22,56</text>
+<text top="765" left="107" width="153" height="8" font="0">ALCOOL, etilico em gel, a 70%, com 500</text>
+<text top="775" left="107" width="12" height="8" font="0">ml.</text>
+<text top="767" left="42" width="23" height="8" font="0">04280</text>
+<text top="788" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="788" left="368" width="13" height="8" font="0">CX</text>
+<text top="788" left="415" width="5" height="8" font="0">2</text>
+<text top="788" left="457" width="34" height="8" font="0">48,00000</text>
+<text top="788" left="527" width="20" height="8" font="0">96,00</text>
+<text top="788" left="588" width="16" height="8" font="0">0,00</text>
+<text top="788" left="642" width="16" height="8" font="0">0,00</text>
+<text top="788" left="730" width="16" height="8" font="0">0,00</text>
+<text top="788" left="268" width="36" height="8" font="0">28011000</text>
+<text top="788" left="690" width="16" height="8" font="0">0,00</text>
+<text top="788" left="764" width="16" height="8" font="0">0,00</text>
+<text top="788" left="309" width="5" height="8" font="0">0</text>
+<text top="788" left="808" width="20" height="8" font="0">15,55</text>
+<text top="788" left="107" width="146" height="8" font="0">Cloro Puro embalagem 1 litro caixa c/12</text>
+<text top="799" left="107" width="14" height="8" font="0">und</text>
+<text top="791" left="42" width="23" height="8" font="0">04283</text>
+<text top="812" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="812" left="368" width="13" height="8" font="0">CX</text>
+<text top="812" left="413" width="9" height="8" font="0">10</text>
+<text top="812" left="457" width="34" height="8" font="0">25,00000</text>
+<text top="812" left="524" width="25" height="8" font="0">250,00</text>
+<text top="812" left="588" width="16" height="8" font="0">0,00</text>
+<text top="812" left="642" width="16" height="8" font="0">0,00</text>
+<text top="812" left="730" width="16" height="8" font="0">0,00</text>
+<text top="812" left="268" width="36" height="8" font="0">38089419</text>
+<text top="812" left="690" width="16" height="8" font="0">0,00</text>
+<text top="812" left="764" width="16" height="8" font="0">0,00</text>
+<text top="812" left="309" width="5" height="8" font="0">0</text>
+<text top="812" left="808" width="20" height="8" font="0">13,85</text>
+<text top="812" left="107" width="153" height="8" font="0">Desinfetante liquido, contendo 06 unid. de</text>
+<text top="823" left="107" width="10" height="8" font="0">2L</text>
+<text top="815" left="42" width="23" height="8" font="0">04284</text>
+<text top="836" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="836" left="368" width="13" height="8" font="0">UN</text>
+<text top="836" left="415" width="5" height="8" font="0">5</text>
+<text top="836" left="459" width="29" height="8" font="0">2,90000</text>
+<text top="836" left="527" width="20" height="8" font="0">14,50</text>
+<text top="836" left="588" width="16" height="8" font="0">0,00</text>
+<text top="836" left="642" width="16" height="8" font="0">0,00</text>
+<text top="836" left="730" width="16" height="8" font="0">0,00</text>
+<text top="836" left="268" width="36" height="8" font="0">38089419</text>
+<text top="836" left="690" width="16" height="8" font="0">0,00</text>
+<text top="836" left="764" width="16" height="8" font="0">0,00</text>
+<text top="836" left="309" width="5" height="8" font="0">0</text>
+<text top="836" left="811" width="16" height="8" font="0">0,80</text>
+<text top="836" left="107" width="134" height="8" font="0">Desifetante Multiuso, Embalagem de</text>
+<text top="846" left="107" width="25" height="8" font="0">500ml.</text>
+<text top="839" left="42" width="23" height="8" font="0">04285</text>
+<text top="860" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="860" left="368" width="13" height="8" font="0">CX</text>
+<text top="860" left="415" width="5" height="8" font="0">1</text>
+<text top="860" left="457" width="34" height="8" font="0">26,00000</text>
+<text top="860" left="527" width="20" height="8" font="0">26,00</text>
+<text top="860" left="588" width="16" height="8" font="0">0,00</text>
+<text top="860" left="642" width="16" height="8" font="0">0,00</text>
+<text top="860" left="730" width="16" height="8" font="0">0,00</text>
+<text top="860" left="268" width="36" height="8" font="0">34022000</text>
+<text top="860" left="690" width="16" height="8" font="0">0,00</text>
+<text top="860" left="764" width="16" height="8" font="0">0,00</text>
+<text top="860" left="309" width="5" height="8" font="0">0</text>
+<text top="860" left="811" width="16" height="8" font="0">8,53</text>
+<text top="860" left="107" width="119" height="8" font="0">Detergente lava louca 500 ml cx.</text>
+<text top="870" left="107" width="51" height="8" font="0">contendo12un</text>
+<text top="862" left="42" width="23" height="8" font="0">04286</text>
+<text top="884" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="884" left="368" width="13" height="8" font="0">UN</text>
+<text top="884" left="415" width="5" height="8" font="0">2</text>
+<text top="884" left="459" width="29" height="8" font="0">3,40000</text>
+<text top="884" left="529" width="16" height="8" font="0">6,80</text>
+<text top="884" left="588" width="16" height="8" font="0">0,00</text>
+<text top="884" left="642" width="16" height="8" font="0">0,00</text>
+<text top="884" left="730" width="16" height="8" font="0">0,00</text>
+<text top="884" left="268" width="36" height="8" font="0">34022000</text>
+<text top="884" left="690" width="16" height="8" font="0">0,00</text>
+<text top="884" left="764" width="16" height="8" font="0">0,00</text>
+<text top="884" left="309" width="5" height="8" font="0">0</text>
+<text top="884" left="811" width="16" height="8" font="0">2,23</text>
+<text top="884" left="107" width="98" height="8" font="0">Limpa vidros  com 500 ml,</text>
+<text top="886" left="42" width="23" height="8" font="0">04292</text>
+<text top="900" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="900" left="369" width="11" height="8" font="0">LT</text>
+<text top="900" left="413" width="9" height="8" font="0">24</text>
+<text top="900" left="459" width="29" height="8" font="0">3,70000</text>
+<text top="900" left="527" width="20" height="8" font="0">88,80</text>
+<text top="900" left="588" width="16" height="8" font="0">0,00</text>
+<text top="900" left="642" width="16" height="8" font="0">0,00</text>
+<text top="900" left="730" width="16" height="8" font="0">0,00</text>
+<text top="900" left="268" width="36" height="8" font="0">34012090</text>
+<text top="900" left="690" width="16" height="8" font="0">0,00</text>
+<text top="900" left="764" width="16" height="8" font="0">0,00</text>
+<text top="900" left="309" width="5" height="8" font="0">0</text>
+<text top="900" left="808" width="20" height="8" font="0">29,13</text>
+<text top="900" left="107" width="126" height="8" font="0">Sabao geleia, embalagem de 1 litro</text>
+<text top="903" left="42" width="23" height="8" font="0">04300</text>
+<text top="917" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="917" left="368" width="13" height="8" font="0">CX</text>
+<text top="917" left="415" width="5" height="8" font="0">2</text>
+<text top="917" left="457" width="34" height="8" font="0">33,00000</text>
+<text top="917" left="527" width="20" height="8" font="0">66,00</text>
+<text top="917" left="588" width="16" height="8" font="0">0,00</text>
+<text top="917" left="642" width="16" height="8" font="0">0,00</text>
+<text top="917" left="730" width="16" height="8" font="0">0,00</text>
+<text top="917" left="268" width="36" height="8" font="0">34011900</text>
+<text top="917" left="690" width="16" height="8" font="0">0,00</text>
+<text top="917" left="764" width="16" height="8" font="0">0,00</text>
+<text top="917" left="309" width="5" height="8" font="0">0</text>
+<text top="917" left="808" width="20" height="8" font="0">21,65</text>
+<text top="917" left="107" width="106" height="8" font="0">Sabao em Po, com tensoativo</text>
+<text top="927" left="107" width="64" height="8" font="0">biodegradavel, co</text>
+<text top="919" left="42" width="23" height="8" font="0">04295</text>
+<text top="940" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="940" left="368" width="12" height="8" font="0">GL</text>
+<text top="940" left="415" width="5" height="8" font="0">1</text>
+<text top="940" left="459" width="29" height="8" font="0">8,70000</text>
+<text top="940" left="529" width="16" height="8" font="0">8,70</text>
+<text top="940" left="588" width="16" height="8" font="0">0,00</text>
+<text top="940" left="642" width="16" height="8" font="0">0,00</text>
+<text top="940" left="730" width="16" height="8" font="0">0,00</text>
+<text top="940" left="268" width="36" height="8" font="0">34013000</text>
+<text top="940" left="690" width="16" height="8" font="0">0,00</text>
+<text top="940" left="764" width="16" height="8" font="0">0,00</text>
+<text top="940" left="309" width="5" height="8" font="0">0</text>
+<text top="940" left="811" width="16" height="8" font="0">2,97</text>
+<text top="940" left="107" width="152" height="8" font="0">Sabonete liquido  Embalagem  contendo 5</text>
+<text top="951" left="107" width="26" height="8" font="0">LITRO</text>
+<text top="943" left="42" width="23" height="8" font="0">04302</text>
+<text top="964" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="964" left="368" width="12" height="8" font="0">FD</text>
+<text top="964" left="415" width="5" height="8" font="0">5</text>
+<text top="964" left="459" width="29" height="8" font="0">1,40000</text>
+<text top="964" left="529" width="16" height="8" font="0">7,00</text>
+<text top="964" left="588" width="16" height="8" font="0">0,00</text>
+<text top="964" left="642" width="16" height="8" font="0">0,00</text>
+<text top="964" left="730" width="16" height="8" font="0">0,00</text>
+<text top="964" left="268" width="36" height="8" font="0">68053090</text>
+<text top="964" left="690" width="16" height="8" font="0">0,00</text>
+<text top="964" left="764" width="16" height="8" font="0">0,00</text>
+<text top="964" left="309" width="5" height="8" font="0">0</text>
+<text top="964" left="811" width="16" height="8" font="0">2,20</text>
+<text top="964" left="107" width="158" height="8" font="0">Esponja dupla face, Emb.  com 03 unidades</text>
+<text top="967" left="42" width="23" height="8" font="0">04332</text>
+<text top="981" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="981" left="366" width="17" height="8" font="0">PCT</text>
+<text top="981" left="415" width="5" height="8" font="0">1</text>
+<text top="981" left="457" width="34" height="8" font="0">14,00000</text>
+<text top="981" left="527" width="20" height="8" font="0">14,00</text>
+<text top="981" left="588" width="16" height="8" font="0">0,00</text>
+<text top="981" left="642" width="16" height="8" font="0">0,00</text>
+<text top="981" left="730" width="16" height="8" font="0">0,00</text>
+<text top="981" left="268" width="36" height="8" font="0">68053090</text>
+<text top="981" left="690" width="16" height="8" font="0">0,00</text>
+<text top="981" left="764" width="16" height="8" font="0">0,00</text>
+<text top="981" left="309" width="5" height="8" font="0">0</text>
+<text top="981" left="811" width="16" height="8" font="0">4,40</text>
+<text top="981" left="107" width="144" height="8" font="0">Esponja la de Aco, Emb.  Fardo com 14</text>
+<text top="991" left="107" width="27" height="8" font="0">pacotes</text>
+<text top="983" left="42" width="23" height="8" font="0">04333</text>
+<text top="1005" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="1005" left="366" width="17" height="8" font="0">PCT</text>
+<text top="1005" left="415" width="5" height="8" font="0">1</text>
+<text top="1005" left="459" width="29" height="8" font="0">2,00000</text>
+<text top="1005" left="529" width="16" height="8" font="0">2,00</text>
+<text top="1005" left="588" width="16" height="8" font="0">0,00</text>
+<text top="1005" left="642" width="16" height="8" font="0">0,00</text>
+<text top="1005" left="730" width="16" height="8" font="0">0,00</text>
+<text top="1005" left="268" width="36" height="8" font="0">36050000</text>
+<text top="1005" left="690" width="16" height="8" font="0">0,00</text>
+<text top="1005" left="764" width="16" height="8" font="0">0,00</text>
+<text top="1005" left="309" width="5" height="8" font="0">0</text>
+<text top="1005" left="811" width="16" height="8" font="0">0,63</text>
+<text top="1005" left="107" width="157" height="8" font="0">Fosforo Embalagem  pacote com 10 caixas.</text>
+<text top="1007" left="42" width="23" height="8" font="0">04335</text>
+<text top="1115" left="37" width="118" height="11" font="5"><b>DADOS ADICIONAIS</b></text>
+<text top="1133" left="50" width="152" height="8" font="0">INFORMAÇÕES COMPLEMENTARES</text>
+<text top="1134" left="442" width="97" height="8" font="0">RESERVADO AO FISCO</text>
+<text top="1142" left="41" width="367" height="7" font="13">ORDEM DE SERVICO E FORNECIMENTO/EXECUCAO N. 003268/2018 - CCZ Trib a</text>
+<text top="1152" left="41" width="367" height="7" font="13">prox R$: 152,83 Federal 200,55 Estadual Fonte: IBPT empresometro.com</text>
+<text top="1162" left="41" width="54" height="7" font="13">.br S3A6R4</text>
+<text top="1042" left="42" width="120" height="11" font="5"><b>CÁLCULO DO ISSQN</b></text>
+<text top="1061" left="47" width="101" height="8" font="0">INSCRIÇÃO MUNICIPAL</text>
+<text top="1061" left="244" width="129" height="8" font="0">VALOR TOTAL DOS SERVIÇOS</text>
+<text top="1073" left="322" width="26" height="14" font="2">0,00</text>
+<text top="1061" left="440" width="125" height="8" font="0">BASE DE CALCULO DO ISSQN</text>
+<text top="1073" left="521" width="26" height="14" font="2">0,00</text>
+<text top="1061" left="650" width="74" height="8" font="0">VALOR DO ISSQN</text>
+<text top="1073" left="740" width="26" height="14" font="2">0,00</text>
+</page>
+<page number="2" position="absolute" top="0" left="0" height="1262" width="892">
+<text top="261" left="45" width="114" height="8" font="0">NATUREZA DA OPERAÇÃO</text>
+<text top="296" left="45" width="98" height="8" font="0">INSCRIÇÃO ESTADUAL</text>
+<text top="296" left="293" width="177" height="8" font="0">INSCRIÇÃO ESTADUAL SUB. TRIBUTARIA</text>
+<text top="296" left="576" width="21" height="8" font="0">CNPJ</text>
+<text top="171" left="550" width="82" height="8" font="0">CHAVE DE ACESSO</text>
+<text top="173" left="399" width="73" height="14" font="1"><b>0 - Entrada</b></text>
+<text top="186" left="399" width="56" height="14" font="1"><b>1 - Saída</b></text>
+<text top="206" left="399" width="20" height="14" font="1"><b>Nº </b></text>
+<text top="222" left="399" width="54" height="14" font="1"><b>SÉRIE :</b></text>
+<text top="181" left="489" width="8" height="14" font="1"><b>1</b></text>
+<text top="206" left="445" width="75" height="14" font="1"><b>000.002.782</b></text>
+<text top="273" left="46" width="82" height="14" font="2">Venda a vista</text>
+<text top="307" left="45" width="68" height="14" font="2">100061309</text>
+<text top="307" left="577" width="122" height="14" font="2">15.129.564/0001-04</text>
+<text top="184" left="556" width="284" height="9" font="3"><b>2918  0915  1295  6400  0104  5500  1000  0027  8210  0464  0326</b></text>
+<text top="130" left="395" width="126" height="9" font="3"><b>DOCUMENTO AUXILIAR</b></text>
+<text top="143" left="414" width="92" height="9" font="3"><b>DA NOTA FISCAL </b></text>
+<text top="115" left="144" width="233" height="12" font="4"><b>PRISMA DISTRIBUIDORA LTDA ME</b></text>
+<text top="133" left="188" width="189" height="11" font="5"><b>AVENIDA DAS AMERICAS B, 231 </b></text>
+<text top="111" left="425" width="62" height="16" font="6"><b>DANFE</b></text>
+<text top="64" left="44" width="105" height="8" font="0">DATA DE RECEBIMENTO</text>
+<text top="64" left="169" width="207" height="8" font="0">IDENTIFICAÇÃO E ASSINATURA DO RECEBEDOR</text>
+<text top="36" left="780" width="32" height="14" font="1"><b>NF-e</b></text>
+<text top="75" left="740" width="43" height="11" font="5"><b>SÉRIE :</b></text>
+<text top="74" left="790" width="8" height="14" font="1"><b>1</b></text>
+<text top="55" left="767" width="75" height="14" font="1"><b>000.002.782</b></text>
+<text top="55" left="740" width="17" height="11" font="5"><b>Nº:</b></text>
+<text top="158" left="424" width="71" height="9" font="3"><b>ELETRÔNICA</b></text>
+<text top="260" left="569" width="170" height="8" font="0">PROTOCOLO DE AUTORIZAÇÃO DE USO</text>
+<text top="272" left="588" width="176" height="9" font="3"><b>129181002778754 - 22/09/2018 11:22:49</b></text>
+<text top="239" left="482" width="38" height="14" font="1"><b>2 de 2</b></text>
+<text top="222" left="511" width="8" height="14" font="1"><b>1</b></text>
+<text top="239" left="399" width="58" height="14" font="1"><b>FOLHA:</b></text>
+<text top="35" left="41" width="553" height="8" font="0">RECEBEMOS DE PRISMA DISTRIBUIDORA LTDA ME OS PRODUTOS/SERVIÇOS CONSTANTES NA NOTA FISCAL INDICADA AO LADO</text>
+<text top="146" left="284" width="93" height="11" font="5"><b>DINAH BORGES</b></text>
+<text top="160" left="325" width="51" height="11" font="5"><b>Eunapolis</b></text>
+<text top="173" left="360" width="17" height="11" font="5"><b>BA</b></text>
+<text top="186" left="257" width="119" height="11" font="5"><b>TEL/FAX: 7391003646</b></text>
+<text top="200" left="298" width="79" height="11" font="5"><b>CEP: 45826660</b></text>
+<text top="76" left="41" width="98" height="14" font="7"><i><b>____/____/____</b></i></text>
+<text top="216" left="590" width="239" height="6" font="8">Consulta de autenticidade no portal nacional da NF-e </text>
+<text top="224" left="641" width="135" height="6" font="8">www.nfe.fazenda.gov.br/portal </text>
+<text top="232" left="637" width="144" height="6" font="8">ou no site da Sefaz Autorizadora</text>
+<text top="35" left="651" width="58" height="8" font="0">VALOR NOTA</text>
+<text top="47" left="653" width="45" height="8" font="9"><b>R$ 1.300,10</b></text>
+<text top="64" left="410" width="66" height="8" font="0">DESTINATÁRIO</text>
+<text top="79" left="403" width="175" height="8" font="9"><b>FUNDO MUN. DE SAUDE DE EUNAPOLIS</b></text>
+<text top="331" left="38" width="184" height="11" font="5"><b>DADOS DO PRODUTO/SERVIÇO</b></text>
+<text top="357" left="126" width="127" height="7" font="12">DESCRIÇÃO DO PRODUTO/SERVIÇO</text>
+<text top="352" left="58" width="18" height="7" font="12">COD.</text>
+<text top="353" left="280" width="17" height="7" font="12">NCM</text>
+<text top="357" left="337" width="19" height="7" font="12">CFOP</text>
+<text top="357" left="364" width="21" height="7" font="12">UNID.</text>
+<text top="357" left="403" width="28" height="7" font="12">QUANT.</text>
+<text top="353" left="459" width="26" height="7" font="12">VALOR</text>
+<text top="353" left="522" width="26" height="7" font="12">VALOR</text>
+<text top="357" left="571" width="49" height="7" font="12">B.CALC. ICMS</text>
+<text top="357" left="627" width="89" height="7" font="12">VALOR ICMS VALOR IPI</text>
+<text top="352" left="734" width="43" height="7" font="12">ALIQUOTAS</text>
+<text top="364" left="727" width="18" height="7" font="12">ICMS</text>
+<text top="364" left="767" width="9" height="7" font="12">IPI</text>
+<text top="364" left="57" width="22" height="7" font="12">PROD.</text>
+<text top="363" left="283" width="10" height="7" font="12">SH</text>
+<text top="352" left="792" width="55" height="7" font="12">VALOR APROX.</text>
+<text top="364" left="793" width="54" height="7" font="12">DOS TRIBUTOS</text>
+<text top="363" left="456" width="36" height="7" font="12">UNITARIO</text>
+<text top="363" left="522" width="26" height="7" font="12"> TOTAL</text>
+<text top="357" left="307" width="24" height="7" font="12">CSOSN</text>
+<text top="383" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="383" left="368" width="13" height="8" font="0">UN</text>
+<text top="383" left="413" width="9" height="8" font="0">60</text>
+<text top="383" left="459" width="29" height="8" font="0">3,62000</text>
+<text top="383" left="524" width="25" height="8" font="0">217,20</text>
+<text top="383" left="588" width="16" height="8" font="0">0,00</text>
+<text top="383" left="642" width="16" height="8" font="0">0,00</text>
+<text top="383" left="730" width="16" height="8" font="0">0,00</text>
+<text top="383" left="268" width="36" height="8" font="0">70099200</text>
+<text top="383" left="690" width="16" height="8" font="0">0,00</text>
+<text top="383" left="764" width="16" height="8" font="0">0,00</text>
+<text top="383" left="309" width="5" height="8" font="0">0</text>
+<text top="383" left="808" width="20" height="8" font="0">76,37</text>
+<text top="383" left="107" width="92" height="8" font="0">Espelho plastico de bolso</text>
+<text top="386" left="42" width="23" height="8" font="0">04501</text>
+<text top="400" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="400" left="366" width="17" height="8" font="0">PCT</text>
+<text top="400" left="415" width="5" height="8" font="0">5</text>
+<text top="400" left="457" width="34" height="8" font="0">12,00000</text>
+<text top="400" left="527" width="20" height="8" font="0">60,00</text>
+<text top="400" left="588" width="16" height="8" font="0">0,00</text>
+<text top="400" left="642" width="16" height="8" font="0">0,00</text>
+<text top="400" left="730" width="16" height="8" font="0">0,00</text>
+<text top="400" left="268" width="36" height="8" font="0">63071000</text>
+<text top="400" left="690" width="16" height="8" font="0">0,00</text>
+<text top="400" left="764" width="16" height="8" font="0">0,00</text>
+<text top="400" left="309" width="5" height="8" font="0">0</text>
+<text top="400" left="808" width="20" height="8" font="0">13,32</text>
+<text top="400" left="107" width="132" height="8" font="0">Flanela para limpeza, Pacote com 06</text>
+<text top="410" left="107" width="34" height="8" font="0">unidades.</text>
+<text top="402" left="42" width="23" height="8" font="0">04337</text>
+<text top="423" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="423" left="368" width="13" height="8" font="0">UN</text>
+<text top="423" left="415" width="5" height="8" font="0">3</text>
+<text top="423" left="459" width="29" height="8" font="0">6,70000</text>
+<text top="423" left="527" width="20" height="8" font="0">20,10</text>
+<text top="423" left="588" width="16" height="8" font="0">0,00</text>
+<text top="423" left="642" width="16" height="8" font="0">0,00</text>
+<text top="423" left="730" width="16" height="8" font="0">0,00</text>
+<text top="423" left="268" width="36" height="8" font="0">38089119</text>
+<text top="423" left="690" width="16" height="8" font="0">0,00</text>
+<text top="423" left="764" width="16" height="8" font="0">0,00</text>
+<text top="423" left="309" width="5" height="8" font="0">0</text>
+<text top="423" left="811" width="16" height="8" font="0">0,84</text>
+<text top="423" left="107" width="157" height="8" font="0">Inseticida Embalagem contendo no minimo</text>
+<text top="434" left="107" width="23" height="8" font="0">300ml</text>
+<text top="426" left="42" width="23" height="8" font="0">04289</text>
+<text top="447" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="447" left="368" width="13" height="8" font="0">UN</text>
+<text top="447" left="415" width="5" height="8" font="0">5</text>
+<text top="447" left="459" width="29" height="8" font="0">3,00000</text>
+<text top="447" left="527" width="20" height="8" font="0">15,00</text>
+<text top="447" left="588" width="16" height="8" font="0">0,00</text>
+<text top="447" left="642" width="16" height="8" font="0">0,00</text>
+<text top="447" left="730" width="16" height="8" font="0">0,00</text>
+<text top="447" left="268" width="36" height="8" font="0">63079090</text>
+<text top="447" left="690" width="16" height="8" font="0">0,00</text>
+<text top="447" left="764" width="16" height="8" font="0">0,00</text>
+<text top="447" left="309" width="5" height="8" font="0">0</text>
+<text top="447" left="811" width="16" height="8" font="0">3,33</text>
+<text top="447" left="107" width="143" height="8" font="0">Pano de chao, tipo saco, 100% algodao,</text>
+<text top="458" left="107" width="21" height="8" font="0">alveja</text>
+<text top="450" left="42" width="23" height="8" font="0">04339</text>
+<text top="471" left="318" width="38" height="8" font="0">103 5102</text>
+<text top="471" left="368" width="12" height="8" font="0">DZ</text>
+<text top="471" left="415" width="5" height="8" font="0">1</text>
+<text top="471" left="455" width="38" height="8" font="0">120,00000</text>
+<text top="471" left="524" width="25" height="8" font="0">120,00</text>
+<text top="471" left="588" width="16" height="8" font="0">0,00</text>
+<text top="471" left="642" width="16" height="8" font="0">0,00</text>
+<text top="471" left="730" width="16" height="8" font="0">0,00</text>
+<text top="471" left="268" width="36" height="8" font="0">96039000</text>
+<text top="471" left="690" width="16" height="8" font="0">0,00</text>
+<text top="471" left="764" width="16" height="8" font="0">0,00</text>
+<text top="471" left="309" width="5" height="8" font="0">0</text>
+<text top="471" left="808" width="20" height="8" font="0">37,74</text>
+<text top="471" left="107" width="133" height="8" font="0">Rodo para piso, Rodo para piso, com</text>
+<text top="481" left="107" width="31" height="8" font="0">borracha</text>
+<text top="474" left="42" width="23" height="8" font="0">04315</text>
+</page>

@@ -38,6 +38,8 @@ static char ownerPassword[33] = "";
 static char userPassword[33] = "";
 static GBool printVersion = gFalse;
 
+void ProcessXML();
+
 std::string getFileName(const std::string& s)
 {
     char sep = '/';
@@ -140,6 +142,9 @@ static GooString* getInfoString(Dict *infoDict, const char *key) {
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
+    ProcessXML();
+    return a.exec();
 
     GooString* fileName = nullptr;
 
@@ -268,6 +273,167 @@ int main(int argc, char *argv[])
         doc->displayPages(htmlOut, firstPage, lastPage, 72 * scale, 72 * scale, 0,
             gTrue, gFalse, gFalse);
         htmlOut->dumpDocOutline(doc);
+    }
+
+    //ProcessXML();
+}
+
+#include <QFile>
+#include <QXmlStreamReader>
+#include <QDebug>
+
+#include <QMap>
+#include <QList>
+
+struct sTEXTDATA
+{
+    int top;
+    int left;
+    int height;
+    int width;
+
+    long fontIndex;
+
+    QString text;
+};
+
+struct sFONTDESCRIPTION
+{
+    int index; // it's necessary to define?
+    int size;
+    QString family;
+    QString color; // hex value
+};
+
+struct sPAGE
+{
+    long number;
+    QString position;
+
+    int top;
+    int left;
+    int height;
+    int width;
+
+    QMap<int, sFONTDESCRIPTION*> fontMap;
+    QList<sTEXTDATA*> txtDataList;
+};
+
+void ProcessXML()
+{
+    QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/test.xml");
+    if(!file.open(QFile::ReadOnly | QFile::Text))
+    {
+        qDebug() << "Cannot read file" << file.errorString();
+        exit(0);
+    }
+
+    QMap<int, sPAGE*>* pageMap = new QMap<int, sPAGE*>();
+
+    QXmlStreamReader reader(&file);
+
+    sFONTDESCRIPTION* fontDesc = nullptr;
+    sTEXTDATA* txtData = nullptr;
+
+    while(!reader.atEnd() && !reader.hasError())
+    {
+        QXmlStreamReader::TokenType token = reader.readNext();
+        if(token == QXmlStreamReader::StartDocument)
+            continue;
+
+        if(token == QXmlStreamReader::StartElement)
+        {
+            if(reader.name() == "pdf2xml")
+                continue;
+
+            if(reader.name() == "page")
+            {
+                int number = reader.attributes().value("number").toInt();
+                QString position = reader.attributes().value("position").toString();
+                int top = reader.attributes().value("top").toInt();
+                int left = reader.attributes().value("left").toInt();
+                int height = reader.attributes().value("height").toInt();
+                int width = reader.attributes().value("width").toInt();
+
+                sPAGE* pageData = new sPAGE();
+                pageData->number = number;
+                pageData->position = position;
+                pageData->top = top;
+                pageData->left = left;
+                pageData->height = height;
+                pageData->width = width;
+
+                pageData->fontMap.clear();
+                pageData->txtDataList.clear();
+
+                reader.readNext();
+
+                while(!(reader.tokenType() == QXmlStreamReader::EndElement && reader.name() == "page"))
+                {
+                    if(reader.tokenType() == QXmlStreamReader::StartElement)
+                    {
+                        if(reader.name() == "fontspec")
+                        {
+                            if(reader.tokenType() != QXmlStreamReader::StartElement)
+                                continue;
+
+                            int id = reader.attributes().value("id").toInt();
+                            int size = reader.attributes().value("size").toInt();
+                            QString family = reader.attributes().value("family").toString();
+                            QString color = reader.attributes().value("color").toString();
+
+                            fontDesc = new sFONTDESCRIPTION();
+                            fontDesc->index = id;
+                            fontDesc->size = size;
+                            fontDesc->color = color;
+                            fontDesc->family = family;
+
+                            if(pageData->fontMap.contains(id))
+                            {
+                                qDebug() << "already has font added with same index!";
+                                continue;
+                            }
+
+                            pageData->fontMap.insert(id, fontDesc);
+                        }
+
+                        if(reader.name() == "text")
+                        {
+                            if(reader.tokenType() != QXmlStreamReader::StartElement)
+                                continue;
+
+                            int topText = reader.attributes().value("top").toInt();
+                            int leftText = reader.attributes().value("left").toInt();
+                            int widthText = reader.attributes().value("width").toInt();
+                            int heightText = reader.attributes().value("height").toInt();
+                            int font = reader.attributes().value("font").toInt();
+
+                            QString text = reader.readElementText(QXmlStreamReader::IncludeChildElements);
+                            if(text == "")
+                            {
+                                qDebug() << "text is null.";
+                                continue;
+                            }
+
+                            txtData = new sTEXTDATA();
+                            txtData->top = topText;
+                            txtData->left = leftText;
+                            txtData->width = widthText;
+                            txtData->height = heightText;
+                            txtData->fontIndex = font;
+                            txtData->text = text;
+
+                            pageData->txtDataList.push_back(txtData);
+                        }
+                    }
+                    reader.readNext();
+                }
+
+                // loaded everything from current page node,
+                // now let to save in map.
+                pageMap->insert(pageData->number, pageData);
+            }
+        }
     }
 }
 
