@@ -319,6 +319,12 @@ struct sPAGE
     QList<sTEXTDATA*> txtDataList;
 };
 
+struct sINVOICEDATA
+{
+    QString header;
+    QString value;
+};
+
 bool CheckPossibleHeader(QString text)
 {
     int len = text.size();
@@ -335,41 +341,155 @@ bool CheckPossibleHeader(QString text)
     return (lenNumber == 0) ? true : (lenNumber > lenLetter) ? false : true;
 }
 
+bool TryGetValue(sTEXTDATA* header, QList<sTEXTDATA*>* possibleValues, QString* value)
+{
+    QList<sTEXTDATA*> inRange;
+
+    sTEXTDATA* tmpData = nullptr;
+    int rangeHeight = header->height;
+    int height = header->height;
+    int top = header->top;
+
+    int distanceTop = 0;
+    int distanceHeight = 0;
+
+    for(auto it = possibleValues->begin(); it != possibleValues->end(); ++it)
+    {
+        tmpData = (*it);
+        //if(!tmpData) continue;
+
+        distanceTop = tmpData->top - top;
+        distanceHeight = height + tmpData->height;
+
+        if((distanceTop > 0) && distanceTop <= distanceHeight)
+        {
+            inRange.push_back(tmpData);
+        }
+    }
+
+    if(inRange.size() == 0)
+    {
+        *value = nullptr;
+
+        // Not found value. ='(
+        return false;
+    }
+
+    if(inRange.size() == 1)
+    {
+        // Already got value, then let to return! =)
+        *value = inRange[0]->text;
+        return true;
+    }
+
+    if(inRange.size() > 0)
+    {
+        QString tmpValue = "";
+        sTEXTDATA* tmpData = nullptr;
+
+        float distance = 1000;
+
+        // We get above 1 possible values
+        // So it will be necessary to check by distance.
+        for(auto it = inRange.begin(); it != inRange.end(); ++it)
+        {
+            tmpData = (*it);
+
+            //double a = 0;
+            //a = sqrt(pow(header->left - tmpValue->left, 2));
+            //double b = 0;
+            //b = (tmpValue->left > header->left) ? sqrt(pow(tmpValue->left - header->left, 2)) : sqrt(pow(header->left - tmpValue->left, 2));
+            int c = (tmpData->left > header->left) ? tmpData->left - header->left : header->left - tmpData->left;
+            if(c < distance)
+            {
+                tmpValue = tmpData->text;
+                distance = c;
+            }
+        }
+
+        *value = tmpValue;
+        return true;
+    }
+
+    return false;
+}
+
 bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
 {
     // List with possibles headers.
     QList<sTEXTDATA*> possibleHeaders;
+    QList<sTEXTDATA*> possibleValues;
+
+    QList<sINVOICEDATA*> invoiceList;
+
+    QList<sTEXTDATA*> failed;
 
     // Temporary variables.
     sPAGE* page = nullptr;
     sTEXTDATA* textData = nullptr;
+    sINVOICEDATA* invoiceData = nullptr;
+    QString currentData;
 
     // Iterator of the page map.
-    QMap<int, sPAGE*>::iterator it;
+    QMap<int, sPAGE*>::iterator itPage;
 
     // 0. Process each page.
-    for(it = pageMap->begin(); it != pageMap->end(); ++it)
+    for(itPage = pageMap->begin(); itPage != pageMap->end(); ++itPage)
     {
-        page = it.value();
-        if(!page) continue;
+        page = itPage.value();
+        //if(!page) continue;
 
         // 1. Let to get possibles headers.
         // We will discard texts that only have values.
         // Because it is more likely to get a possible header and try to read the value below the header.
-        for(auto itTxt = page->txtDataList.begin(); itTxt != page->txtDataList.end(); ++itTxt)
+        for(auto it = page->txtDataList.begin(); it != page->txtDataList.end(); ++it)
         {
-            textData = *itTxt;
-            if(!textData) continue;
+            textData = (*it);
+            //if(!textData) continue;
 
             if(CheckPossibleHeader(textData->text))
+            {
                 possibleHeaders.push_back(textData);
+            }
+            else
+            {
+                possibleValues.push_back(textData);
+            }
         }
 
         // Check if we got possibles header, then let to process.
         if(possibleHeaders.size() > 0)
         {
+            //if(possibleValues.size() > possibleHeaders.size())
+            //{
+            //    qDebug() << "No make sense you have more values than headers!";
+            //    return false;
+            //}
+
             // Now based on the possible header
             // We will try to get their values from the coordinates (top and left).
+            for(auto it = possibleHeaders.begin(); it != possibleHeaders.end(); ++it)
+            {
+                textData = (*it);
+                if(!textData || textData->text == "") continue;
+
+                // debug purpose.
+                //if(textData->text != "DATA DA EMISSÃO")
+                //    continue;
+
+                if(TryGetValue(textData, &possibleValues, &currentData))
+                {
+                    invoiceData = new sINVOICEDATA();
+                    invoiceData->header = textData->text;
+                    invoiceData->value = currentData;
+
+                    invoiceList.push_back(invoiceData);
+                }
+                else
+                {
+                    failed.push_back(textData);
+                }
+            }
         }
         else
         {
