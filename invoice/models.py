@@ -9,39 +9,49 @@ class Invoice(models.Model):
 
     number = models.CharField(max_length=9, blank=True)
 
-    operation_nature = models.CharField(max_length=255, blank=True)  # NATUREZA DA OPERAÇÃO
+    operation_nature = models.CharField(
+        max_length=255, blank=True)  # NATUREZA DA OPERAÇÃO
 
-    authorization_protocol = models.CharField(max_length=255, blank=True)  # PROTOCOLO DE AUTORIZAÇÃO
+    authorization_protocol = models.CharField(
+        max_length=255, blank=True)  # PROTOCOLO DE AUTORIZAÇÃO
 
-    access_key = models.CharField(max_length=44, unique=True)  # CHAVE DE ACESSO
+    access_key = models.CharField(
+        max_length=44, unique=True)  # CHAVE DE ACESSO
 
-    state_registration = models.CharField(max_length=255, blank=True)  # INSCRIÇÃO ESTADUAL
+    state_registration = models.CharField(
+        max_length=255, blank=True)  # INSCRIÇÃO ESTADUAL
 
     receiver = models.ForeignKey(
-            'invoice.Receiver',
-            related_name='invoices',
-            on_delete=models.CASCADE
-            )
+        'invoice.Receiver', related_name='invoices', on_delete=models.CASCADE)
 
     seller = models.ForeignKey(
-            'invoice.Seller',
-            related_name='invoices',
-            on_delete=models.CASCADE
-            )
+        'invoice.Seller', related_name='invoices', on_delete=models.CASCADE)
 
     emission_date = models.DateField(blank=True)
 
     entry_exit_datetime = models.DateTimeField(blank=True)
 
-    total_products_value = models.CharField(max_length=30, blank=True)
+    # total_products_value = models.FloatField(max_length=30, blank=True)
 
     total_invoice_value = models.FloatField(blank=True)
 
-    freight_value = models.CharField(max_length=30, blank=True)
+    basis_calculation_icms = models.FloatField(blank=True)
 
-    icms_value = models.CharField(max_length=30, blank=True)
+    freight_value = models.FloatField(blank=True)
 
-    discount_value = models.CharField(max_length=30, blank=True)
+    insurance_value = models.FloatField(blank=True)
+
+    icms_value = models.FloatField(blank=True)
+
+    discount_value = models.FloatField(blank=True)
+
+    basis_calculation_icms_st = models.FloatField(blank=True)
+
+    icms_value_st = models.FloatField(blank=True)
+
+    other_expenditure = models.FloatField(blank=True)
+
+    ipi_value = models.FloatField(blank=True)
 
 
 class Seller(models.Model):
@@ -82,8 +92,8 @@ class Product_Service(models.Model):
 
     qtd = models.IntegerField()
 
-    unity_value = models.CharField(max_length=30)
+    unity_value = models.FloatField(max_length=30)
 
-    total_value = models.CharField(max_length=30)
+    total_value = models.FloatField(max_length=30)
 
-    discount_value = models.CharField(max_length=30)
+    discount_value = models.FloatField(max_length=30)

@@ -177,9 +177,9 @@ class ProductServiceTest(TestCase):
             code='1232123',
             description='PLACA VEICULO',
             qtd=1,
-            unity_value='146,00',
-            total_value='146,00',
-            discount_value=',00'
+            total_value=146.00,
+            unity_value=146.00,
+            discount_value=0.00
         )
 
     def as_dict(self):
@@ -203,9 +203,9 @@ class ProductServiceTest(TestCase):
             'code': '123213214',
             'description': 'Pneu',
             'qtd': 2,
-            'unity_value': '50,00',
-            'total_value': '100,00',
-            'discount_value': ',00'
+            'unity_value': 50.00,
+            'total_value': 100.00,
+            'discount_value': 0.0
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 201)
@@ -284,11 +284,18 @@ class InvoiceTest(TestCase):
             receiver=self.receiver1,
             emission_date=datetime.date(2018, 2, 27),
             entry_exit_datetime=datetime.datetime(2018, 2, 27, 16, 20, 55),
-            total_products_value='146,00',
+            # total_products_value=146.00,
             total_invoice_value=146.00,
-            freight_value=',00',
-            icms_value=',00',
-            discount_value=',00')
+            basis_calculation_icms=0.0,
+            freight_value=0.0,
+            insurance_value=0.0,
+            icms_value=0.0,
+            discount_value=0.0,
+            basis_calculation_icms_st=0.0,
+            icms_value_st=0.0,
+            other_expenditure=0.0,
+            ipi_value=0.0
+            )
 
     def as_dict(self):
         return {
@@ -304,11 +311,17 @@ class InvoiceTest(TestCase):
             'receiver': self.receiver1.id,
             'emission_date': self.invoice1.emission_date.strftime('%Y-%m-%d'),
             'entry_exit_datetime': self.invoice1.entry_exit_datetime.strftime('%Y-%m-%dT%H:%M:%SZ'),
-            'total_products_value': self.invoice1.total_products_value,
+            # 'total_products_value': self.invoice1.total_products_value,
             'total_invoice_value': self.invoice1.total_invoice_value,
+            'basis_calculation_icms': self.invoice1.basis_calculation_icms,
             'freight_value': self.invoice1.freight_value,
+            'insurance_value': self.invoice1.insurance_value,
             'icms_value': self.invoice1.icms_value,
-            'discount_value': self.invoice1.discount_value
+            'discount_value': self.invoice1.discount_value,
+            'basis_calculation_icms_st': self.invoice1.basis_calculation_icms_st,
+            'icms_value_st': self.invoice1.icms_value_st,
+            'other_expenditure': self.invoice1.other_expenditure,
+            'ipi_value': self.invoice1.ipi_value
         }
 
     def test_invoice_object_get(self):

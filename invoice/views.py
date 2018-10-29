@@ -57,7 +57,7 @@ def convert_pdf_to_txt(file):
 def search_create_receiver(cpnj_cpf_receiver, text):
 
     if Receiver.objects.filter(cpf_cnpj=cpnj_cpf_receiver).count() == 1:
-            receiver = Receiver.objects.get(cpf_cnpj=cpnj_cpf_receiver)
+        receiver = Receiver.objects.get(cpf_cnpj=cpnj_cpf_receiver)
     else:
         # Procurar os atributos do Receiver
 
@@ -174,7 +174,7 @@ def search_create_receiver(cpnj_cpf_receiver, text):
 def search_create_seller(cnpj_seller, text, uf_code_seller):
 
     if Seller.objects.filter(cnpj=cnpj_seller).count() == 1:
-            seller = Seller.objects.get(cnpj=cnpj_seller)
+        seller = Seller.objects.get(cnpj=cnpj_seller)
     else:
         # Procurar os atributos do Seller
 
@@ -418,6 +418,205 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         dict_invoice['state_registration'] = state_registration
 
+        # VALOR DOS IMPOSTOS
+
+        basis_calculation_icms = re.search(
+            r'BASE DE CÁLCULO DE ICMS\s+([\d+|\.]+\,\d{2})\s', text,
+            re.M | re.I)
+        if not basis_calculation_icms:
+            return Response({
+                'error':
+                'Base do cálculo de ICMS da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        basis_calculation_icms = str(basis_calculation_icms.group(1))
+        basis_calculation_icms = basis_calculation_icms.replace(
+            'BASE DE CÁLCULO DE ICMS', '')
+        basis_calculation_icms = basis_calculation_icms.replace(' ', '')
+        basis_calculation_icms = basis_calculation_icms.replace('.', '')
+        basis_calculation_icms = basis_calculation_icms.replace('\n', '')
+        basis_calculation_icms = basis_calculation_icms.replace(',', '.')
+        basis_calculation_icms = float(basis_calculation_icms)
+
+        print("-------------------")
+        print(basis_calculation_icms)
+        print("-------------------")
+
+        dict_invoice['basis_calculation_icms'] = basis_calculation_icms
+
+        freight_value = re.search(
+            r'VALOR DO FRETE\s+.*\s+([\d+|\.]+\,\d{2})\s', text, re.M | re.I)
+        if not freight_value:
+            return Response({
+                'error':
+                'Valor do Frete da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        freight_value = str(freight_value.group(1))
+        freight_value = freight_value.replace('VALOR DO FRETE', '')
+        freight_value = freight_value.replace('VALOR DO SEGURO', '')
+        freight_value = freight_value.replace(' ', '')
+        freight_value = freight_value.replace('.', '')
+        freight_value = freight_value.replace('\n', '')
+        freight_value = freight_value.replace(',', '.')
+        freight_value = float(freight_value)
+
+        print("-------------------")
+        print(freight_value)
+        print("-------------------")
+
+        dict_invoice['freight_value'] = freight_value
+
+        insurance_value = re.search(
+            r'VALOR DO SEGURO\s+.*\s+([\d+|\.]+\,\d{2})\s', text, re.M | re.I)
+        if not insurance_value:
+            return Response({
+                'error':
+                'Valor do Seguro da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        insurance_value = str(insurance_value.group(1))
+        insurance_value = insurance_value.replace('VALOR DO SEGURO', '')
+        insurance_value = insurance_value.replace(' ', '')
+        insurance_value = insurance_value.replace('.', '')
+        insurance_value = insurance_value.replace('\n', '')
+        insurance_value = insurance_value.replace(',', '.')
+        insurance_value = float(insurance_value)
+
+        print("-------------------")
+        print(insurance_value)
+        print("-------------------")
+
+        dict_invoice['insurance_value'] = insurance_value
+
+        icms_value = re.search(
+            r'VALOR DO ICMS\n.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})\s', text,
+            re.M | re.I)
+        if not icms_value:
+            return Response({
+                'error':
+                'Valor do ICMS da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        icms_value = str(icms_value.group(1))
+        icms_value = icms_value.replace(' ', '')
+        icms_value = icms_value.replace('.', '')
+        icms_value = icms_value.replace('\n', '')
+        icms_value = icms_value.replace(',', '.')
+        icms_value = float(icms_value)
+        print("-------------------")
+        print(icms_value)
+        print("-------------------")
+
+        dict_invoice['icms_value'] = icms_value
+
+        discount_value = re.search(r'DESCONTO\s+([\d+|\.]+\,\d{2})\s', text,
+                                   re.M | re.I)
+        if not discount_value:
+            return Response(
+                {
+                    'error': 'Desconto da nota fiscal não encontrada no pdf!'
+                },
+                status=400)
+        discount_value = str(discount_value.group(1))
+        discount_value = discount_value.replace(' ', '')
+        discount_value = discount_value.replace('.', '')
+        discount_value = discount_value.replace('\n', '')
+        discount_value = discount_value.replace(',', '.')
+        discount_value = float(discount_value)
+        print("-------------------")
+        print(discount_value)
+        print("-------------------")
+
+        dict_invoice['discount_value'] = discount_value
+
+        basis_calculation_icms_st = re.search(
+            r'BASE DE CÁLCULO ICMS S.*\s+.*\s+.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})',
+            text, re.M | re.I)
+        if not basis_calculation_icms_st:
+            return Response({
+                'error':
+                'Base do cálculo de ICMS ST da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        basis_calculation_icms_st = str(basis_calculation_icms_st.group(1))
+        basis_calculation_icms_st = basis_calculation_icms_st.replace(' ', '')
+        basis_calculation_icms_st = basis_calculation_icms_st.replace('.', '')
+        basis_calculation_icms_st = basis_calculation_icms_st.replace('\n', '')
+        basis_calculation_icms_st = basis_calculation_icms_st.replace(',', '.')
+        basis_calculation_icms_st = float(basis_calculation_icms_st)
+
+        print("-------------------")
+        print(basis_calculation_icms_st)
+        print("-------------------")
+
+        dict_invoice['basis_calculation_icms_st'] = basis_calculation_icms_st
+
+        icms_value_st = re.search(
+            r'VALOR DO ICMS S.*\s+.*\s+.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})',
+            text, re.M | re.I)
+        if not icms_value_st:
+            return Response({
+                'error':
+                'Valor do ICMS ST da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        icms_value_st = str(icms_value_st.group(1))
+        icms_value_st = icms_value_st.replace(' ', '')
+        icms_value_st = icms_value_st.replace('.', '')
+        icms_value_st = icms_value_st.replace('\n', '')
+        icms_value_st = icms_value_st.replace(',', '.')
+        icms_value_st = float(icms_value_st)
+
+        print("-------------------")
+        print(icms_value_st)
+        print("-------------------")
+
+        dict_invoice['icms_value_st'] = icms_value_st
+
+        other_expenditure = re.search(
+            r'DESPESAS ACESSÓRIAS.*\s+.*\s+([\d+|\.]+\,\d{2})', text,
+            re.M | re.I)
+        if not other_expenditure:
+            return Response({
+                'error':
+                'Despesas Acessórias da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        other_expenditure = str(other_expenditure.group(1))
+        other_expenditure = other_expenditure.replace(' ', '')
+        other_expenditure = other_expenditure.replace('.', '')
+        other_expenditure = other_expenditure.replace('\n', '')
+        other_expenditure = other_expenditure.replace(',', '.')
+        other_expenditure = float(other_expenditure)
+
+        print("-------------------")
+        print(other_expenditure)
+        print("-------------------")
+
+        dict_invoice['other_expenditure'] = other_expenditure
+
+        ipi_value = re.search(r'VALOR DO IPI.*\s+([\d+|\.]+\,\d{2})', text,
+                              re.M | re.I)
+        if not ipi_value:
+            return Response({
+                'error':
+                'Valor do IPI da nota fiscal não encontrada no pdf!'
+            },
+                            status=400)
+        ipi_value = str(ipi_value.group(1))
+        ipi_value = ipi_value.replace(' ', '')
+        ipi_value = ipi_value.replace('.', '')
+        ipi_value = ipi_value.replace('\n', '')
+        ipi_value = ipi_value.replace(',', '.')
+        ipi_value = float(ipi_value)
+
+        print("-------------------")
+        print(ipi_value)
+        print("-------------------")
+
+        dict_invoice['ipi_value'] = ipi_value
+
         # VALOR TOTAL DOS PRODUTOS Parser
 
         values = re.findall(r'\s([\d+|\.]+\,\d{2})\s', text, re.M | re.I)
@@ -449,6 +648,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             total_invoice_value = total_invoice_value[1:]
         if total_invoice_value[-1] == '.':
             total_invoice_value = total_invoice_value[:-1]
+
+        total_invoice_value = float(total_invoice_value)
 
         print("-------------------")
         print(total_invoice_value)
