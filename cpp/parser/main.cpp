@@ -350,8 +350,14 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
     QList<sTEXTDATA*> inRange;
     sTEXTDATA* tmpData = nullptr;
 
+    QRect originalHeaderRect = headerRect;
+
     int distance = 0;
-    int distanceClose = headerRect.height() / 2;
+    int distanceClose = originalHeaderRect.height() / 2;
+
+    // When only one neighbor was found in the same column
+    // then there is only one possibility: left or right side.
+    bool oneColumn = false;
 
     // Get all the values that are close to the header in Y.
     for(auto it = possibleValues->begin(); it != possibleValues->end(); ++it)
@@ -359,148 +365,260 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         tmpData = (*it);
 
         // Check if is in same position, if yes, let ignore, because is our current header.
-        if(tmpData->top == headerRect.y() && tmpData->left == headerRect.x())
-        {
+        if(tmpData->top == originalHeaderRect.y() &&
+           tmpData->left == originalHeaderRect.x())
             continue;
-        }
 
-        distance = (tmpData->top > headerRect.y()) ? (tmpData->top - headerRect.y()) : (headerRect.y() - tmpData->top);
+        distance = (tmpData->top > originalHeaderRect.y()) ?
+                    (tmpData->top - originalHeaderRect.y()) :
+                    (originalHeaderRect.y() - tmpData->top);
+
         if(distance <= distanceClose)
         {
             inRange.push_back(tmpData);
         }
     }
 
-    // debug purpose, delete it.
-    int size = inRange.size();
-
     if(inRange.size() == 0)
     {
         qDebug() << "This shoundn't to happen.";
         return headerRect;
     }
-    else if(inRange.size() == 1)
+
+    sTEXTDATA* leftData = nullptr;
+    sTEXTDATA* rightData = nullptr;
+
+    if(inRange.size() == 1)
     {
-        int b = 3;
-        // todo here.
+        tmpData = inRange.first();
+        oneColumn = true;
+
+        int sizeTotal = originalHeaderRect.left() + originalHeaderRect.width();
+        if(tmpData->left > sizeTotal)
+        {
+            rightData = tmpData;
+        }
+        else
+        {
+            leftData = tmpData;
+        }
     }
-    else
+
+    distanceClose = 0;
+
+    /********************************************************/
+    // 1. Get left side more close.
+    if(oneColumn == false)
     {
-        //sTEXTDATA* rightData = nullptr;
-        sTEXTDATA* leftData = nullptr;
-
-        int dist = 0;
-
-        /********************************************************/
-        // 1. Get left side more close.
         for(auto it = inRange.begin(); it != inRange.end(); ++it)
         {
             tmpData = (*it);
 
-            //dist = (tmpData->left > headerRect.top()) ? (tmpData->left - headerRect.top()) : (headerRect.top() - tmpData->left);
-            dist = headerRect.left() - tmpData->left;
-            if(distance > dist)
+            if(tmpData->left > originalHeaderRect.left())
+                continue;
+
+            distanceClose = originalHeaderRect.left() - tmpData->left;
+            if(distance > distanceClose)
             {
-                distance = dist;
+                distance = distanceClose;
                 leftData = tmpData;
             }
         }
+    }
 
-        // Check if we got right data for be processed.
-        if(leftData != nullptr)
+    // Check if we got left data for be processed.
+    if(leftData != nullptr)
+    {
+        QList<sTEXTDATA*> values;
+
+        QPoint point(leftData->left, leftData->top);
+        QSize size(leftData->width, leftData->height);
+        QRect leftRect(point, size);
+
+        int diffLeft = (originalHeaderRect.left() - leftRect.left()) - 1;
+
+        // Update rect of the right.
+
+        // TODO : find a better way to increase height than to use defined value 10.
+        QSize newLeftSize = QSize(diffLeft, leftData->height + 10);
+        QRect newLeftRect = QRect(point, newLeftSize);
+
+        QPoint tmpPoint;
+        QSize tmpSize;
+        QRect tmpRect;
+
+        for(auto it = possibleValues->begin(); it != possibleValues->end(); ++it)
         {
-            QList<sTEXTDATA*> values;
+            tmpData = (*it);
 
-            QPoint point(leftData->left, leftData->top);
-            QSize size(leftData->width, leftData->height);
-            QRect rightRect(point, size);
+            // Check if is in same position, if yes, let ignore, because is our current header.
+            if(tmpData->top == leftRect.y() &&
+               tmpData->left == leftRect.x())
+                continue;
 
-            int diffLeft = (headerRect.left() - rightRect.left()) - 1;
+            tmpPoint = QPoint(tmpData->left, tmpData->top);
+            tmpSize = QSize(tmpData->width, tmpData->height);
+            tmpRect = QRect(tmpPoint, tmpSize);
 
-            // Update rect of the right.
-
-            // TODO : find a better way to increase height than to use defined value 10.
-            QSize newLeftSize = QSize(diffLeft, leftData->height + 10);
-            QRect newLeftRect = QRect(point, newLeftSize);
-
-            QPoint tmpPoint;
-            QSize tmpSize;
-            QRect tmpRect;
-
-            for(auto it = possibleValues->begin(); it != possibleValues->end(); ++it)
+            // Check if current data intersects with our header rect.
+            if(newLeftRect.intersects(tmpRect))
             {
-                tmpData = (*it);
-
-                // Check if is in same position, if yes, let ignore, because is our current header.
-                if(tmpData->top == rightRect.y() && tmpData->left == rightRect.x())
-                {
-                    continue;
-                }
-
-                tmpPoint = QPoint(tmpData->left, tmpData->top);
-                tmpSize = QSize(tmpData->width, tmpData->height);
-                tmpRect = QRect(tmpPoint, tmpSize);
-
-                if(newLeftRect.intersects(tmpRect))
-                {
-                    values.push_back(tmpData);
-                }
-            }
-
-            if(values.size() == 0)
-            {
-                // There is no value below the right header.
-                // So only rightData coordinates will be used to update.
-                int newLeft = (rightRect.left() + rightRect.width()) + 1;
-                int newSizeWidth = (headerRect.left() - newLeft) + headerRect.width();
-                tmpPoint = QPoint(newLeft, headerRect.top());
-                tmpSize = QSize(newSizeWidth, headerRect.height());
-
-                headerRect = QRect(tmpPoint, tmpSize);
-            }
-            else if(values.size() == 1)
-            {
-                tmpData = values.first();
-
-                int newLeft = (tmpData->left + tmpData->width) + 1;
-
-                if(newLeft > headerRect.left())
-                {
-                    // In this case, the poppler processed some information incorrectly
-                    // it included two values in a single element.
-
-                    // TODO : ...
-                    int b = 3;
-
-                    // This problem happen with text: "DATA DA EMISSÃO".
-                }
-
-                int newSizeWidth = (headerRect.left() - newLeft) + headerRect.width();
-                tmpPoint = QPoint(newLeft, headerRect.top());
-                tmpSize = QSize(newSizeWidth, headerRect.height());
-
-                headerRect = QRect(tmpPoint, tmpSize);
-            }
-            else
-            {
-                int b = 3;
+                values.push_back(tmpData);
             }
         }
 
-        /********************************************************/
-        // 2. Get right side more close.
+        if(values.size() == 0)
+        {
+            // There is no value below the right header.
+            // So only rightData coordinates will be used to update.
+            int newLeft = (leftRect.left() + leftRect.width()) + 1;
+            int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
+            tmpPoint = QPoint(newLeft, originalHeaderRect.top());
+            tmpSize = QSize(newSizeWidth, originalHeaderRect.height());
+
+            headerRect = QRect(tmpPoint, tmpSize);
+        }
+        else if(values.size() == 1)
+        {
+            tmpData = values.first();
+
+            int newLeft = (tmpData->left + tmpData->width) + 1;
+
+            if(newLeft > headerRect.left())
+            {
+                // In this case, the poppler processed some information incorrectly
+                // it included two values in a single element.
+
+                // TODO : ...
+                int b = 3;
+
+                // This problem happen with text: "DATA DA EMISSÃO".
+            }
+
+            int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
+            tmpPoint = QPoint(newLeft, originalHeaderRect.top());
+            tmpSize = QSize(newSizeWidth, originalHeaderRect.height());
+
+            headerRect = QRect(tmpPoint, tmpSize);
+        }
+        else
+        {
+            int b = 3;
+        }
+    }
+
+    // Update distance.
+    distance = originalHeaderRect.left() + originalHeaderRect.width();
+    distanceClose = 0;
+
+    /********************************************************/
+    // 2. Get right side more close.
+    if(oneColumn == false)
+    {
         for(auto it = inRange.begin(); it != inRange.end(); ++it)
         {
             tmpData = (*it);
 
-            //dist = (tmpData->left > headerRect.top()) ? (tmpData->left - headerRect.top()) : (headerRect.top() - tmpData->left);
-            dist = headerRect.left() - tmpData->left;
-            if(distance > dist)
+            if(tmpData->left < (originalHeaderRect.left() + originalHeaderRect.width()))
+                continue;
+
+            distanceClose = tmpData->left - (originalHeaderRect.left() + originalHeaderRect.width());
+            if(distanceClose < distance)
             {
-                distance = dist;
-                //rightData = tmpData;
+                distance = distanceClose;
+                rightData = tmpData;
             }
         }
+    }
+
+    if(rightData != nullptr)
+    {
+        QList<sTEXTDATA*> values;
+
+        QPoint point(rightData->left, rightData->top);
+        QSize size(rightData->width, rightData->height);
+        QRect rightRect(point, size);
+
+        int diffLeft = (rightRect.left() - (originalHeaderRect.left() + originalHeaderRect.width()));
+        if(diffLeft <= 0)
+        {
+            qDebug() << "Check here";
+        }
+
+        int totalLeft = originalHeaderRect.width() + diffLeft;
+
+        // Update rect of the right.
+
+        // TODO : find a better way to increase height than to use defined value 10.
+        QSize newRightSize = QSize(totalLeft, rightData->height + 10);
+        QRect newRightRect = QRect(point, newRightSize);
+
+        QPoint tmpPoint;
+        QSize tmpSize;
+        QRect tmpRect;
+
+        for(auto it = possibleValues->begin(); it != possibleValues->end(); ++it)
+        {
+            tmpData = (*it);
+
+            // Check if is in same position, if yes, let ignore, because is our current header.
+            if(tmpData->top == rightRect.y() &&
+               tmpData->left == rightRect.x())
+                continue;
+
+            tmpPoint = QPoint(tmpData->left, tmpData->top);
+            tmpSize = QSize(tmpData->width, tmpData->height);
+            tmpRect = QRect(tmpPoint, tmpSize);
+
+            // Check if current data intersects with our header rect.
+            if(newRightRect.intersects(tmpRect))
+            {
+                values.push_back(tmpData);
+            }
+        }
+
+        if(values.size() == 0)
+        {
+            // There is no value below the right header.
+            // So only rightData coordinates will be used to update.
+            int newLeft = (rightRect.left() + rightRect.width()) + 1;
+            int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
+            tmpPoint = QPoint(newLeft, originalHeaderRect.top());
+            tmpSize = QSize(newSizeWidth, originalHeaderRect.height());
+
+            headerRect = QRect(tmpPoint, tmpSize);
+        }
+        else if(values.size() == 1)
+        {
+            tmpData = values.first();
+
+            int newLeft = (tmpData->left + tmpData->width) + 1;
+
+            if(newLeft > headerRect.left())
+            {
+                // In this case, the poppler processed some information incorrectly
+                // it included two values in a single element.
+
+                // TODO : ...
+                int b = 3;
+
+                // This problem happen with text: "DATA DA EMISSÃO".
+            }
+
+            int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
+            tmpPoint = QPoint(newLeft, originalHeaderRect.top());
+            tmpSize = QSize(newSizeWidth, originalHeaderRect.height());
+
+            headerRect = QRect(tmpPoint, tmpSize);
+        }
+        else
+        {
+            int b = 3;
+        }
+    }
+    else
+    {
+        int b = 3;
     }
 
     return headerRect;
@@ -650,10 +768,11 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
             for(auto it = possibleHeaders.begin(); it != possibleHeaders.end(); ++it)
             {
                 textData = (*it);
-                if(!textData || textData->text == "") continue;
+                if(!textData || textData->text == "")
+                    continue;
 
                 // debug purpose.
-                if(textData->text != "DATA DE SAÍDA/ENTRADA")
+                if(textData->text != "BAIRRO/DISTRITO")
                     continue;
 
                 if(TryGetValue(textData, &possibleValues, &currentData, page->height, page->width))
