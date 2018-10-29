@@ -143,8 +143,12 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
+    ////////////////////////////////////////////
+
     ReadInvoiceXML();
     return a.exec();
+
+    ////////////////////////////////////////////
 
     GooString* fileName = nullptr;
 
@@ -345,13 +349,23 @@ bool CheckPossibleHeader(QString text)
 #include <QPoint>
 #include <QSize>
 
+///
+/// \brief TrySimulateRectHeader
+/// \param headerRect
+/// \param possibleValues
+/// \param maxPageHeight
+/// \param maxPageWidth
+/// \return
+///
 QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues, int maxPageHeight, int maxPageWidth)
 {
     QList<sTEXTDATA*> inRange;
     sTEXTDATA* tmpData = nullptr;
 
-    QRect originalHeaderRect = headerRect;
+    // Keep headerRect without edits.
+    const QRect originalHeaderRect = headerRect;
 
+    // Variables used for calculation of distance.
     int distance = 0;
     int distanceClose = originalHeaderRect.height() / 2;
 
@@ -369,30 +383,41 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
            tmpData->left == originalHeaderRect.x())
             continue;
 
+        // Calcule distance between header and tmpData.
         distance = (tmpData->top > originalHeaderRect.y()) ?
                     (tmpData->top - originalHeaderRect.y()) :
                     (originalHeaderRect.y() - tmpData->top);
 
+        // Check if distance calculed is less than lastest distance close.
         if(distance <= distanceClose)
         {
             inRange.push_back(tmpData);
         }
     }
 
+    // Check if not found any value.
     if(inRange.size() == 0)
     {
         qDebug() << "This shoundn't to happen.";
         return headerRect;
     }
 
+    // Let to process values.
     sTEXTDATA* leftData = nullptr;
     sTEXTDATA* rightData = nullptr;
 
+    // Check if found only 1 value in current row
+    // Then check if value is in right or left side of our header data.
     if(inRange.size() == 1)
     {
+        // Get first value from list.
         tmpData = inRange.first();
+
+        // Set oneColumn in true, because don't is more necessary to search new values.
         oneColumn = true;
 
+        // Calcule max width value, if value is greater than left variable
+        // Then is data in right side, else is left side.
         int sizeTotal = originalHeaderRect.left() + originalHeaderRect.width();
         if(tmpData->left > sizeTotal)
         {
@@ -467,6 +492,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
             }
         }
 
+        // Check if got some value for be processed.
         if(values.size() == 0)
         {
             // There is no value below the right header.
@@ -482,9 +508,9 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         {
             tmpData = values.first();
 
+            // Calcule maximium left and check if this overflow with headerRect left.
             int newLeft = (tmpData->left + tmpData->width) + 1;
-
-            if(newLeft > headerRect.left())
+            if(newLeft > originalHeaderRect.left())
             {
                 // In this case, the poppler processed some information incorrectly
                 // it included two values in a single element.
@@ -503,7 +529,11 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         }
         else
         {
-            int b = 3;
+            // In this case, we got more than 1 values closers.
+            for(auto it = values.begin(); it != values.end(); ++it)
+            {
+                tmpData = (*it);
+            }
         }
     }
 
@@ -531,6 +561,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         }
     }
 
+    // Check if we found some value in right side.
     if(rightData != nullptr)
     {
         QList<sTEXTDATA*> values;
@@ -539,18 +570,20 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         QSize size(rightData->width, rightData->height);
         QRect rightRect(point, size);
 
-        int diffLeft = (rightRect.left() - (originalHeaderRect.left() + originalHeaderRect.width()));
-        if(diffLeft <= 0)
-        {
-            qDebug() << "Check here";
-        }
+        //int diffLeft = (rightRect.left() - (originalHeaderRect.left() + originalHeaderRect.width()));
+        //if(diffLeft <= 0)
+        //{
+        //    qDebug() << "Check here";
+        //}
+        //
+        //int totalLeft = originalHeaderRect.width() + diffLeft;
 
-        int totalLeft = originalHeaderRect.width() + diffLeft;
+        int diffLeft = 0;
 
         // Update rect of the right.
 
         // TODO : find a better way to increase height than to use defined value 10.
-        QSize newRightSize = QSize(totalLeft, rightData->height + 10);
+        QSize newRightSize = QSize(diffLeft, rightData->height + 10);
         QRect newRightRect = QRect(point, newRightSize);
 
         QPoint tmpPoint;
@@ -613,12 +646,11 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         }
         else
         {
-            int b = 3;
+            for(auto it = values.begin(); it != values.end(); ++it)
+            {
+
+            }
         }
-    }
-    else
-    {
-        int b = 3;
     }
 
     return headerRect;
@@ -646,77 +678,14 @@ bool TryGetValue(sTEXTDATA* header, QList<sTEXTDATA*>* possibleValues, QString* 
 
     }
 
-    // OLD
-    //QList<sTEXTDATA*> inRange;
-    //
-    //sTEXTDATA* tmpData = nullptr;
-    //int rangeHeight = header->height;
-    //int height = header->height;
-    //int top = header->top;
-    //
-    //int distanceTop = 0;
-    //int distanceHeight = 0;
-    //
-    //for(auto it = possibleValues->begin(); it != possibleValues->end(); ++it)
-    //{
-    //    tmpData = (*it);
-    //
-    //    distanceTop = tmpData->top - top;
-    //    distanceHeight = height + tmpData->height;
-    //
-    //    if((distanceTop > 0) && distanceTop <= distanceHeight)
-    //    {
-    //        inRange.push_back(tmpData);
-    //    }
-    //}
-    //
-    //if(inRange.size() == 0)
-    //{
-    //    *value = nullptr;
-    //
-    //    // Not found value. ='(
-    //    return false;
-    //}
-    //
-    //if(inRange.size() == 1)
-    //{
-    //    // Already got value, then let to return! =)
-    //    *value = inRange[0]->text;
-    //    return true;
-    //}
-    //
-    //if(inRange.size() > 0)
-    //{
-    //    QString tmpValue = "";
-    //    sTEXTDATA* tmpData = nullptr;
-    //
-    //    float distance = 1000;
-    //
-    //    // We get above 1 possible values
-    //    // So it will be necessary to check by distance.
-    //    for(auto it = inRange.begin(); it != inRange.end(); ++it)
-    //    {
-    //        tmpData = (*it);
-    //
-    //        //double a = 0;
-    //        //a = sqrt(pow(header->left - tmpValue->left, 2));
-    //        //double b = 0;
-    //        //b = (tmpValue->left > header->left) ? sqrt(pow(tmpValue->left - header->left, 2)) : sqrt(pow(header->left - tmpValue->left, 2));
-    //        int c = (tmpData->left > header->left) ? tmpData->left - header->left : header->left - tmpData->left;
-    //        if(c < distance)
-    //        {
-    //            tmpValue = tmpData->text;
-    //            distance = c;
-    //        }
-    //    }
-    //
-    //    *value = tmpValue;
-    //    return true;
-    //}
-    //
-    //return false;
+    return false;
 }
 
+///
+/// \brief GetInvoiceData
+/// \param pageMap
+/// \return
+///
 bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
 {
     // List with possibles headers.
@@ -757,12 +726,6 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
         // Check if we got possibles header, then let to process.
         if(possibleHeaders.size() > 0)
         {
-            //if(possibleValues.size() > possibleHeaders.size())
-            //{
-            //    qDebug() << "No make sense you have more values than headers!";
-            //    return false;
-            //}
-
             // Now based on the possible header
             // We will try to get their values from the coordinates (top and left).
             for(auto it = possibleHeaders.begin(); it != possibleHeaders.end(); ++it)
@@ -799,6 +762,10 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
     return true;
 }
 
+///
+/// \brief ReadInvoiceXML
+/// \return
+///
 bool ReadInvoiceXML()
 {
     QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/test.xml");
