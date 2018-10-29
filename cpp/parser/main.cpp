@@ -529,10 +529,51 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         }
         else
         {
+            distance = 0;
+            distanceClose = 0;
+
+            // Reset tmpData.
+            tmpData = nullptr;
+
             // In this case, we got more than 1 values closers.
             for(auto it = values.begin(); it != values.end(); ++it)
             {
-                tmpData = (*it);
+                rightData = (*it);
+
+                distanceClose = originalHeaderRect.left() - rightData->left;
+                if(distanceClose > distance)
+                {
+                    distance = distanceClose;
+                    tmpData = rightData;
+                }
+            }
+
+            if(tmpData == nullptr)
+            {
+                // TODO : Necessary to check some case than happen here.
+                qDebug() << "This shouln't to happen!";
+                return headerRect;
+            }
+            else
+            {
+                // Calcule maximium left and check if this overflow with headerRect left.
+                int newLeft = (tmpData->left + tmpData->width) + 1;
+                if(newLeft > originalHeaderRect.left())
+                {
+                    // In this case, the poppler processed some information incorrectly
+                    // it included two values in a single element.
+
+                    // TODO : ...
+                    int b = 3;
+
+                    // This problem happen with text: "DATA DA EMISSÃO".
+                }
+
+                int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
+                tmpPoint = QPoint(newLeft, originalHeaderRect.top());
+                tmpSize = QSize(newSizeWidth, originalHeaderRect.height());
+
+                headerRect = QRect(tmpPoint, tmpSize);
             }
         }
     }
