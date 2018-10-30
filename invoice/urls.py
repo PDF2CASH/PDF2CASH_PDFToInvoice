@@ -1,13 +1,14 @@
-from django.conf.urls import url, include
 from . import views
-from rest_framework import routers
+from django.urls import path
 
-router = routers.DefaultRouter()
-router.register(r'invoice', views.InvoiceViewSet)
-router.register(r'seller', views.SellerViewSet)
-router.register(r'receiver', views.ReceiverViewSet)
-router.register(r'product-service', views.ProductServiceViewSet)
 
 urlpatterns = [
-    url(r'/', include(router.urls)),
+    path(r'invoice/', views.InvoiceCreateList.as_view()),
+    path(r'invoice/<int:pk>/', views.InvoiceShowDelete.as_view()),
+    path(r'seller/<int:pk>/', views.sellerShow),
+    path(r'receiver/<int:pk>/', views.receiverShow),
+    path(r'product-service/<int:pk>/', views.productShow),
+    path(r'seller/', views.sellerList),
+    path(r'receiver/', views.receiverList),
+    path(r'product-service/', views.productList),
 ]
