@@ -745,12 +745,45 @@ bool TryGetValue(sTEXTDATA* header, QList<sTEXTDATA*>* possibleValues, QString* 
     }
     else
     {
+        sTEXTDATA* txtData = nullptr;
+        int distanceTop = header->height / 2;
+
+        int distance = -1;
+        int tmpDistance = 0;
+
         for(auto it = values.begin(); it != values.end(); ++it)
         {
+            tmpData = (*it);
 
+            if(tmpData->top <= (header->top + distanceTop))
+                continue;
+
+            tmpDistance = (tmpData->left > header->left) ?
+                        tmpData->left - header->left :
+                        header->left - tmpData->left;
+
+            if(distance == -1)
+            {
+                distance = tmpDistance;
+                txtData = tmpData;
+            }
+            else if(tmpDistance < distance)
+            {
+                distance = tmpDistance;
+                txtData = tmpData;
+            }
         }
 
-        int b = 3;
+        if(txtData == nullptr)
+        {
+            *value = "";
+            return false;
+        }
+        else
+        {
+            *value = txtData->text;
+            return true;
+        }
     }
 
     return false;
@@ -810,7 +843,7 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
                     continue;
 
                 // debug purpose.
-                if(textData->text != "INSCRIÇÃO ESTADUAL SUB. TRIBUTARIA")
+                if(textData->text != "ENDEREÇO")
                     continue;
 
                 if(TryGetValue(textData, &possibleValues, &currentData, page->height, page->width))
