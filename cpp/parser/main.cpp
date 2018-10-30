@@ -580,9 +580,33 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
     distance = maxPageWidth;//originalHeaderRect.left() + originalHeaderRect.width();
     distanceClose = 0;
 
+    bool isLastColumn = false;
+
     /********************************************************/
     // 2. Get right side more close.
     if(oneColumn == false)
+    {
+        int totalWidth = originalHeaderRect.left() + originalHeaderRect.width();
+        for(auto it = inRange.begin(); it != inRange.end(); ++it)
+        {
+            tmpData = (*it);
+
+            if(!isLastColumn && totalWidth > tmpData->left)
+                isLastColumn = true;
+
+            if(tmpData->left < totalWidth)
+                continue;
+
+            distanceClose = tmpData->left - totalWidth;
+            if(distanceClose < distance)
+            {
+                distance = distanceClose;
+                rightData = tmpData;
+            }
+        }
+    }
+
+    if(rightData == nullptr)
     {
         for(auto it = inRange.begin(); it != inRange.end(); ++it)
         {
@@ -591,7 +615,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
             if(tmpData->left < (originalHeaderRect.left() + originalHeaderRect.width()))
                 continue;
 
-            distanceClose = tmpData->left - (originalHeaderRect.left() + originalHeaderRect.width());
+            distanceClose = tmpData->left - (maxPageWidth - (originalHeaderRect.left() + originalHeaderRect.width()));
             if(distanceClose < distance)
             {
                 distance = distanceClose;
@@ -785,8 +809,6 @@ bool TryGetValue(sTEXTDATA* header, QList<sTEXTDATA*>* possibleValues, QString* 
             return true;
         }
     }
-
-    return false;
 }
 
 ///
@@ -843,7 +865,7 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
                     continue;
 
                 // debug purpose.
-                if(textData->text != "ENDEREÇO")
+                if(textData->text != "VALOR DO ISSQN")
                     continue;
 
                 if(TryGetValue(textData, &possibleValues, &currentData, page->height, page->width))
