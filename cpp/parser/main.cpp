@@ -349,6 +349,8 @@ bool CheckPossibleHeader(QString text)
 #include <QPoint>
 #include <QSize>
 
+const int SPACE_HEIGHT_BETWEEN_HEADER_VALUE = 10;
+
 ///
 /// \brief TrySimulateRectHeader
 /// \param headerRect
@@ -465,7 +467,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
 
         // TODO : find a better way to increase height than to use defined value 10.
         QRect newLeftRect(QPoint(leftData->left, leftData->top),
-                          QSize(diffLeft, leftData->height + 10));
+                          QSize(diffLeft, leftData->height + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
 
         QRect tmpRect;
 
@@ -476,6 +478,12 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
             // Check if is in same position, if yes, let ignore, because is our current header.
             if(tmpData->top == leftRect.y() &&
                tmpData->left == leftRect.x())
+                continue;
+
+            // Sometimes the position of the left of the value is smaller than that of the header
+            // so we have to ignore it, otherwise the algorithm will think that this value belongs
+            // to another header.
+            if((tmpData->left + tmpData->width) > originalHeaderRect.left())
                 continue;
 
             tmpRect = QRect(QPoint(tmpData->left, tmpData->top),
@@ -498,7 +506,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
             int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
 
             headerRect = QRect(QPoint(newLeft, originalHeaderRect.top()),
-                               QSize(newSizeWidth, originalHeaderRect.height() + 10));
+                               QSize(newSizeWidth, originalHeaderRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
 
             rightData = nullptr;
         }
@@ -521,7 +529,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
 
             int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
             headerRect = QRect(QPoint(newLeft, originalHeaderRect.top()),
-                               QSize(newSizeWidth, originalHeaderRect.height() + 10));
+                               QSize(newSizeWidth, originalHeaderRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
 
             leftData = tmpData;
         }
@@ -569,7 +577,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
 
                 int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
                 headerRect = QRect(QPoint(newLeft, originalHeaderRect.top()),
-                                   QSize(newSizeWidth, originalHeaderRect.height() + 10));
+                                   QSize(newSizeWidth, originalHeaderRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
 
                 leftData = tmpData;
             }
@@ -639,14 +647,14 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
 
         // TODO : find a better way to increase height than to use defined value 10.
         QRect newRightRect(QPoint(newWidth, rightData->top),
-                           QSize(diffLeft, rightData->height + 10));
+                           QSize(diffLeft, rightData->height + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
 
         // Temporary variable used for intersects.
         QRect tmpRect;
 
         // TODO : find a better way to increase height than to use defined value 10.
         QRect tmpRectHeader(QPoint(headerRect.left(), headerRect.top()),
-                            QSize(headerRect.width(), headerRect.height() + 10));
+                            QSize(headerRect.width(), headerRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
 
         for(auto it = possibleValues->begin(); it != possibleValues->end(); ++it)
         {
@@ -685,7 +693,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
                         originalHeaderRect.width() + (rightData->left - (originalHeaderRect.left() + originalHeaderRect.width())) - 1;
 
             headerRect = QRect(QPoint(newLeft, originalHeaderRect.top()),
-                               QSize(newSizeWidth, originalHeaderRect.height() + 10));
+                               QSize(newSizeWidth, originalHeaderRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
 
             rightData = nullptr;
         }
@@ -708,7 +716,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
 
             int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
             headerRect = QRect(QPoint(newLeft, originalHeaderRect.top()),
-                               QSize(newSizeWidth, originalHeaderRect.height() + 10));
+                               QSize(newSizeWidth, originalHeaderRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
 
             rightData = tmpData;
         }
@@ -865,7 +873,7 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
                     continue;
 
                 // debug purpose.
-                if(textData->text != "VALOR DO ISSQN")
+                if(textData->text != "PESO LIQUIDO")
                     continue;
 
                 if(TryGetValue(textData, &possibleValues, &currentData, page->height, page->width))
