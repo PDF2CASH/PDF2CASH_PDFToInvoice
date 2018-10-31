@@ -422,7 +422,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
     // Check if not found any value.
     if(inRange.size() == 0)
     {
-        qDebug() << "This shoundn't to happen.";
+        qDebug() << "This shouldn't to happen.";
         return headerRect;
     }
 
@@ -614,23 +614,13 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
             if(tmpData == nullptr)
             {
                 // TODO : Necessary to check some case than happen here.
-                qDebug() << "This shouln't to happen!";
+                qDebug() << "This shouldn't to happen!";
                 return headerRect;
             }
             else
             {
                 // Calcule maximium left and check if this overflow with headerRect left.
                 int newLeft = (tmpData->left + tmpData->width) + 1;
-                if(newLeft > originalHeaderRect.left())
-                {
-                    // In this case, the poppler processed some information incorrectly
-                    // it included two values in a single element.
-
-                    // TODO : ...
-                    int b = 3;
-
-                    // This problem happen with text: "DATA DA EMISSÃO".
-                }
 
                 int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
                 headerRect = QRect(QPoint(newLeft, originalHeaderRect.top()),
@@ -642,7 +632,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
     }
 
     // Update distance.
-    distance = maxPageWidth;//originalHeaderRect.left() + originalHeaderRect.width();
+    distance = maxPageWidth;
     distanceClose = 0;
 
     bool isLastColumn = true;
@@ -692,51 +682,83 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
     }
     else if(rightData != nullptr)
     {
+        // Temporary variable used for intersects.
+        QRect tmpRect;
+
         QList<sTEXTDATA*> values;
 
         QRect rightRect(QPoint(rightData->left, rightData->top),
                         QSize(rightData->width, rightData->height));
 
-        int diffLeft = (rightData->left - (originalHeaderRect.left() + originalHeaderRect.width())) - 1;
-        int newWidth = (originalHeaderRect.left() + originalHeaderRect.width()) + 1;
-
-        // Update rect of the right.
-
-        // TODO : find a better way to increase height than to use defined value 10.
-        QRect newRightRect(QPoint(newWidth, rightData->top),
-                           QSize(diffLeft, rightData->height + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
-
-        // Temporary variable used for intersects.
-        QRect tmpRect;
-
-        // TODO : find a better way to increase height than to use defined value 10.
-        QRect tmpRectHeader(QPoint(headerRect.left(), headerRect.top()),
-                            QSize(headerRect.width(), headerRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
+        QRect testQuantityRect(QPoint(originalHeaderRect.left(), originalHeaderRect.top()),
+                               QSize(originalHeaderRect.width() + (rightData->left - originalHeaderRect.left() - 1),
+                                     originalHeaderRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
 
         for(auto it = possibleValues->begin(); it != possibleValues->end(); ++it)
         {
             tmpData = (*it);
 
             // Check if is in same position, if yes, let ignore, because is our current header.
-            if(tmpData->top == rightRect.y() &&
-               tmpData->left == rightRect.x())
+            if((tmpData->top == rightRect.y() && tmpData->left == rightRect.x()) ||
+               (tmpData->top == originalHeaderRect.top() && tmpData->left == originalHeaderRect.left()))
                 continue;
 
             tmpRect = QRect(QPoint(tmpData->left, tmpData->top),
                             QSize(tmpData->width, tmpData->height));
 
-            // Check if current data intersects with our header rect.
-            if(newRightRect.intersects(tmpRect))
+            if(testQuantityRect.intersects(tmpRect))
             {
-                // Check if it intercepts with the original header
-                // It's own value we're looking for, but we'll ignore it for now.
-                if(tmpRectHeader.intersects(tmpRect))
-                    continue;
-
                 values.push_back(tmpData);
             }
         }
 
+        if(values.length() == 1)
+        {
+            values.clear();
+        }
+        else
+        {
+            values.clear();
+
+            int diffLeft = (rightData->left - (originalHeaderRect.left() + originalHeaderRect.width())) - 1;
+            int newWidth = (originalHeaderRect.left() + originalHeaderRect.width()) + 1;
+
+            // Update rect of the right.
+
+            // TODO : find a better way to increase height than to use defined value 10.
+            QRect newRightRect(QPoint(newWidth, rightData->top),
+                               QSize(diffLeft, rightData->height + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
+
+            // TODO : find a better way to increase height than to use defined value 10.
+            QRect tmpRectHeader(QPoint(headerRect.left(), headerRect.top()),
+                                QSize(headerRect.width(), headerRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
+
+            for(auto it = possibleValues->begin(); it != possibleValues->end(); ++it)
+            {
+                tmpData = (*it);
+
+                // Check if is in same position, if yes, let ignore, because is our current header.
+                if(tmpData->top == rightRect.y() &&
+                   tmpData->left == rightRect.x())
+                    continue;
+
+                tmpRect = QRect(QPoint(tmpData->left, tmpData->top),
+                                QSize(tmpData->width, tmpData->height));
+
+                // Check if current data intersects with our header rect.
+                if(newRightRect.intersects(tmpRect))
+                {
+                    // Check if it intercepts with the original header
+                    // It's own value we're looking for, but we'll ignore it for now.
+                    if(tmpRectHeader.intersects(tmpRect))
+                        continue;
+
+                    values.push_back(tmpData);
+                }
+            }
+        }
+
+        // -----------------------------------
         if(values.size() == 0)
         {
             // There is no value below the right header.
@@ -775,13 +797,9 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         }
         else
         {
-            // TODO : finish it!
-            for(auto it = values.begin(); it != values.end(); ++it)
-            {
-
-            }
-
-            int b = 3;
+            // TODO : Necessary to check some case than can happen here.
+            qDebug() << "This shouldn't to happen!";
+            return headerRect;
         }
     }
 
@@ -926,7 +944,7 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
                     continue;
 
                 // debug purpose.
-                if(textData->text != "VALOR TOTAL DA NOTA")
+                if(textData->text != "FRETE POR CONTA")
                     continue;
 
                 if(TryGetValue(textData, &possibleValues, &currentData, page->height, page->width))

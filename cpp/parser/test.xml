@@ -115,10 +115,10 @@
 <text top="645" left="484" width="58" height="8" font="0">NUMERAÇÃO</text>
 <text top="645" left="624" width="55" height="8" font="0">PESO BRUTO</text>
 <text top="645" left="741" width="62" height="8" font="0">PESO LIQUIDO</text>
-<text top="512" left="102" width="26" height="14" font="2">0,00</text>
-<text top="512" left="277" width="26" height="14" font="2">0,00</text>
-<text top="512" left="443" width="26" height="14" font="2">0,00</text>
-<text top="512" left="606" width="26" height="14" font="2">0,00</text>
+<text top="512" left="102" width="26" height="14" font="2">1,00</text>
+<text top="512" left="277" width="26" height="14" font="2">2,00</text>
+<text top="512" left="443" width="26" height="14" font="2">3,00</text>
+<text top="512" left="606" width="26" height="14" font="2">4,00</text>
 <text top="512" left="745" width="53" height="14" font="2">1.300,10</text>
 <text top="545" left="72" width="26" height="14" font="2">0,00</text>
 <text top="544" left="265" width="26" height="14" font="2">0,00</text>
