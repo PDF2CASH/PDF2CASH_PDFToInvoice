@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 
     GooString* fileName = nullptr;
 
-    fileName = new GooString("/home/litwin/PDFParserTest/test.pdf");
+    fileName = new GooString("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/nfe1.pdf");
 
     GooString *docTitle = nullptr;
     GooString *author = nullptr, *keywords = nullptr, *subject = nullptr, *date = nullptr;
@@ -299,6 +299,28 @@ struct sTEXTDATA
     long fontIndex;
 
     QString text;
+
+    sTEXTDATA() {}
+
+    sTEXTDATA(int t, int l, int h, int w, long f, QString txt)
+    {
+        top = t;
+        left = l;
+        height = h;
+        width = w;
+        fontIndex = f;
+        text = txt;
+    }
+
+    sTEXTDATA(sTEXTDATA* data)
+    {
+        top = data->top;
+        left = data->left;
+        height = data->height;
+        width = data->width;
+        fontIndex = data->fontIndex;
+        text = data->text;
+    }
 };
 
 struct sFONTDESCRIPTION
@@ -349,7 +371,7 @@ bool CheckPossibleHeader(QString text)
 #include <QPoint>
 #include <QSize>
 
-const int SPACE_HEIGHT_BETWEEN_HEADER_VALUE = 10;
+const int SPACE_HEIGHT_BETWEEN_HEADER_VALUE = 14;
 
 ///
 /// \brief TrySimulateRectHeader
@@ -588,7 +610,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
     distance = maxPageWidth;//originalHeaderRect.left() + originalHeaderRect.width();
     distanceClose = 0;
 
-    bool isLastColumn = false;
+    bool isLastColumn = true;
 
     /********************************************************/
     // 2. Get right side more close.
@@ -599,8 +621,11 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         {
             tmpData = (*it);
 
-            if(!isLastColumn && totalWidth > tmpData->left)
-                isLastColumn = true;
+            if(isLastColumn &&
+               (tmpData->left + tmpData->width) > totalWidth)
+            {
+                isLastColumn = false;
+            }
 
             if(tmpData->left < totalWidth)
                 continue;
@@ -614,26 +639,23 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         }
     }
 
-    if(rightData == nullptr)
-    {
-        for(auto it = inRange.begin(); it != inRange.end(); ++it)
-        {
-            tmpData = (*it);
-
-            if(tmpData->left < (originalHeaderRect.left() + originalHeaderRect.width()))
-                continue;
-
-            distanceClose = tmpData->left - (maxPageWidth - (originalHeaderRect.left() + originalHeaderRect.width()));
-            if(distanceClose < distance)
-            {
-                distance = distanceClose;
-                rightData = tmpData;
-            }
-        }
-    }
-
     // Check if we found some value in right side.
-    if(rightData != nullptr)
+    if(rightData == nullptr && isLastColumn)
+    {
+        // There is no value below the right header.
+        // So only rightData coordinates will be used to update.
+        int newLeft = (originalHeaderRect.left() != headerRect.left()) ?
+                       headerRect.left() :
+                       originalHeaderRect.left();
+
+        int newSizeWidth = (originalHeaderRect.width() != headerRect.width()) ?
+                    headerRect.width() + (maxPageWidth - (originalHeaderRect.left() + originalHeaderRect.width())) - 1 :
+                    originalHeaderRect.width() + (maxPageWidth - (originalHeaderRect.left() + originalHeaderRect.width())) - 1;
+
+        headerRect = QRect(QPoint(newLeft, originalHeaderRect.top()),
+                           QSize(newSizeWidth, originalHeaderRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
+    }
+    else if(rightData != nullptr)
     {
         QList<sTEXTDATA*> values;
 
@@ -701,20 +723,16 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         {
             tmpData = values.first();
 
-            // Calcule maximium left and check if this overflow with headerRect left.
-            int newLeft = (tmpData->left + tmpData->width) + 1;
-            if(newLeft > headerRect.left())
-            {
-                // In this case, the poppler processed some information incorrectly
-                // it included two values in a single element.
+            // There is no value below the right header.
+            // So only rightData coordinates will be used to update.
+            int newLeft = (originalHeaderRect.left() != headerRect.left()) ?
+                           headerRect.left() :
+                           originalHeaderRect.left();
 
-                // TODO : ...
-                int b = 3;
+            int newSizeWidth = (originalHeaderRect.width() != headerRect.width()) ?
+                        headerRect.width() + (tmpData->left - (originalHeaderRect.left() + originalHeaderRect.width())) - 1 :
+                        originalHeaderRect.width() + (tmpData->left - (originalHeaderRect.left() + originalHeaderRect.width())) - 1;
 
-                // This problem happen with text: "DATA DA EMISSÃO".
-            }
-
-            int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
             headerRect = QRect(QPoint(newLeft, originalHeaderRect.top()),
                                QSize(newSizeWidth, originalHeaderRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
 
@@ -873,7 +891,7 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
                     continue;
 
                 // debug purpose.
-                if(textData->text != "PESO LIQUIDO")
+                if(textData->text != "INSCRIÇÃO ESTADUAL")
                     continue;
 
                 if(TryGetValue(textData, &possibleValues, &currentData, page->height, page->width))
@@ -906,17 +924,18 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
 ///
 bool ReadInvoiceXML()
 {
-    QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/test.xml");
+    QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/nfe1.xml");
     if(!file.open(QFile::ReadOnly | QFile::Text))
     {
         qDebug() << "Cannot read file" << file.errorString();
-        exit(0);
+        return false;
     }
 
     QMap<int, sPAGE*>* pageMap = new QMap<int, sPAGE*>();
 
     QXmlStreamReader reader(&file);
 
+    // Temporary pointers.
     sFONTDESCRIPTION* fontDesc = nullptr;
     sTEXTDATA* txtData = nullptr;
 
@@ -1011,23 +1030,26 @@ bool ReadInvoiceXML()
                             pageData->txtDataList.push_back(txtData);
                         }
                     }
+
                     reader.readNext();
                 }
 
                 // loaded everything from current page node,
                 // now let to save in map.
-                pageMap->insert(pageData->number, pageData);
+                pageMap->insert(static_cast<int>(pageData->number), pageData);
             }
         }
     }
 
+    // If loaded with successfuly, let to process invoice data.
     if(pageMap->size() > 0)
     {
         return GetInvoiceData(pageMap);
     }
     else
     {
-        qDebug() << "page map is null!";
+        // Failed to load.
+        qDebug() << "page map is null.";
         return false;
     }
 }

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="${POPPLER_VERSION}">
+<page number="1" position="absolute" top="0" left="0" height="1263" width="892">
+	<fontspec id="0" size="13" family="Helvetica" color="#000000"/>
+	<fontspec id="1" size="8" family="CourierNewPSMT" color="#000000"/>
+	<fontspec id="2" size="5" family="CourierNewPSMT" color="#000000"/>
+	<fontspec id="3" size="7" family="CourierNewPS" color="#000000"/>
+	<fontspec id="4" size="7" family="CourierNewPSMT" color="#000000"/>
+	<fontspec id="5" size="8" family="CourierNewPS" color="#000000"/>
+	<fontspec id="6" size="5" family="CourierNewPS" color="#000000"/>
+	<fontspec id="7" size="13" family="CourierNewPS" color="#000000"/>
+	<fontspec id="8" size="5" family="ArialMT" color="#000000"/>
+	<fontspec id="9" size="4" family="CourierNewPSMT" color="#000000"/>
+<text top="449" left="681" width="25" height="8" font="1">0,00</text>
+<text top="449" left="837" width="32" height="8" font="1">39,90</text>
+<text top="449" left="726" width="25" height="8" font="1">0,00</text>
+<text top="449" left="587" width="25" height="8" font="1">0,00</text>
+<text top="476" left="264" width="25" height="8" font="1">0,00</text>
+<text top="476" left="131" width="25" height="8" font="1">4,90</text>
+<text top="449" left="491" width="25" height="8" font="1">0,00</text>
+<text top="449" left="366" width="25" height="8" font="1">1,79</text>
+<text top="449" left="189" width="31" height="8" font="1">44,80</text>
+<text top="210" left="545" width="140" height="6" font="2">PROTOCOLO DE AUTORIZAÇÃO DE USO</text>
+<text top="219" left="546" width="189" height="7" font="3"><b>135180337052809 18/05/2018 13:10:22</b></text>
+<text top="170" left="543" width="281" height="7" font="4">Consulta de autenticidade no portal nacional da NF-e</text>
+<text top="180" left="543" width="265" height="7" font="4">www.nfe.fazenda.gov.br/portal ou no site da Sefaz</text>
+<text top="190" left="543" width="65" height="7" font="4">Autorizadora</text>
+<text top="49" left="716" width="13" height="8" font="5"><b>N°</b></text>
+<text top="257" left="26" width="108" height="6" font="6"><b>DESTINATÁRIO / REMETENTE</b></text>
+<text top="270" left="588" width="36" height="6" font="2">CNPJ/CPF</text>
+<text top="270" left="758" width="68" height="6" font="2">DATA DA EMISSÃO</text>
+<text top="270" left="30" width="77" height="6" font="2">NOME/RAZÃO SOCIAL</text>
+<text top="299" left="30" width="36" height="6" font="2">ENDEREÇO</text>
+<text top="299" left="486" width="77" height="6" font="2">BAIRRO / DISTRITO</text>
+<text top="299" left="669" width="14" height="6" font="2">CEP</text>
+<text top="324" left="372" width="36" height="6" font="2">FONE/FAX</text>
+<text top="324" left="536" width="9" height="6" font="2">UF</text>
+<text top="349" left="26" width="86" height="6" font="6"><b>FATURA / DUPLICATAS</b></text>
+<text top="438" left="30" width="104" height="6" font="2">BASE DE CÁLCULO DO ICMS</text>
+<text top="438" left="230" width="59" height="6" font="2">VALOR DO ICMS</text>
+<text top="426" left="26" width="81" height="6" font="6"><b>CÁLCULO DO IMPOSTO</b></text>
+<text top="491" left="26" width="194" height="6" font="6"><b>TRANSPORTADOR / VOLUMES TRANSPORTADOS DADOS</b></text>
+<text top="504" left="30" width="54" height="6" font="2">RAZÃO SOCIAL</text>
+<text top="504" left="372" width="68" height="6" font="2">FRETE POR CONTA</text>
+<text top="504" left="468" width="50" height="6" font="2">CÓDIGO ANTT</text>
+<text top="283" left="30" width="145" height="8" font="1">NILTON FERREIRA MARQUES</text>
+<text top="308" left="30" width="120" height="8" font="1">QUADRA 23 76 CS  76</text>
+<text top="283" left="782" width="63" height="8" font="1">18/05/2018</text>
+<text top="308" left="486" width="69" height="8" font="1">SETOR LESTE</text>
+<text top="308" left="682" width="57" height="8" font="1">72460-230</text>
+<text top="335" left="536" width="13" height="8" font="1">DF</text>
+<text top="335" left="372" width="63" height="8" font="1">6195535274</text>
+<text top="515" left="372" width="76" height="8" font="1">0 - Emitente</text>
+<text top="299" left="758" width="95" height="6" font="2">DATA DA SAÍDA/ENTRADA</text>
+<text top="324" left="758" width="59" height="6" font="2">HORA DE SAÍDA</text>
+<text top="335" left="30" width="50" height="8" font="1">BRASILIA</text>
+<text top="324" left="30" width="41" height="6" font="2">MUNICÍPIO</text>
+<text top="361" left="59" width="27" height="6" font="2">Número</text>
+<text top="361" left="146" width="45" height="6" font="2">Vencimento</text>
+<text top="361" left="251" width="23" height="6" font="2">Valor</text>
+<text top="476" left="537" width="25" height="8" font="1">0,00</text>
+<text top="465" left="434" width="117" height="6" font="2">OUTRAS DESPESAS ACESSÓRIAS</text>
+<text top="465" left="165" width="68" height="6" font="2">VALOR DO SEGURO</text>
+<text top="465" left="299" width="36" height="6" font="2">DESCONTO</text>
+<text top="476" left="401" width="25" height="8" font="1">0,00</text>
+<text top="465" left="30" width="63" height="6" font="2">VALOR DO FRETE</text>
+<text top="476" left="834" width="32" height="8" font="1">44,80</text>
+<text top="465" left="717" width="86" height="6" font="2">VALOR TOTAL DA NOTA</text>
+<text top="504" left="603" width="72" height="6" font="2">PLACA DO VEÍCULO</text>
+<text top="504" left="729" width="45" height="6" font="2">CNPJ / CPF</text>
+<text top="531" left="420" width="41" height="6" font="2">MUNICÍPIO</text>
+<text top="531" left="30" width="36" height="6" font="2">ENDEREÇO</text>
+<text top="558" left="30" width="45" height="6" font="2">QUANTIDADE</text>
+<text top="569" left="114" width="6" height="8" font="1">1</text>
+<text top="569" left="131" width="44" height="8" font="1">VOLUMES</text>
+<text top="558" left="131" width="32" height="6" font="2">ESPÉCIE</text>
+<text top="558" left="306" width="23" height="6" font="2">MARCA</text>
+<text top="558" left="467" width="41" height="6" font="2">NUMERAÇÃO</text>
+<text top="531" left="695" width="9" height="6" font="2">UF</text>
+<text top="558" left="665" width="45" height="6" font="2">PESO BRUTO</text>
+<text top="569" left="713" width="31" height="8" font="1">0,060</text>
+<text top="569" left="836" width="32" height="8" font="1">0,060</text>
+<text top="558" left="782" width="54" height="6" font="2">PESO LÍQUIDO</text>
+<text top="504" left="695" width="9" height="6" font="2">UF</text>
+<text top="465" left="572" width="54" height="6" font="2">VALOR DO IPI</text>
+<text top="476" left="681" width="25" height="8" font="1">0,00</text>
+<text top="104" left="468" width="45" height="12" font="7"><b>DANFE</b></text>
+<text top="116" left="450" width="81" height="6" font="2">DOCUMENTO AUXILIAR</text>
+<text top="124" left="459" width="63" height="6" font="2">DA NOTA FISCAL</text>
+<text top="133" left="468" width="45" height="6" font="2">ELETRÔNICA</text>
+<text top="144" left="455" width="50" height="6" font="2">0 - ENTRADA</text>
+<text top="153" left="455" width="41" height="6" font="2">1 - SAÍDA</text>
+<text top="210" left="30" width="90" height="6" font="2">NATUREZA DA OPERAÇÃO</text>
+<text top="233" left="30" width="81" height="6" font="2">INSCRIÇÃO ESTADUAL</text>
+<text top="233" left="314" width="153" height="6" font="2">INSC.ESTADUAL DO SUBST. TRIBUTÁRIO</text>
+<text top="233" left="597" width="18" height="6" font="2">CNPJ</text>
+<text top="218" left="30" width="290" height="8" font="1">VENDA MERCADORIA  ADQUIR/RECEB TERCEIROS TP:51</text>
+<text top="242" left="129" width="76" height="8" font="1">421021117115</text>
+<text top="242" left="410" width="82" height="8" font="1">0774932700177</text>
+<text top="242" left="676" width="113" height="8" font="1">47.960.950/0897-85</text>
+<text top="149" left="519" width="5" height="6" font="6"><b>1</b></text>
+<text top="179" left="479" width="11" height="7" font="3"><b>20</b></text>
+<text top="179" left="446" width="27" height="7" font="3"><b>SÉRIE</b></text>
+<text top="166" left="459" width="38" height="8" font="5"><b>185920</b></text>
+<text top="56" left="30" width="86" height="6" font="2">DATA DE RECEBIMENTO</text>
+<text top="56" left="141" width="176" height="6" font="2">IDENTIFICAÇÃO E ASSINATURA DO RECEBEDOR</text>
+<text top="30" left="774" width="36" height="12" font="7"><b>NF-e</b></text>
+<text top="62" left="755" width="13" height="8" font="5"><b>20</b></text>
+<text top="49" left="729" width="38" height="8" font="5"><b>185920</b></text>
+<text top="29" left="30" width="383" height="6" font="2">RECEBEMOS DE MAGAZINE LUIZA S/A OS PRODUTOS CONSTANTES DA NOTA FISCAL INDICADA ABAIXO</text>
+<text top="62" left="716" width="31" height="8" font="5"><b>SÉRIE</b></text>
+<text top="144" left="543" width="68" height="6" font="2">CHAVE DE ACESSO</text>
+<text top="189" left="446" width="27" height="7" font="3"><b>FOLHA</b></text>
+<text top="189" left="482" width="22" height="7" font="3"><b>1/ 1</b></text>
+<text top="155" left="560" width="292" height="7" font="3"><b>3518 0547 9609 5008 9785 5502 0000 1859 2010 5823 7752</b></text>
+<text top="585" left="26" width="117" height="6" font="6"><b>DADOS DO PRODUTO / SERVIÇO</b></text>
+<text top="166" left="447" width="13" height="8" font="5"><b>N°</b></text>
+<text top="103" left="231" width="113" height="8" font="5"><b>MAGAZINE LUIZA S/A</b></text>
+<text top="132" left="140" width="103" height="7" font="4">ROD BANDEIRANTES, 1</text>
+<text top="150" left="140" width="178" height="7" font="4">KM 68 E 760 METROS S - RIO ABAIXO</text>
+<text top="166" left="140" width="157" height="7" font="4">LOUVEIRA - SP - CEP: 13290000</text>
+<text top="308" left="782" width="63" height="8" font="1">18/05/2018</text>
+<text top="335" left="788" width="50" height="8" font="1">14:10:01</text>
+<text top="361" left="343" width="27" height="6" font="2">Número</text>
+<text top="361" left="429" width="45" height="6" font="2">Vencimento</text>
+<text top="361" left="534" width="23" height="6" font="2">Valor</text>
+<text top="361" left="626" width="27" height="6" font="2">Número</text>
+<text top="361" left="713" width="45" height="6" font="2">Vencimento</text>
+<text top="361" left="814" width="23" height="6" font="2">Valor</text>
+<text top="283" left="624" width="88" height="8" font="1">389.623.061-15</text>
+<text top="438" left="759" width="108" height="6" font="2">VALOR TOTAL DOS PRODUTOS</text>
+<text top="438" left="522" width="72" height="6" font="2">VALOR DO ICMS ST</text>
+<text top="438" left="623" width="131" height="6" font="2">VALOR APROXIMADO DOS TRIBUTOS</text>
+<text top="438" left="401" width="117" height="6" font="2">BASE DE CÁLCULO DO ICMS ST</text>
+<text top="600" left="42" width="124" height="7" font="8">DADOS DO PRODUTO / SERVIÇOS</text>
+<text top="601" left="257" width="27" height="6" font="2">NCM/SH</text>
+<text top="601" left="30" width="41" height="6" font="2">COD.PROD.</text>
+<text top="601" left="114" width="135" height="6" font="2">DESCRIÇÃO DO PRODUTO / SERVIÇO</text>
+<text top="601" left="425" width="54" height="6" font="2">VL. UNITÁRIO</text>
+<text top="601" left="294" width="37" height="6" font="2">CST CFOP</text>
+<text top="601" left="338" width="18" height="6" font="2">UNID</text>
+<text top="601" left="380" width="18" height="6" font="2">QTDE</text>
+<text top="598" left="848" width="23" height="6" font="2">ALÍQ.</text>
+<text top="606" left="853" width="14" height="6" font="2">IPI</text>
+<text top="598" left="823" width="23" height="6" font="2">ALÍQ.</text>
+<text top="606" left="825" width="18" height="6" font="2">ICMS</text>
+<text top="601" left="776" width="27" height="6" font="2">V. IPI</text>
+<text top="601" left="636" width="32" height="6" font="2">BC.ICMS</text>
+<text top="601" left="507" width="41" height="6" font="2">VL. TOTAL</text>
+<text top="601" left="706" width="36" height="6" font="2">VL. ICMS</text>
+<text top="598" left="583" width="14" height="6" font="2">VL.</text>
+<text top="606" left="572" width="36" height="6" font="2">DESCONTO</text>
+<text top="615" left="740" width="18" height="6" font="2">1,79</text>
+<text top="615" left="828" width="18" height="6" font="2">4,00</text>
+<text top="615" left="666" width="23" height="6" font="2">44,80</text>
+<text top="615" left="542" width="23" height="6" font="2">39,90</text>
+<text top="615" left="458" width="32" height="6" font="2">39,9000</text>
+<text top="615" left="254" width="36" height="6" font="2">85183000</text>
+<text top="615" left="313" width="18" height="6" font="2">6108</text>
+<text top="615" left="343" width="9" height="6" font="2">PC</text>
+<text top="615" left="387" width="27" height="6" font="2">1,0000</text>
+<text top="615" left="27" width="32" height="6" font="2">5572748</text>
+<text top="615" left="294" width="14" height="6" font="2">200</text>
+<text top="615" left="596" width="18" height="6" font="2">0,00</text>
+<text top="615" left="114" width="135" height="6" font="2">HEADPHONE JBL T110 BLACK PRETO</text>
+<text top="624" left="114" width="9" height="6" font="2">NA</text>
+<text top="967" left="26" width="72" height="6" font="6"><b>DADOS ADICIONAIS</b></text>
+<text top="936" left="30" width="86" height="6" font="2">INSCRIÇÃO MUNICIPAL</text>
+<text top="936" left="197" width="108" height="6" font="2">VALOR TOTAL DOS SERVIÇOS</text>
+<text top="936" left="413" width="108" height="6" font="2">BASE DE CÁLCULO DO ISSQN</text>
+<text top="936" left="629" width="63" height="6" font="2">VALOR DO ISSQN</text>
+<text top="979" left="543" width="81" height="6" font="2">RESERVADO AO FISCO</text>
+<text top="1220" left="854" width="14" height="5" font="9">MSAF</text>
+<text top="923" left="26" width="72" height="6" font="6"><b>CÁLCULO DO ISSQN</b></text>
+<text top="981" left="30" width="117" height="6" font="2">INFORMAÇÕES COMPLEMENTARES</text>
+<text top="992" left="32" width="486" height="7" font="4">Valores totais do ICMS Interestadual: DIFAL da UF destino R$5,02 + FCP R$0,00; DIFAL da UF</text>
+<text top="1002" left="32" width="76" height="7" font="4">origem R$1,25.</text>
+<text top="1012" left="32" width="486" height="7" font="4">Inf. Contribuinte: Val Aprox Tributos R$23,85(53,23%) Fonte:IBPT FEDERAIS 28,23%,ESTADUAIS</text>
+<text top="1022" left="32" width="497" height="7" font="4">25,00%,MUNICIPAIS 0%NUM. PEDIDO:428468233 / CODCLI:50851046 / LOTE:1388628 / CODVENDR:6001 /</text>
+<text top="1033" left="32" width="491" height="7" font="4">OBS.PED:REF.: ANTIGO SETOR BANCARIO (61 )95535274 / CELULAR:61-95535274 / Valores totais do</text>
+<text top="1043" left="32" width="475" height="7" font="4">ICMS Interestadual: DIFAL da UF destino R$ 5,02 + FCP R$ 0,00 DIFAL da UF Origem R$ 1,25</text>
+</page>
