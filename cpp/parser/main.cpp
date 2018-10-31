@@ -453,6 +453,41 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
         }
     }
 
+    // Optimize list, so you will not have to go through the entire list again
+    // but only for possible values.
+    QList<sTEXTDATA*> tmpPossibleValues;
+    bool sameInRange = false;
+
+    for(auto it = possibleValues->begin(); it != possibleValues->end(); ++it)
+    {
+        tmpData = (*it);
+
+        if(tmpData->top < originalHeaderRect.top() ||
+           tmpData->top > ((originalHeaderRect.top() + originalHeaderRect.height()) + (SPACE_HEIGHT_BETWEEN_HEADER_VALUE * 2)))
+            continue;
+
+        sameInRange = false;
+        for(auto rangeIt = inRange.begin(); rangeIt != inRange.end(); ++rangeIt)
+        {
+            if((*rangeIt)->left == tmpData->left &&
+               (*rangeIt)->top == tmpData->top)
+            {
+                sameInRange = true;
+                break;
+            }
+        }
+
+        if(sameInRange)
+            continue;
+
+        tmpPossibleValues.push_back(tmpData);
+    }
+
+    if(tmpPossibleValues.length() > 0)
+    {
+        possibleValues = &tmpPossibleValues;
+    }
+
     distanceClose = 0;
 
     /********************************************************/
@@ -891,7 +926,7 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
                     continue;
 
                 // debug purpose.
-                if(textData->text != "INSCRIÇÃO ESTADUAL")
+                if(textData->text != "VALOR TOTAL DA NOTA")
                     continue;
 
                 if(TryGetValue(textData, &possibleValues, &currentData, page->height, page->width))
@@ -924,7 +959,7 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
 ///
 bool ReadInvoiceXML()
 {
-    QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/nfe1.xml");
+    QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/test.xml");
     if(!file.open(QFile::ReadOnly | QFile::Text))
     {
         qDebug() << "Cannot read file" << file.errorString();
