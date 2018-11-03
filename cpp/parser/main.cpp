@@ -329,7 +329,7 @@ enum eADDRESSEE_SENDER                      /// DESTINATÁRIO/REMETENTE
 
 enum eTAX_CALCULATION                       /// CÁLCULO DO IMPOSTO
 {
-    T_C_ICMS_CALCULATION_BASIS,             // BASE DE CÁLCULO DE ICMS
+    T_C_ICMS_CALCULATION_BASIS = 0,             // BASE DE CÁLCULO DE ICMS
     T_C_COST_ICMS,                          // VALOR DO ICMS
     T_C_CALCULATION_BASIS_ICMS_ST,          // BASE DE CÁLCULO ICMS ST
     T_C_VALUE_ICMS_REPLACEMENT,             // VALOR DO ICMS SUBSTITUIÇÃO
@@ -347,7 +347,7 @@ enum eTAX_CALCULATION                       /// CÁLCULO DO IMPOSTO
 
 enum eCONVEYOR_VOLUMES                      /// TRANSPORTADOR/VOLUMES TRANSPORTADOS
 {
-    C_V_SOCIAL_REASON,                      // RAZÃO SOCIAL
+    C_V_SOCIAL_REASON = 0,                      // RAZÃO SOCIAL
     C_V_FREIGHT_ACCOUNT,                    // FRETE POR CONTA
     C_V_CODE_ANTT,                          // CÓDIGO ANTT
     C_V_VEHICLE_PLATE,                      // PLACA DO VEÍCULO
@@ -369,7 +369,7 @@ enum eCONVEYOR_VOLUMES                      /// TRANSPORTADOR/VOLUMES TRANSPORTA
 
 enum eISSQN_CALCULATION                     /// CÁLCULO DO ISSQN
 {
-    I_C_MUNICIPAL_REGISTRATION,             // INSCRIÇÃO MUNICIPAL
+    I_C_MUNICIPAL_REGISTRATION = 0,             // INSCRIÇÃO MUNICIPAL
     I_C_TOTAL_COST_SERVICES,                // VALOR TOTAL DOS SERVIÇOS
     I_C_ISSQN_CALCULATION_BASE,             // BASE DE CALCULO DO ISSQN
     I_C_COST_ISSQN,                         // VALOR DO ISSQN
@@ -385,6 +385,7 @@ enum eINVOICE_HEADER
     CONVEYOR_VOLUMES,                       // TRANSPORTADOR/VOLUMES TRANSPORTADOS
     PRODUCT_SERVICE_DATA,                   // DADOS DO PRODUTO/SERVIÇO
     ISSQN_CALCULATION,                      // CÁLCULO DO ISSQN
+    ADDITIONAL_DATA,                        // DADOS ADICIONAIS
 
     MAX,
 };
@@ -1005,9 +1006,8 @@ bool TryGetValue(sTEXTDATA* header, QList<sTEXTDATA*>* possibleValues, QString* 
     }
 }
 
-QRect FindValueData(QString value, QList<sTEXTDATA*> list)
+bool FindValueData(QString value, QList<sTEXTDATA*> list, QRect* rect)
 {
-    QRect rect;
     sTEXTDATA* data;
 
     QList<sTEXTDATA*> find;
@@ -1023,20 +1023,22 @@ QRect FindValueData(QString value, QList<sTEXTDATA*> list)
 
     if(find.length() == 0)
     {
-        rect = QRect(QPoint(-1, -1), QSize(-1, -1));
+        *rect = QRect(QPoint(-1, -1), QSize(-1, -1));
+        return true;
     }
     else if(find.length() == 1)
     {
         data = find.first();
 
-        rect = QRect(QPoint(data->left, data->top), QSize(data->width, data->height));
+        *rect = QRect(QPoint(data->left, data->top), QSize(data->width, data->height));
+        return true;
     }
     else
     {
         // TODO:
     }
 
-    return rect;
+    return false;
 }
 
 QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
@@ -1320,11 +1322,7 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
     //break;
     case PRODUCT_SERVICE_DATA:
     {
-        // NOT IMPLEMENTED !
-        //switch(value)
-        //{
-        //
-        //}
+        list.push_back("DADOS DO PRODUTO/SERVIÇO");
         return list;
     }
     //break;
@@ -1360,9 +1358,25 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
         }
     }
     //break;
+    case ADDITIONAL_DATA:
+    {
+        list.push_back("DADOS ADICIONAIS");
+        return list;
+    }
     }
 
     return list;
+}
+
+sINVOICEHEADER* GetInvoiceHeader(QList<sINVOICEHEADER*> list, int value)
+{
+    for(auto it = list.begin(); it != list.end(); ++it)
+    {
+        if((*it) && (*it)->header == value)
+            return (*it);
+    }
+
+    return nullptr;
 }
 
 ///
@@ -1374,7 +1388,9 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
 {
     // List with possibles headers.
     QList<sTEXTDATA*> possibleHeaders;
+    QList<sTEXTDATA*> possibleValues;
     QList<sINVOICEDATA*> invoiceList;
+    QList<sINVOICEHEADER*> invoiceHeaderList;
 
     QList<sTEXTDATA*> failed;
 
@@ -1388,7 +1404,11 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
     QMap<int, sPAGE*>::iterator itPage;
 
     //
-    sINVOICEHEADER invoiceHeader;
+    sINVOICEHEADER* invoiceHeader = nullptr;
+    sINVOICEHEADER* tmpHeader = nullptr;
+
+    QString tmpStr;
+    QRect tmpRect;
 
     // 0. Process each page.
     for(itPage = pageMap->begin(); itPage != pageMap->end(); ++itPage)
@@ -1408,53 +1428,174 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
             {
                 possibleHeaders.push_back(textData);
             }
+
+            possibleValues.push_back(textData);
         }
 
         // Check if we got possibles header, then let to process.
-        if(possibleHeaders.size() > 0)
-        {
-            for(int header = MAIN; header < MAX; header++)
-            {
-                switch(header)
-                {
-                    case MAIN:
-                    break;
-                }
-            }
-
-            // Now based on the possible header
-            // We will try to get their values from the coordinates (top and left).
-            for(auto it = possibleHeaders.begin(); it != possibleHeaders.end(); ++it)
-            {
-                textData = (*it);
-
-                if(textData == nullptr ||
-                   textData->text == "")
-                    continue;
-
-                //// debug purpose.
-                //if(textData->text != "FRETE POR CONTA")
-                //    continue;
-                //
-                //if(TryGetValue(textData, &possibleValues, &currentData, page->height, page->width))
-                //{
-                //    invoiceData = new sINVOICEDATA();
-                //    invoiceData->header = textData->text;
-                //    invoiceData->value = currentData;
-                //
-                //    invoiceList.push_back(invoiceData);
-                //}
-                //else
-                //{
-                //    failed.push_back(textData);
-                //}
-            }
-        }
-        else
+        if(possibleHeaders.size() <= 0)
         {
             qDebug() << "Maybe error?";
-            return false;
+            continue;
         }
+
+        // Process header rects.
+        for(int header = MAX - 1; header >= MAIN; header--)
+        {
+            switch(header)
+            {
+                case ADDITIONAL_DATA:
+                {
+                    invoiceHeader = new sINVOICEHEADER();
+                    invoiceHeader->header = ADDITIONAL_DATA;
+
+                    if(FindValueData(ConvertEnumToText(invoiceHeader->header)[0], possibleHeaders, &tmpRect))
+                    {
+                        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
+                                        QSize(page->width, page->height - tmpRect.top()));
+
+                        invoiceHeader->rect = tmpRect;
+
+                        invoiceHeaderList.push_back(invoiceHeader);
+                    }
+                }
+                break;
+                case PRODUCT_SERVICE_DATA:
+                {
+                    tmpHeader = GetInvoiceHeader(invoiceHeaderList, ADDITIONAL_DATA);
+                    if(tmpHeader == nullptr)
+                        continue;
+
+                    invoiceHeader = new sINVOICEHEADER();
+                    invoiceHeader->header = PRODUCT_SERVICE_DATA;
+
+                    if(FindValueData(ConvertEnumToText(invoiceHeader->header)[0], possibleHeaders, &tmpRect))
+                    {
+                        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
+                                        QSize(page->width, (tmpHeader->rect.top() - 1) - tmpRect.top()));
+
+                        invoiceHeader->rect = tmpRect;
+
+                        invoiceHeaderList.push_back(invoiceHeader);
+                    }
+                }
+                break;
+                case CONVEYOR_VOLUMES:
+                {
+                    tmpHeader = GetInvoiceHeader(invoiceHeaderList, PRODUCT_SERVICE_DATA);
+                    if(tmpHeader == nullptr)
+                        continue;
+
+                    invoiceHeader = new sINVOICEHEADER();
+                    invoiceHeader->header = CONVEYOR_VOLUMES;
+
+                    if(FindValueData(ConvertEnumToText(invoiceHeader->header)[0], possibleHeaders, &tmpRect))
+                    {
+                        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
+                                        QSize(page->width, (tmpHeader->rect.top() - 1) - tmpRect.top()));
+
+                        invoiceHeader->rect = tmpRect;
+
+                        invoiceHeaderList.push_back(invoiceHeader);
+                    }
+
+                }
+                break;
+                case TAX_CALCULATION:
+                {
+                    tmpHeader = GetInvoiceHeader(invoiceHeaderList, CONVEYOR_VOLUMES);
+                    if(tmpHeader == nullptr)
+                        continue;
+
+                    invoiceHeader = new sINVOICEHEADER();
+                    invoiceHeader->header = TAX_CALCULATION;
+
+                    if(FindValueData(ConvertEnumToText(invoiceHeader->header)[0], possibleHeaders, &tmpRect))
+                    {
+                        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
+                                        QSize(page->width, (tmpHeader->rect.top() - 1) - tmpRect.top()));
+
+                        invoiceHeader->rect = tmpRect;
+
+                        invoiceHeaderList.push_back(invoiceHeader);
+                    }
+                }
+                break;
+                case ADDRESSEE_SENDER:
+                {
+                    tmpHeader = GetInvoiceHeader(invoiceHeaderList, TAX_CALCULATION);
+                    if(tmpHeader == nullptr)
+                        continue;
+
+                    invoiceHeader = new sINVOICEHEADER();
+                    invoiceHeader->header = ADDRESSEE_SENDER;
+
+                    if(FindValueData(ConvertEnumToText(invoiceHeader->header)[0], possibleHeaders, &tmpRect))
+                    {
+                        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
+                                        QSize(page->width, (tmpHeader->rect.top() - 1) - tmpRect.top()));
+
+                        invoiceHeader->rect = tmpRect;
+
+                        invoiceHeaderList.push_back(invoiceHeader);
+                    }
+                }
+                break;
+                case MAIN:
+                {
+                    tmpHeader = GetInvoiceHeader(invoiceHeaderList, ADDRESSEE_SENDER);
+                    if(tmpHeader == nullptr)
+                        continue;
+
+                    invoiceHeader = new sINVOICEHEADER();
+                    invoiceHeader->header = MAIN;
+
+                    tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, 0 /*tmpRect.top()*/),
+                                    QSize(page->width, (tmpHeader->rect.top() - 1)/* - tmpRect.top()*/));
+
+                    invoiceHeader->rect = tmpRect;
+
+                    invoiceHeaderList.push_back(invoiceHeader);
+                }
+                break;
+            }
+        }
+
+        // Check if we got possibles header.
+        if(invoiceHeaderList.size() <= 0)
+        {
+            qDebug() << "Maybe error?";
+            continue;
+        }
+
+
+        // Now based on the possible header
+        // We will try to get their values from the coordinates (top and left).
+        //for(auto it = possibleHeaders.begin(); it != possibleHeaders.end(); ++it)
+        //{
+        //    textData = (*it);
+        //
+        //    if(textData == nullptr ||
+        //       textData->text == "")
+        //        continue;
+        //
+        //    //// debug purpose.
+        //    //if(textData->text != "FRETE POR CONTA")
+        //    //    continue;
+        //    //
+        //    //if(TryGetValue(textData, &possibleValues, &currentData, page->height, page->width))
+        //    //{
+        //    //    invoiceData = new sINVOICEDATA();
+        //    //    invoiceData->header = textData->text;
+        //    //    invoiceData->value = currentData;
+        //    //
+        //    //    invoiceList.push_back(invoiceData);
+        //    //}
+        //    //else
+        //    //{
+        //    //    failed.push_back(textData);
+        //    //}
+        //}
     }
 
     return true;
