@@ -278,9 +278,11 @@ int main(int argc, char *argv[])
             gTrue, gFalse, gFalse);
         htmlOut->dumpDocOutline(doc);
     }
-
-    //ProcessXML();
 }
+
+////////////////////////////////////////////////////////////////////////
+/// --------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////
 
 #include <QFile>
 #include <QXmlStreamReader>
@@ -288,6 +290,104 @@ int main(int argc, char *argv[])
 
 #include <QMap>
 #include <QList>
+
+#include <QRect>
+#include <QPoint>
+#include <QSize>
+
+const int SPACE_HEIGHT_BETWEEN_HEADER_VALUE = 14;
+
+enum eHEADER_NFE                            /// CABEÇALHO
+{
+    H_ACCESS_KEY = 0,                         // CHAVE DE ACESSO
+    H_NATURE_OPERATION,                       // NATUREZA DA OPERAÇÃO
+    H_PROTOCOL_AUTHORIZATION_USE,             // PROTOCOLO DE AUTORIZAÇÃO DE USO
+    H_STATE_REGISTRATION,                     // INSCRIÇÃO ESTADUAL
+    H_STATE_REGISTRATION_SUB_TAXATION,        // INSCRIÇÃO ESTADUAL SUB. TRIBUTARIA
+    H_CNPJ,                                   // CNPJ
+
+    H_MAX,
+};
+
+enum eADDRESSEE_SENDER                      /// DESTINATÁRIO/REMETENTE
+{
+    A_S_NAME_SOCIAL_REASON = 0,             // NOME/RAZÃO SOCIAL
+    A_S_CPNJ_CPF,                           // CNPJ/CPF
+    A_S_EMISSION_DATE,                      // DATA DA EMISSÃO
+    A_S_ADDRESS,                            // ENDEREÇO
+    A_S_NEIGHBORHOOD_DISTRICT,              // BAIRRO/DISTRITO
+    A_S_CEP,                                // CEP
+    A_S_OUTPUT_INPUT_DATE,                  // DATA DE SAÍDA/ENTRADA
+    A_S_COUNTY,                             // MUNICÍPIO
+    A_S_PHONE_FAX,                          // TELEFONE/FAX
+    A_S_UF,                                 // UF
+    A_S_STATE_REGISTRATION,                 // INSCRIÇÃO ESTADUAL
+    A_S_EXIT_TIME,                          // HORA DE SAÍDA
+
+    A_S_MAX,
+};
+
+enum eTAX_CALCULATION                       /// CÁLCULO DO IMPOSTO
+{
+    T_C_ICMS_CALCULATION_BASIS,             // BASE DE CÁLCULO DE ICMS
+    T_C_COST_ICMS,                          // VALOR DO ICMS
+    T_C_CALCULATION_BASIS_ICMS_ST,          // BASE DE CÁLCULO ICMS ST
+    T_C_VALUE_ICMS_REPLACEMENT,             // VALOR DO ICMS SUBSTITUIÇÃO
+    T_C_TOTAL_VALUE_PRODUCTS,               // VALOR TOTAL DOS PRODUTOS
+    T_C_COST_FREIGHT,                       // VALOR DO FRETE
+    T_C_COST_INSURANCE,                     // VALOR DO SEGURO
+    T_C_DISCOUNT,                           // DESCONTO
+    T_C_OTHER_EXPENDITURE,                  // OUTRAS DESPESAS ACESSÓRIAS
+    T_C_COST_IPI,                           // VALOR DO IPI
+    T_C_APPROXIMATE_COST_TAXES,             // VALOR APROX. DOS TRIBUTOS
+    T_C_COST_TOTAL_NOTE,                    // VALOR TOTAL DA NOTA
+
+    T_C_MAX,
+};
+
+enum eCONVEYOR_VOLUMES                      /// TRANSPORTADOR/VOLUMES TRANSPORTADOS
+{
+    C_V_SOCIAL_REASON,                      // RAZÃO SOCIAL
+    C_V_FREIGHT_ACCOUNT,                    // FRETE POR CONTA
+    C_V_CODE_ANTT,                          // CÓDIGO ANTT
+    C_V_VEHICLE_PLATE,                      // PLACA DO VEÍCULO
+    C_V_UF_1,                               // UF
+    C_V_CNPJ_CPF,                           // CNPJ/CPF
+    C_V_ADDRESS,                            // ENDEREÇO
+    C_V_COUNTY,                             // MUNICÍPIO
+    C_V_UF_2,                               // UF
+    C_V_STATE_REGISTRATION,                 // INSCRIÇÃO ESTADUAL
+    C_V_QUANTITY,                           // QUANTIDADE
+    C_V_SPECIES,                            // ESPÉCIE
+    C_V_MARK,                               // MARCA
+    C_V_NUMBERING,                          // NUMERAÇÃO
+    C_V_GROSS_WEIGHT,                       // PESO BRUTO
+    C_V_NET_WEIGHT,                         // PESO LIQUIDO
+
+    C_V_MAX,
+};
+
+enum eISSQN_CALCULATION                     /// CÁLCULO DO ISSQN
+{
+    I_C_MUNICIPAL_REGISTRATION,             // INSCRIÇÃO MUNICIPAL
+    I_C_TOTAL_COST_SERVICES,                // VALOR TOTAL DOS SERVIÇOS
+    I_C_ISSQN_CALCULATION_BASE,             // BASE DE CALCULO DO ISSQN
+    I_C_COST_ISSQN,                         // VALOR DO ISSQN
+
+    I_C_MAX,
+};
+
+enum eINVOICE_HEADER
+{
+    MAIN = 0,
+    ADDRESSEE_SENDER,                       // DESTINATÁRIO/REMETENTE
+    TAX_CALCULATION,                        // CÁLCULO DO IMPOSTO
+    CONVEYOR_VOLUMES,                       // TRANSPORTADOR/VOLUMES TRANSPORTADOS
+    PRODUCT_SERVICE_DATA,                   // DADOS DO PRODUTO/SERVIÇO
+    ISSQN_CALCULATION,                      // CÁLCULO DO ISSQN
+
+    MAX,
+};
 
 struct sTEXTDATA
 {
@@ -345,17 +445,29 @@ struct sPAGE
     QList<sTEXTDATA*> txtDataList;
 };
 
+struct sINVOICEHEADER
+{
+    eINVOICE_HEADER header;
+    QRect rect;
+};
+
 struct sINVOICEDATA
 {
     QString header;
     QString value;
 };
 
+///
+/// \brief CheckPossibleHeader
+/// \param text
+/// \return
+///
 bool CheckPossibleHeader(QString text)
 {
     int len = text.size();
     int lenNumber = 0;
     int lenLetter = 0;
+
     for(int i = 0; i < len; i++)
     {
         if(text[i].isDigit())
@@ -366,12 +478,6 @@ bool CheckPossibleHeader(QString text)
 
     return (lenNumber == 0) ? true : (lenNumber > lenLetter) ? false : true;
 }
-
-#include <QRect>
-#include <QPoint>
-#include <QSize>
-
-const int SPACE_HEIGHT_BETWEEN_HEADER_VALUE = 14;
 
 ///
 /// \brief TrySimulateRectHeader
@@ -806,6 +912,15 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
     return headerRect;
 }
 
+///
+/// \brief TryGetValue
+/// \param header
+/// \param possibleValues
+/// \param value
+/// \param maxPageHeight
+/// \param maxPageWidth
+/// \return
+///
 bool TryGetValue(sTEXTDATA* header, QList<sTEXTDATA*>* possibleValues, QString* value, int maxPageHeight, int maxPageWidth)
 {
     QList<sTEXTDATA*> values;
@@ -890,6 +1005,366 @@ bool TryGetValue(sTEXTDATA* header, QList<sTEXTDATA*>* possibleValues, QString* 
     }
 }
 
+QRect FindValueData(QString value, QList<sTEXTDATA*> list)
+{
+    QRect rect;
+    sTEXTDATA* data;
+
+    QList<sTEXTDATA*> find;
+
+    for(auto it = list.begin(); it != list.end(); ++it)
+    {
+        data = (*it);
+        if(data != nullptr && data->text == value)
+        {
+            find.push_back(data);
+        }
+    }
+
+    if(find.length() == 0)
+    {
+        rect = QRect(QPoint(-1, -1), QSize(-1, -1));
+    }
+    else if(find.length() == 1)
+    {
+        data = find.first();
+
+        rect = QRect(QPoint(data->left, data->top), QSize(data->width, data->height));
+    }
+    else
+    {
+        // TODO:
+    }
+
+    return rect;
+}
+
+QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
+{
+    QList<QString> list;
+
+    switch(header)
+    {
+    case MAIN:
+    {
+        switch(value)
+        {
+            case H_ACCESS_KEY:
+            {
+                list.push_back("CHAVE DE ACESSO");
+                return list;
+            }
+            case H_NATURE_OPERATION:
+            {
+                list.push_back("NATUREZA DA OPERAÇÃO");
+                return list;
+            }
+            case H_PROTOCOL_AUTHORIZATION_USE:
+            {
+                list.push_back("PROTOCOLO DE AUTORIZAÇÃO DE USO");
+                return list;
+            }
+            case H_STATE_REGISTRATION:
+            {
+                list.push_back("INSCRIÇÃO ESTADUAL");
+                return list;
+            }
+            case H_STATE_REGISTRATION_SUB_TAXATION:
+            {
+                list.push_back("INSCRIÇÃO ESTADUAL SUB. TRIBUTARIA");
+                return list;
+            }
+            case H_CNPJ:
+            {
+                list.push_back("CNPJ");
+                return list;
+            }
+        }
+    }
+    break;
+    case ADDRESSEE_SENDER:
+    {
+        switch(value)
+        {
+        case A_S_NAME_SOCIAL_REASON:
+        {
+            list.push_back("NOME/RAZÃO SOCIAL");
+            return list;
+        }
+        case A_S_CPNJ_CPF:
+        {
+            list.push_back("CNPJ/CPF");
+            return list;
+        }
+        case A_S_EMISSION_DATE:
+        {
+            list.push_back("DATA DA EMISSÃO");
+            return list;
+        }
+        case A_S_ADDRESS:
+        {
+            list.push_back("ENDEREÇO");
+            return list;
+        }
+        case A_S_NEIGHBORHOOD_DISTRICT:
+        {
+            list.push_back("BAIRRO/DISTRITO");
+            return list;
+        }
+        case A_S_CEP:
+        {
+            list.push_back("CEP");
+            return list;
+        }
+        case A_S_OUTPUT_INPUT_DATE:
+        {
+            list.push_back("DATA DE SAÍDA/ENTRADA");
+            return list;
+        }
+        case A_S_COUNTY:
+        {
+            list.push_back("MUNICÍPIO");
+            return list;
+        }
+        case A_S_PHONE_FAX:
+        {
+            list.push_back("TELEFONE/FAX");
+            return list;
+        }
+        case A_S_UF:
+        {
+            list.push_back("UF");
+            return list;
+        }
+        case A_S_STATE_REGISTRATION:
+        {
+            list.push_back("INSCRIÇÃO ESTADUAL");
+            return list;
+        }
+        case A_S_EXIT_TIME:
+        {
+            list.push_back("HORA DE SAÍDA");
+            return list;
+        }
+        default:
+        {
+            list.push_back("DESTINATÁRIO/REMETENTE");
+            return list;
+        }
+        }
+    }
+    //break;
+    case TAX_CALCULATION:
+    {
+        switch(value)
+        {
+        case T_C_ICMS_CALCULATION_BASIS:
+        {
+            list.push_back("BASE DE CÁLCULO DE ICMS");
+            return list;
+        }
+        case T_C_COST_ICMS:
+        {
+            list.push_back("VALOR DO ICMS");
+            return list;
+        }
+        case T_C_CALCULATION_BASIS_ICMS_ST:
+        {
+            list.push_back("BASE DE CÁLCULO ICMS ST");
+            return list;
+        }
+        case T_C_VALUE_ICMS_REPLACEMENT:
+        {
+            list.push_back("VALOR DO ICMS SUBSTITUIÇÃO");
+            return list;
+        }
+        case T_C_TOTAL_VALUE_PRODUCTS:
+        {
+            list.push_back("VALOR TOTAL DOS PRODUTOS");
+            return list;
+        }
+        case T_C_COST_FREIGHT:
+        {
+            list.push_back("VALOR DO FRETE");
+            return list;
+        }
+        case T_C_COST_INSURANCE:
+        {
+            list.push_back("VALOR DO SEGURO");
+            return list;
+        }
+        case T_C_DISCOUNT:
+        {
+            list.push_back("DESCONTO");
+            return list;
+        }
+        case T_C_OTHER_EXPENDITURE:
+        {
+            list.push_back("OUTRAS DESPESAS ACESSÓRIAS");
+            return list;
+        }
+        case T_C_COST_IPI:
+        {
+            list.push_back("VALOR DO IPI");
+            return list;
+        }
+        case T_C_APPROXIMATE_COST_TAXES:
+        {
+            list.push_back("VALOR APROX. DOS TRIBUTOS");
+            return list;
+        }
+        case T_C_COST_TOTAL_NOTE:
+        {
+            list.push_back("VALOR TOTAL DA NOTA");
+            return list;
+        }
+        default:
+        {
+            list.push_back("CÁLCULO DO IMPOSTO");
+            return list;
+        }
+        }
+    }
+    //break;
+    case CONVEYOR_VOLUMES:
+    {
+        switch(value)
+        {
+        case C_V_SOCIAL_REASON:
+        {
+            list.push_back("RAZÃO SOCIAL");
+            return list;
+        }
+        case C_V_FREIGHT_ACCOUNT:
+        {
+            list.push_back("FRETE POR CONTA");
+            return list;
+        }
+        case C_V_CODE_ANTT:
+        {
+            list.push_back("CÓDIGO ANTT");
+            return list;
+        }
+        case C_V_VEHICLE_PLATE:
+        {
+            list.push_back("PLACA DO VEÍCULO");
+            return list;
+        }
+        case C_V_UF_1:
+        {
+            list.push_back("UF");
+            return list;
+        }
+        case C_V_CNPJ_CPF:
+        {
+            list.push_back("CNPJ/CPF");
+            return list;
+        }
+        case C_V_ADDRESS:
+        {
+            list.push_back("ENDEREÇO");
+            return list;
+        }
+        case C_V_COUNTY:
+        {
+            list.push_back("MUNICÍPIO");
+            return list;
+        }
+        case C_V_UF_2:
+        {
+            list.push_back("UF");
+            return list;
+        }
+        case C_V_STATE_REGISTRATION:
+        {
+            list.push_back("INSCRIÇÃO ESTADUAL");
+            return list;
+        }
+        case C_V_QUANTITY:
+        {
+            list.push_back("QUANTIDADE");
+            return list;
+        }
+        case C_V_SPECIES:
+        {
+            list.push_back("ESPÉCIE");
+            return list;
+        }
+        case C_V_MARK:
+        {
+            list.push_back("MARCA");
+            return list;
+        }
+        case C_V_NUMBERING:
+        {
+            list.push_back("NUMERAÇÃO");
+            return list;
+        }
+        case C_V_GROSS_WEIGHT:
+        {
+            list.push_back("PESO BRUTO");
+            return list;
+        }
+        case C_V_NET_WEIGHT:
+        {
+            list.push_back("PESO LIQUIDO");
+            return list;
+        }
+        default:
+        {
+            list.push_back("TRANSPORTADOR/VOLUMES TRANSPORTADOS");
+            return list;
+        }
+        }
+    }
+    //break;
+    case PRODUCT_SERVICE_DATA:
+    {
+        // NOT IMPLEMENTED !
+        //switch(value)
+        //{
+        //
+        //}
+        return list;
+    }
+    //break;
+    case ISSQN_CALCULATION:
+    {
+        switch(value)
+        {
+        case I_C_MUNICIPAL_REGISTRATION:
+        {
+            list.push_back("INSCRIÇÃO MUNICIPAL");
+            return list;
+        }
+        case I_C_TOTAL_COST_SERVICES:
+        {
+            list.push_back("VALOR TOTAL DOS SERVIÇOS");
+            return list;
+        }
+        case I_C_ISSQN_CALCULATION_BASE:
+        {
+            list.push_back("BASE DE CALCULO DO ISSQN");
+            return list;
+        }
+        case I_C_COST_ISSQN:
+        {
+            list.push_back("VALOR DO ISSQN");
+            return list;
+        }
+        default:
+        {
+            list.push_back("CÁLCULO DO ISSQN");
+            return list;
+        }
+        }
+    }
+    //break;
+    }
+
+    return list;
+}
+
 ///
 /// \brief GetInvoiceData
 /// \param pageMap
@@ -899,8 +1374,6 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
 {
     // List with possibles headers.
     QList<sTEXTDATA*> possibleHeaders;
-    QList<sTEXTDATA*> possibleValues;
-
     QList<sINVOICEDATA*> invoiceList;
 
     QList<sTEXTDATA*> failed;
@@ -914,6 +1387,9 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
     // Iterator of the page map.
     QMap<int, sPAGE*>::iterator itPage;
 
+    //
+    sINVOICEHEADER invoiceHeader;
+
     // 0. Process each page.
     for(itPage = pageMap->begin(); itPage != pageMap->end(); ++itPage)
     {
@@ -926,39 +1402,52 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
         {
             textData = (*it);
 
+            // Process all the data obtained in the XML and add only
+            // data that has a number of characters larger than numbers.
             if(CheckPossibleHeader(textData->text))
+            {
                 possibleHeaders.push_back(textData);
-
-            possibleValues.push_back(textData);
+            }
         }
 
         // Check if we got possibles header, then let to process.
         if(possibleHeaders.size() > 0)
         {
+            for(int header = MAIN; header < MAX; header++)
+            {
+                switch(header)
+                {
+                    case MAIN:
+                    break;
+                }
+            }
+
             // Now based on the possible header
             // We will try to get their values from the coordinates (top and left).
             for(auto it = possibleHeaders.begin(); it != possibleHeaders.end(); ++it)
             {
                 textData = (*it);
-                if(!textData || textData->text == "")
+
+                if(textData == nullptr ||
+                   textData->text == "")
                     continue;
 
-                // debug purpose.
-                if(textData->text != "FRETE POR CONTA")
-                    continue;
-
-                if(TryGetValue(textData, &possibleValues, &currentData, page->height, page->width))
-                {
-                    invoiceData = new sINVOICEDATA();
-                    invoiceData->header = textData->text;
-                    invoiceData->value = currentData;
-
-                    invoiceList.push_back(invoiceData);
-                }
-                else
-                {
-                    failed.push_back(textData);
-                }
+                //// debug purpose.
+                //if(textData->text != "FRETE POR CONTA")
+                //    continue;
+                //
+                //if(TryGetValue(textData, &possibleValues, &currentData, page->height, page->width))
+                //{
+                //    invoiceData = new sINVOICEDATA();
+                //    invoiceData->header = textData->text;
+                //    invoiceData->value = currentData;
+                //
+                //    invoiceList.push_back(invoiceData);
+                //}
+                //else
+                //{
+                //    failed.push_back(textData);
+                //}
             }
         }
         else
