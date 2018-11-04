@@ -619,6 +619,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
     }
 
     distanceClose = 0;
+    distance = originalHeaderRect.left();
 
     /********************************************************/
     // 1. Get left side more close.
@@ -821,7 +822,7 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
                         QSize(rightData->width, rightData->height));
 
         QRect testQuantityRect(QPoint(originalHeaderRect.left(), originalHeaderRect.top()),
-                               QSize(originalHeaderRect.width() + (rightData->left - originalHeaderRect.left() - 1),
+                               QSize(originalHeaderRect.width() + ((rightData->left - (originalHeaderRect.left() + originalHeaderRect.width())) - 1),
                                      originalHeaderRect.height() + SPACE_HEIGHT_BETWEEN_HEADER_VALUE));
 
         for(auto it = possibleValues->begin(); it != possibleValues->end(); ++it)
@@ -1047,7 +1048,7 @@ bool FindValueData(QString value, QList<sTEXTDATA*> list, QRect* rect)
     if(find.length() == 0)
     {
         *rect = QRect(QPoint(-1, -1), QSize(-1, -1));
-        return true;
+        return false;
     }
     else if(find.length() == 1)
     {
@@ -1097,6 +1098,7 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
             case H_STATE_REGISTRATION_SUB_TAXATION:
             {
                 list.push_back("INSCRIÇÃO ESTADUAL SUB. TRIBUTARIA");
+                list.push_back("INSC.ESTADUAL DO SUBST. TRIBUTÁRIO");
                 return list;
             }
             case H_CNPJ:
@@ -1134,6 +1136,7 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
         case A_S_NEIGHBORHOOD_DISTRICT:
         {
             list.push_back("BAIRRO/DISTRITO");
+            list.push_back("BAIRRO / DISTRITO");
             return list;
         }
         case A_S_CEP:
@@ -1144,6 +1147,7 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
         case A_S_OUTPUT_INPUT_DATE:
         {
             list.push_back("DATA DE SAÍDA/ENTRADA");
+            list.push_back("DATA DA SAÍDA/ENTRADA");
             return list;
         }
         case A_S_COUNTY:
@@ -1154,6 +1158,7 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
         case A_S_PHONE_FAX:
         {
             list.push_back("TELEFONE/FAX");
+            list.push_back("FONE/FAX");
             return list;
         }
         case A_S_UF:
@@ -1187,6 +1192,7 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
         case T_C_ICMS_CALCULATION_BASIS:
         {
             list.push_back("BASE DE CÁLCULO DE ICMS");
+            list.push_back("BASE DE CÁLCULO DO ICMS");
             return list;
         }
         case T_C_COST_ICMS:
@@ -1197,11 +1203,13 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
         case T_C_CALCULATION_BASIS_ICMS_ST:
         {
             list.push_back("BASE DE CÁLCULO ICMS ST");
+            list.push_back("BASE DE CÁLCULO DO ICMS ST");
             return list;
         }
         case T_C_VALUE_ICMS_REPLACEMENT:
         {
             list.push_back("VALOR DO ICMS SUBSTITUIÇÃO");
+            list.push_back("VALOR DO ICMS ST");
             return list;
         }
         case T_C_TOTAL_VALUE_PRODUCTS:
@@ -1284,6 +1292,7 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
         case C_V_CNPJ_CPF:
         {
             list.push_back("CNPJ/CPF");
+            list.push_back("CNPJ / CPF");
             return list;
         }
         case C_V_ADDRESS:
@@ -1334,11 +1343,13 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
         case C_V_NET_WEIGHT:
         {
             list.push_back("PESO LIQUIDO");
+            list.push_back("PESO LÍQUIDO");
             return list;
         }
         default:
         {
             list.push_back("TRANSPORTADOR/VOLUMES TRANSPORTADOS");
+            list.push_back("TRANSPORTADOR / VOLUMES TRANSPORTADOS DADOS");
             return list;
         }
         }
@@ -1347,6 +1358,7 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
     case PRODUCT_SERVICE_DATA:
     {
         list.push_back("DADOS DO PRODUTO/SERVIÇO");
+        list.push_back("DADOS DO PRODUTO / SERVIÇO");
         return list;
     }
     //break;
@@ -1367,6 +1379,7 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
         case I_C_ISSQN_CALCULATION_BASE:
         {
             list.push_back("BASE DE CALCULO DO ISSQN");
+            list.push_back("BASE DE CÁLCULO DO ISSQN");
             return list;
         }
         case I_C_COST_ISSQN:
@@ -1411,10 +1424,14 @@ QList<sINVOICEHEADER*> ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHeaders, i
     sINVOICEHEADER* tmpHeader = nullptr;
 
     QRect tmpRect;
+    QString tmpStr;
+    QList<QString> tmpStrList;
 
     // Process header rects.
     for(int header = MAX - 1; header >= MAIN; header--)
     {
+        tmpStrList.clear();
+
         switch(header)
         {
             case ADDITIONAL_DATA:
@@ -1422,14 +1439,24 @@ QList<sINVOICEHEADER*> ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHeaders, i
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = ADDITIONAL_DATA;
 
-                if(FindValueData(ConvertEnumToText(invoiceHeader->header)[0], possibleHeaders, &tmpRect))
+                tmpStrList = ConvertEnumToText(invoiceHeader->header);
+
+                for(auto it = tmpStrList.begin(); it != tmpStrList.end(); ++it)
                 {
-                    tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
-                                    QSize(maxWidth, maxHeight - tmpRect.top()));
+                    tmpStr = (*it);
+                    if(tmpStr.isEmpty())
+                        continue;
 
-                    invoiceHeader->rect = tmpRect;
+                    if(FindValueData(tmpStr, possibleHeaders, &tmpRect))
+                    {
+                        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
+                                        QSize(maxWidth, maxHeight - tmpRect.top()));
 
-                    invoiceHeaderList.push_back(invoiceHeader);
+                        invoiceHeader->rect = tmpRect;
+
+                        invoiceHeaderList.push_back(invoiceHeader);
+                        break;
+                    }
                 }
             }
             break;
@@ -1442,14 +1469,24 @@ QList<sINVOICEHEADER*> ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHeaders, i
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = ISSQN_CALCULATION;
 
-                if(FindValueData(ConvertEnumToText(invoiceHeader->header)[0], possibleHeaders, &tmpRect))
+                tmpStrList = ConvertEnumToText(invoiceHeader->header);
+
+                for(auto it = tmpStrList.begin(); it != tmpStrList.end(); ++it)
                 {
-                    tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
-                                    QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
+                    tmpStr = (*it);
+                    if(tmpStr.isEmpty())
+                        continue;
 
-                    invoiceHeader->rect = tmpRect;
+                    if(FindValueData(tmpStr, possibleHeaders, &tmpRect))
+                    {
+                        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
+                                        QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
 
-                    invoiceHeaderList.push_back(invoiceHeader);
+                        invoiceHeader->rect = tmpRect;
+
+                        invoiceHeaderList.push_back(invoiceHeader);
+                        break;
+                    }
                 }
             }
             break;
@@ -1462,14 +1499,24 @@ QList<sINVOICEHEADER*> ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHeaders, i
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = PRODUCT_SERVICE_DATA;
 
-                if(FindValueData(ConvertEnumToText(invoiceHeader->header)[0], possibleHeaders, &tmpRect))
+                tmpStrList = ConvertEnumToText(invoiceHeader->header);
+
+                for(auto it = tmpStrList.begin(); it != tmpStrList.end(); ++it)
                 {
-                    tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
-                                    QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
+                    tmpStr = (*it);
+                    if(tmpStr.isEmpty())
+                        continue;
 
-                    invoiceHeader->rect = tmpRect;
+                    if(FindValueData(tmpStr, possibleHeaders, &tmpRect))
+                    {
+                        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
+                                        QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
 
-                    invoiceHeaderList.push_back(invoiceHeader);
+                        invoiceHeader->rect = tmpRect;
+
+                        invoiceHeaderList.push_back(invoiceHeader);
+                        break;
+                    }
                 }
             }
             break;
@@ -1482,14 +1529,24 @@ QList<sINVOICEHEADER*> ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHeaders, i
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = CONVEYOR_VOLUMES;
 
-                if(FindValueData(ConvertEnumToText(invoiceHeader->header)[0], possibleHeaders, &tmpRect))
+                tmpStrList = ConvertEnumToText(invoiceHeader->header);
+
+                for(auto it = tmpStrList.begin(); it != tmpStrList.end(); ++it)
                 {
-                    tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
-                                    QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
+                    tmpStr = (*it);
+                    if(tmpStr.isEmpty())
+                        continue;
 
-                    invoiceHeader->rect = tmpRect;
+                    if(FindValueData(tmpStr, possibleHeaders, &tmpRect))
+                    {
+                        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
+                                        QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
 
-                    invoiceHeaderList.push_back(invoiceHeader);
+                        invoiceHeader->rect = tmpRect;
+
+                        invoiceHeaderList.push_back(invoiceHeader);
+                        break;
+                    }
                 }
             }
             break;
@@ -1502,14 +1559,24 @@ QList<sINVOICEHEADER*> ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHeaders, i
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = TAX_CALCULATION;
 
-                if(FindValueData(ConvertEnumToText(invoiceHeader->header)[0], possibleHeaders, &tmpRect))
+                tmpStrList = ConvertEnumToText(invoiceHeader->header);
+
+                for(auto it = tmpStrList.begin(); it != tmpStrList.end(); ++it)
                 {
-                    tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
-                                    QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
+                    tmpStr = (*it);
+                    if(tmpStr.isEmpty())
+                        continue;
 
-                    invoiceHeader->rect = tmpRect;
+                    if(FindValueData(tmpStr, possibleHeaders, &tmpRect))
+                    {
+                        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
+                                        QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
 
-                    invoiceHeaderList.push_back(invoiceHeader);
+                        invoiceHeader->rect = tmpRect;
+
+                        invoiceHeaderList.push_back(invoiceHeader);
+                        break;
+                    }
                 }
             }
             break;
@@ -1522,14 +1589,24 @@ QList<sINVOICEHEADER*> ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHeaders, i
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = ADDRESSEE_SENDER;
 
-                if(FindValueData(ConvertEnumToText(invoiceHeader->header)[0], possibleHeaders, &tmpRect))
+                tmpStrList = ConvertEnumToText(invoiceHeader->header);
+
+                for(auto it = tmpStrList.begin(); it != tmpStrList.end(); ++it)
                 {
-                    tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
-                                    QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
+                    tmpStr = (*it);
+                    if(tmpStr.isEmpty())
+                        continue;
 
-                    invoiceHeader->rect = tmpRect;
+                    if(FindValueData(tmpStr, possibleHeaders, &tmpRect))
+                    {
+                        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
+                                        QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
 
-                    invoiceHeaderList.push_back(invoiceHeader);
+                        invoiceHeader->rect = tmpRect;
+
+                        invoiceHeaderList.push_back(invoiceHeader);
+                        break;
+                    }
                 }
             }
             break;
@@ -1958,7 +2035,7 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
 ///
 bool ReadInvoiceXML()
 {
-    QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/nfe1.xml");
+    QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/test.xml");
     if(!file.open(QFile::ReadOnly | QFile::Text))
     {
         qDebug() << "Cannot read file" << file.errorString();
