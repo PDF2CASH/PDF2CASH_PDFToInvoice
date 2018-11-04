@@ -293,6 +293,8 @@ int main(int argc, char *argv[])
 
 #include <QFile>
 #include <QXmlStreamReader>
+#include <QTextStream>
+
 #include <QDebug>
 
 #include <QMap>
@@ -1853,10 +1855,12 @@ QString GenerateJson(QMap<int, QList<sINVOICEDATA*>> map)
         }
     }
 
+    json.chop(2);
+    json += "\n";
     json += "}";
 
     // TODO : Debug purpose.
-    printf("%s\n", json.toStdString().c_str());
+    //printf("%s\n", json.toStdString().c_str());
 
     return json;
 }
@@ -2024,7 +2028,15 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
     }
 
     DebugShow(invoicesMap);
-    //GenerateJson(invoicesMap);
+
+    // Create JSON file.
+    QString filename = "data.json";
+    QFile file(filename);
+    if (file.open(QIODevice::ReadWrite))
+    {
+        QTextStream stream(&file);
+        stream << GenerateJson(invoicesMap) << endl;
+    }
 
     return true;
 }
