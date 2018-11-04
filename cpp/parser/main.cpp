@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
     clock_t startTime = clock();
 
     ReadInvoiceXML();
-    printf("%ld seconds have passed\n", (clock() - startTime) / CLOCKS_PER_SEC);
+    printf("\n%ld seconds have passed\n", (clock() - startTime) / CLOCKS_PER_SEC);
 
     return a.exec();
 
@@ -463,6 +463,9 @@ struct sINVOICEDATA
 {
     QString header;
     QString value;
+
+    int headerID;
+    int subHeaderID;
 };
 
 ///
@@ -485,6 +488,19 @@ bool CheckPossibleHeader(QString text)
     }
 
     return (lenNumber == 0) ? true : (lenNumber > lenLetter) ? false : true;
+}
+
+bool IsNumber(QString text)
+{
+    int len = text.size();
+
+    for(int i = 0; i < len; i++)
+    {
+        if(text[i].isNumber() == false)
+            return false;
+    }
+
+    return true;
 }
 
 ///
@@ -1158,6 +1174,7 @@ QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1)
         default:
         {
             list.push_back("DESTINATÁRIO/REMETENTE");
+            list.push_back("DESTINATÁRIO / REMETENTE");
             return list;
         }
         }
@@ -1603,6 +1620,170 @@ void DebugShow(QMap<int, QList<sINVOICEDATA*>> map)
     }
 }
 
+QString ConvertToJsonHeader(int header, int value)
+{
+    QString tmpStr;
+
+    switch(header)
+    {
+    case MAIN:
+    {
+        switch(value)
+        {
+            case H_ACCESS_KEY: return "main_access_key";
+            case H_NATURE_OPERATION: return "main_nature_operation";
+            case H_PROTOCOL_AUTHORIZATION_USE: return "main_protocol_authorization_use";
+            case H_STATE_REGISTRATION: return "main_state_registration";
+            case H_STATE_REGISTRATION_SUB_TAXATION: return "main_state_registration_sub_tax";
+            case H_CNPJ: return "main_cnpj";
+        }
+    }
+    break;
+    case ADDRESSEE_SENDER:
+    {
+        switch(value)
+        {
+        case A_S_NAME_SOCIAL_REASON: return "sender_name_social";
+        case A_S_CPNJ_CPF: return "sender_cnpj_cpf";
+        case A_S_EMISSION_DATE: return "sender_emission_date";
+        case A_S_ADDRESS: return "sender_address";
+        case A_S_NEIGHBORHOOD_DISTRICT: return "sender_neighborhood_district";
+        case A_S_CEP: return "sender_cep";
+        case A_S_OUTPUT_INPUT_DATE: return "sender_out_input_date";
+        case A_S_COUNTY: return "sender_county";
+        case A_S_PHONE_FAX: return "sender_phone_fax";
+        case A_S_UF: return "sender_uf";
+        case A_S_STATE_REGISTRATION: return "sender_state_registration";
+        case A_S_EXIT_TIME: return "sender_output_time";
+        }
+    }
+    break;
+    case TAX_CALCULATION:
+    {
+        switch(value)
+        {
+        case T_C_ICMS_CALCULATION_BASIS: return "tax_icms_basis";
+        case T_C_COST_ICMS: return "tax_cost_icms";
+        case T_C_CALCULATION_BASIS_ICMS_ST: return "tax_icms_basis_st";
+        case T_C_VALUE_ICMS_REPLACEMENT: return "tax_cost_icms_replacement";
+        case T_C_TOTAL_VALUE_PRODUCTS: return "tax_total_cost_products";
+        case T_C_COST_FREIGHT: return "tax_cost_freight";
+        case T_C_COST_INSURANCE: return "tax_cost_insurance";
+        case T_C_DISCOUNT: return "tax_discount";
+        case T_C_OTHER_EXPENDITURE: return "tax_other_expenditure";
+        case T_C_COST_IPI: return "tax_cost_ipi";
+        case T_C_APPROXIMATE_COST_TAXES: return "tax_approx_cost_taxes";
+        case T_C_COST_TOTAL_NOTE: return "tax_cost_total_note";
+        }
+    }
+    break;
+    case CONVEYOR_VOLUMES:
+    {
+        switch(value)
+        {
+        case C_V_SOCIAL_REASON: return "conveyor_social_reason";
+        case C_V_FREIGHT_ACCOUNT: return "conveyor_freight_account";
+        case C_V_CODE_ANTT: return "conveyor_code_antt";
+        case C_V_VEHICLE_PLATE: return "conveyor_vehicle_plate";
+        case C_V_UF_1: return "conveyor_uf_1";
+        case C_V_CNPJ_CPF: return "conveyor_cnpj_cpf";
+        case C_V_ADDRESS: return "conveyor_address";
+        case C_V_COUNTY: return "conveyor_county";
+        case C_V_UF_2: return "conveyor_uf_2";
+        case C_V_STATE_REGISTRATION: return "conveyor_state_registration";
+        case C_V_QUANTITY: return "conveyor_quantity";
+        case C_V_SPECIES: return "conveyor_species";
+        case C_V_MARK: return "conveyor_mark";
+        case C_V_NUMBERING: return "conveyor_numering";
+        case C_V_GROSS_WEIGHT: return "conveyor_gross_weight";
+        case C_V_NET_WEIGHT: return "conveyor_net_weight";
+        }
+    }
+    break;
+    case PRODUCT_SERVICE_DATA:
+    {
+        return "product_service_data";
+    }
+    break;
+    case ISSQN_CALCULATION:
+    {
+        switch(value)
+        {
+        case I_C_MUNICIPAL_REGISTRATION: return "issqn_municial_registration";
+        case I_C_TOTAL_COST_SERVICES: return "issqn_total_cost_services";
+        case I_C_ISSQN_CALCULATION_BASE: return "issqn_calculation_base";
+        case I_C_COST_ISSQN: return "issqn_cost";
+        }
+    }
+    break;
+    case ADDITIONAL_DATA:
+    {
+        return "additional_data";
+    }
+    break;
+    }
+
+    return "";
+}
+
+QString GenerateJson(QMap<int, QList<sINVOICEDATA*>> map)
+{
+    QString json("");
+
+    QString tmpStr;
+    sINVOICEDATA* tmpInvoice = nullptr;
+
+    json += "{\n";
+
+    for(auto it = map.begin(); it != map.end(); ++it)
+    {
+        for(auto it2 = (*it).begin(); it2 != (*it).end(); ++it2)
+        {
+            tmpInvoice = (*it2);
+            if(tmpInvoice != nullptr)
+            {
+                tmpStr = ConvertToJsonHeader(tmpInvoice->headerID, tmpInvoice->subHeaderID);
+                if(tmpStr.isEmpty())
+                    continue;
+
+                json += "\t";
+                json += "\"";
+                json += tmpStr;
+                json += "\"";
+                json += ": ";
+
+                if(tmpInvoice->value.isEmpty())
+                {
+                    json += "null";
+                    json += ",\n";
+                }
+                else
+                {
+                    if(IsNumber(tmpInvoice->value))
+                    {
+                        json += tmpInvoice->value;
+                        json += ",\n";
+                    }
+                    else
+                    {
+                        json += "\"";
+                        json += tmpInvoice->value;
+                        json += "\"";
+                        json += ",\n";
+                    }
+                }
+            }
+        }
+    }
+
+    json += "}";
+
+    // TODO : Debug purpose.
+    printf("%s\n", json.toStdString().c_str());
+
+    return json;
+}
+
 ///
 /// \brief GetInvoiceData
 /// \param pageMap
@@ -1747,6 +1928,8 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
                             invoiceData = new sINVOICEDATA();
                             invoiceData->header = textData->text;
                             invoiceData->value = currentData;
+                            invoiceData->headerID = i;
+                            invoiceData->subHeaderID = k;
 
                             tmpInvoiceList.push_back(invoiceData);
                             break;
@@ -1764,6 +1947,7 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
     }
 
     DebugShow(invoicesMap);
+    //GenerateJson(invoicesMap);
 
     return true;
 }
@@ -1774,7 +1958,7 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
 ///
 bool ReadInvoiceXML()
 {
-    QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/test.xml");
+    QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/nfe1.xml");
     if(!file.open(QFile::ReadOnly | QFile::Text))
     {
         qDebug() << "Cannot read file" << file.errorString();
