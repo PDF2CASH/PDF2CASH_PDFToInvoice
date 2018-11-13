@@ -41,7 +41,7 @@ static char ownerPassword[33] = "";
 static char userPassword[33] = "";
 static GBool printVersion = gFalse;
 
-bool ReadInvoiceXML();
+bool ReadInvoiceXML(QString fileName);
 
 std::string getFileName(const std::string& s)
 {
@@ -52,14 +52,16 @@ std::string getFileName(const std::string& s)
 #endif
 
     size_t i = s.rfind(sep, s.length());
-    if (i != std::string::npos) {
+    if (i != std::string::npos)
+    {
         return(s.substr(i + 1, s.length() - i));
     }
 
     return("");
 }
 
-static GooString* getInfoDate(Dict *infoDict, const char *key) {
+static GooString* getInfoDate(Dict *infoDict, const char *key)
+{
     Object obj;
     const char *s;
     int year, mon, day, hour, min, sec, tz_hour, tz_minute;
@@ -69,10 +71,12 @@ static GooString* getInfoDate(Dict *infoDict, const char *key) {
     char buf[256];
 
     obj = infoDict->lookup(key);
-    if (obj.isString()) {
+    if (obj.isString())
+    {
         s = obj.getString()->getCString();
         // TODO do something with the timezone info
-        if (parseDateString(s, &year, &mon, &day, &hour, &min, &sec, &tz, &tz_hour, &tz_minute)) {
+        if (parseDateString(s, &year, &mon, &day, &hour, &min, &sec, &tz, &tz_hour, &tz_minute))
+        {
             tmStruct.tm_year = year - 1900;
             tmStruct.tm_mon = mon - 1;
             tmStruct.tm_mday = day;
@@ -83,21 +87,26 @@ static GooString* getInfoDate(Dict *infoDict, const char *key) {
             tmStruct.tm_yday = -1;
             tmStruct.tm_isdst = -1;
             mktime(&tmStruct); // compute the tm_wday and tm_yday fields
-            if (strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S+00:00", &tmStruct)) {
+            if (strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S+00:00", &tmStruct))
+            {
                 result = new GooString(buf);
             }
-            else {
+            else
+            {
                 result = new GooString(s);
             }
         }
-        else {
+        else
+        {
             result = new GooString(s);
         }
     }
+
     return result;
 }
 
-static GooString* getInfoString(Dict *infoDict, const char *key) {
+static GooString* getInfoString(Dict *infoDict, const char *key)
+{
     Object obj;
     // Raw value as read from PDF (may be in pdfDocEncoding or UCS2)
     const GooString *rawString;
@@ -110,56 +119,56 @@ static GooString* getInfoString(Dict *infoDict, const char *key) {
     GBool isUnicode;
 
     obj = infoDict->lookup(key);
-    if (obj.isString()) {
+    if (obj.isString())
+    {
         rawString = obj.getString();
 
         // Convert rawString to unicode
-        if (rawString->hasUnicodeMarker()) {
+        if (rawString->hasUnicodeMarker())
+        {
             isUnicode = gTrue;
             unicodeLength = (obj.getString()->getLength() - 2) / 2;
         }
-        else {
+        else
+        {
             isUnicode = gFalse;
             unicodeLength = obj.getString()->getLength();
         }
+
         unicodeString = new Unicode[unicodeLength];
 
-        for (int i = 0; i<unicodeLength; i++) {
-            if (isUnicode) {
+        for (int i = 0; i<unicodeLength; i++)
+        {
+            if (isUnicode)
+            {
                 unicodeString[i] = ((rawString->getChar((i + 1) * 2) & 0xff) << 8) |
                     (rawString->getChar(((i + 1) * 2) + 1) & 0xff);
             }
-            else {
+            else
+            {
                 unicodeString[i] = pdfDocEncoding[rawString->getChar(i) & 0xff];
             }
         }
 
         // HTML escape and encode unicode
         encodedString = HtmlFont::HtmlFilter(unicodeString, unicodeLength);
+
         delete[] unicodeString;
     }
 
     return encodedString;
 }
 
-int main(int argc, char *argv[])
+#include <QElapsedTimer>
+
+bool ProcessPDF(QString pdfFileName)
 {
-    QCoreApplication a(argc, argv);
-
-    ////////////////////////////////////////////
-
-    clock_t startTime = clock();
-
-    ReadInvoiceXML();
-    printf("\n%ld seconds have passed\n", (clock() - startTime) / CLOCKS_PER_SEC);
-
-    return a.exec();
-
-    ////////////////////////////////////////////
-
     GooString* fileName = nullptr;
 
-    fileName = new GooString("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/nfe1.pdf");
+    //fileName = new GooString("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/nfe1.pdf");
+    fileName = new GooString(pdfFileName.toStdString().c_str());
+
+    printf("Filename: %s\n", fileName->toStr().c_str());
 
     GooString *docTitle = nullptr;
     GooString *author = nullptr, *keywords = nullptr, *subject = nullptr, *date = nullptr;
@@ -180,7 +189,7 @@ int main(int argc, char *argv[])
     if (doc == nullptr || !doc->isOk())
     {
         printf("Failed to read PDF file.\n");
-        return -1;
+        return false;
     }
 
     bool xml = true;
@@ -199,12 +208,14 @@ int main(int argc, char *argv[])
     if (scale>3.0) scale = 3.0;
     if (scale<0.5) scale = 0.5;
 
-    if (complexMode || singleHtml) {
+    if (complexMode || singleHtml)
+    {
         //noframes=gFalse;
         stout = gFalse;
     }
 
-    if (stout) {
+    if (stout)
+    {
         noframes = gTrue;
         complexMode = gFalse;
         singleHtml = gFalse;
@@ -223,7 +234,8 @@ int main(int argc, char *argv[])
         firstPage = 1;
     if (lastPage < 1 || lastPage > doc->getNumPages())
         lastPage = doc->getNumPages();
-    if (lastPage < firstPage) {
+    if (lastPage < firstPage)
+    {
         error(errCommandLine, -1,
             "Wrong page range given: the first page ({0:d}) can not be after the last page ({1:d}).",
             firstPage, lastPage);
@@ -231,7 +243,8 @@ int main(int argc, char *argv[])
     }
 
     info = doc->getDocInfo();
-    if (info.isDict()) {
+    if (info.isDict())
+    {
         docTitle = getInfoString(info.getDict(), "Title");
         author = getInfoString(info.getDict(), "Author");
         keywords = getInfoString(info.getDict(), "Keywords");
@@ -240,6 +253,7 @@ int main(int argc, char *argv[])
         if (!date)
             date = getInfoDate(info.getDict(), "CreationDate");
     }
+
     if (!docTitle) docTitle = new GooString(htmlFileName);
 
     if (!singleHtml)
@@ -261,7 +275,9 @@ int main(int argc, char *argv[])
         firstPage,
         doOutline,
         xml);
+
     delete docTitle;
+
     if (author)
     {
         delete author;
@@ -283,8 +299,73 @@ int main(int argc, char *argv[])
     {
         doc->displayPages(htmlOut, firstPage, lastPage, 72 * scale, 72 * scale, 0,
             gTrue, gFalse, gFalse);
+
         htmlOut->dumpDocOutline(doc);
     }
+    else
+    {
+        printf("Some problem here.\n");
+        return false;
+    }
+
+    delete htmlOut;
+
+    if(doc) delete doc;
+
+    return true;
+}
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication a(argc, argv);
+
+    /*
+    // TODO : DEBUG PURPOSE !
+    argc = 2;
+    argv = new char*[2];
+
+    //argv[1] = "/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/test.pdf";
+    argv[1] = "/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/build-parser-Desktop_Qt_5_11_2_GCC_64bit-Debug/test.pdf";
+    // END -------------------------
+    */
+
+    if(argc <= 1 || argc > 2)
+    {
+        printf("Incorrect way to execute program.\n");
+        printf("PARAM: [program] [path pdf]\n.");
+
+        return -1;
+    }
+
+    QString fileName(argv[1]);
+
+    if(ProcessPDF(fileName))
+    {
+        QElapsedTimer timer;
+        timer.start();
+        int timeOutMS = 1000;
+        int remainingTime = 0;
+
+        for (;;)
+        {
+            remainingTime = timeOutMS - timer.elapsed();
+            if(remainingTime <= 0)
+            {
+                // Now to read xml created.
+                ReadInvoiceXML(fileName);
+                break;
+            }
+        }
+    }
+    else
+    {
+        printf("Error to process PDF.\n");
+    }
+
+    printf("Finished!\n");
+
+    //return a.exec();
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -706,16 +787,6 @@ QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues,
 
             // Calcule maximium left and check if this overflow with headerRect left.
             int newLeft = (tmpData->left + tmpData->width) + 1;
-            if(newLeft > originalHeaderRect.left())
-            {
-                // In this case, the poppler processed some information incorrectly
-                // it included two values in a single element.
-
-                // TODO : ...
-                int b = 3;
-
-                // This problem happen with text: "DATA DA EMISSÃO".
-            }
 
             int newSizeWidth = (originalHeaderRect.left() - newLeft) + originalHeaderRect.width();
             headerRect = QRect(QPoint(newLeft, originalHeaderRect.top()),
@@ -1870,7 +1941,7 @@ QString GenerateJson(QMap<int, QList<sINVOICEDATA*>> map)
 /// \param pageMap
 /// \return
 ///
-bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
+bool GetInvoiceData(QString fileName, QMap<int, sPAGE*>* pageMap)
 {
     // List with possibles headers.
     QList<sTEXTDATA*> headers;
@@ -2027,16 +2098,33 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
         }
     }
 
-    DebugShow(invoicesMap);
+    //DebugShow(invoicesMap);
+
+    //QString croped_fileName= fileName.split(".",QString::SkipEmptyParts).at(0);
 
     // Create JSON file.
-    QString filename = "data.json";
+    //QString filename = "data.json";
+    //QString filename = croped_fileName + ".json";
+
+    QString filename = fileName.replace(".pdf", ".json");
+
+    printf("JSON will be saved in: %s\n", filename.toStdString().c_str());
     QFile file(filename);
+
+    QString buffer = GenerateJson(invoicesMap);
+    if(buffer.isEmpty() || buffer.isNull())
+    {
+        printf("Failed to generate Json.\n");
+        return false;
+    }
+
     if (file.open(QIODevice::ReadWrite))
     {
         QTextStream stream(&file);
-        stream << GenerateJson(invoicesMap) << endl;
+        stream << buffer << endl;
     }
+
+    printf("%s", buffer.toStdString().c_str());
 
     return true;
 }
@@ -2045,9 +2133,13 @@ bool GetInvoiceData(QMap<int, sPAGE*>* pageMap)
 /// \brief ReadInvoiceXML
 /// \return
 ///
-bool ReadInvoiceXML()
+bool ReadInvoiceXML(QString fileName)
 {
-    QFile file("/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/test.xml");
+    QString tmp = fileName.replace(".pdf", ".xml");
+
+    printf("XML: %s\n", tmp.toStdString().c_str());
+
+    QFile file(tmp);
     if(!file.open(QFile::ReadOnly | QFile::Text))
     {
         qDebug() << "Cannot read file" << file.errorString();
@@ -2062,8 +2154,14 @@ bool ReadInvoiceXML()
     sFONTDESCRIPTION* fontDesc = nullptr;
     sTEXTDATA* txtData = nullptr;
 
+    printf("Let to read XML now.\n");
+
+    int count = 0;
+
     while(!reader.atEnd() && !reader.hasError())
     {
+        printf("[%d] - Reading XML.\n", count++);
+
         QXmlStreamReader::TokenType token = reader.readNext();
         if(token == QXmlStreamReader::StartDocument)
             continue;
@@ -2167,7 +2265,7 @@ bool ReadInvoiceXML()
     // If loaded with successfuly, let to process invoice data.
     if(pageMap->size() > 0)
     {
-        return GetInvoiceData(pageMap);
+        return GetInvoiceData(fileName, pageMap);
     }
     else
     {
@@ -2176,4 +2274,3 @@ bool ReadInvoiceXML()
         return false;
     }
 }
-
