@@ -2106,7 +2106,7 @@ bool GetInvoiceData(QString fileName, QMap<int, sPAGE*>* pageMap)
     //QString filename = "data.json";
     //QString filename = croped_fileName + ".json";
 
-    QString filename = fileName.replace(".pdf", ".json");
+    QString filename = fileName.replace(".xml", ".json");
 
     printf("JSON will be saved in: %s\n", filename.toStdString().c_str());
     QFile file(filename);
