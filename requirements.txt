@@ -10,3 +10,4 @@ pdfminer.six
 PyPDF2
 nltk
 django-seed
+PyYAML

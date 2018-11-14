@@ -1,0 +1,560 @@
+- model: invoice.receiver
+  pk: 1
+  fields:
+    name: LOJA COMERCIAL DE LIMPEZAS
+    cpf_cnpj: 03444927491452
+    address: SETOR COMERCIAL SUL LOJA 20
+    neighborhood: AVENIDA SUL 21
+    cep: 72047183
+    county: Brasília
+    uf: DF
+    phone: 5561982663425
+
+- model: invoice.seller
+  pk: 1
+  fields:
+    name: CLEAN HOUSE EXPRESS
+    cnpj: 38364057392616
+    cep: 84657093
+    uf_code: 61
+
+- model: invoice.seller
+  pk: 2
+  fields:
+    name: FORUM PURILE AMERICAN
+    cnpj: 37495648265716
+    cep: 84659873
+    uf_code: 72
+
+- model: invoice.seller
+  pk: 3
+  fields:
+    name: STAR LIMP
+    cnpj: 37502658493616
+    cep: 86957409
+    uf_code: 50
+
+- model: invoice.invoice
+  pk: 1
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/clean1.pdf
+    text: RECEBEMOS DA CLEAN HOUSE EXPRESS OS PRODUTOS/SERVIÇOS CONSTANTES
+    number: 947385625
+    operation_nature: Venda a vista
+    authorization_protocol: 369241002778264 15/06/2018 10:10:24
+    access_key: 30180915129564000164550240860027811004640314
+    state_registration: 203461300
+    receiver: 1
+    seller: 1
+    emission_date: "2018-01-21"
+    entry_exit_datetime: "2018-10-14T12:35:04Z"
+    total_invoice_value: 2789.1
+    basis_calculation_icms: 30.1
+    freight_value: 15.2
+    insurance_value: 500.4
+    icms_value: 28.2
+    discount_value: 89.2
+    basis_calculation_icms_st: 39.1
+    icms_value_st: 22.1
+    other_expenditure: 29.1
+    ipi_value: 28.1
+
+- model: invoice.invoice
+  pk: 2
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/clean2.pdf
+    text: RECEBEMOS DA CLEAN HOUSE EXPRESS OS PRODUTOS/SERVIÇOS CONSTANTES
+    number: 767385634
+    operation_nature: Venda a vista
+    authorization_protocol: 269241003478263 14/05/2018 08:24:25
+    access_key: 86180915129564000104550010000027811004640364
+    state_registration: 210341301
+    receiver: 1
+    seller: 1
+    emission_date: "2018-03-14"
+    entry_exit_datetime: "2018-11-16T14:40:03Z"
+    total_invoice_value: 2789.1
+    basis_calculation_icms: 2789.1
+    freight_value: 29.1
+    insurance_value: 234.1
+    icms_value: 100.5
+    discount_value: 73.6
+    basis_calculation_icms_st: 92.2
+    icms_value_st: 80.6
+    other_expenditure: 29.5
+    ipi_value: 23.8
+
+- model: invoice.invoice
+  pk: 3
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/clean3.pdf
+    text: RECEBEMOS DA CLEAN HOUSE EXPRESS OS PRODUTOS/SERVIÇOS CONSTANTES
+    number: 877385664
+    operation_nature: Venda a vista
+    authorization_protocol: 649241002778235 13/05/2018 07:09:23
+    access_key: 85183215129564574104550013500027811004694263
+    state_registration: 760351303
+    receiver: 1
+    seller: 1
+    emission_date: "2018-03-23"
+    entry_exit_datetime: "2018-10-14T12:35:04Z"
+    total_invoice_value: 2739.1
+    basis_calculation_icms: 2789.1
+    freight_value: 69.2
+    insurance_value: 72.1
+    icms_value: 92.5
+    discount_value: 838.6
+    basis_calculation_icms_st: 109.1
+    icms_value_st: 109.3
+    other_expenditure: 589.5
+    ipi_value: 229.1
+
+- model: invoice.invoice
+  pk: 4
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/clean4.pdf
+    text: RECEBEMOS DA CLEAN HOUSE EXPRESS OS PRODUTOS/SERVIÇOS CONSTANTES
+    number: 677385645
+    operation_nature: Venda a vista
+    authorization_protocol: 369241002778264 13/09/2018 04:02:22
+    access_key: 76480915129564000104230034045027811064645386
+    state_registration: 250861304
+    receiver: 1
+    seller: 1
+    emission_date: "2018-03-10"
+    entry_exit_datetime: "2018-05-16T14:53:32Z"
+    total_invoice_value: 2909.1
+    basis_calculation_icms: 273.1
+    freight_value: 05.7
+    insurance_value: 268.8
+    icms_value: 389.0
+    discount_value: 98.2
+    basis_calculation_icms_st: 872.9
+    icms_value_st: 98.2
+    other_expenditure: 109.1
+    ipi_value: 209.1
+
+- model: invoice.invoice
+  pk: 5
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/clean5.pdf
+    text: RECEBEMOS DA CLEAN HOUSE EXPRESS OS PRODUTOS/SERVIÇOS CONSTANTES
+    number: 977385656
+    operation_nature: Venda a vista
+    authorization_protocol: 439241002778245 16/06/2018 05:08:22
+    access_key: 64183515129564000104550075003427811004673246
+    state_registration: 980351305
+    receiver: 1
+    seller: 1
+    emission_date: "2018-03-30"
+    entry_exit_datetime: "2018-09-13T13:45:14Z"
+    total_invoice_value: 9001.8
+    basis_calculation_icms: 2979.1
+    freight_value: 29.2
+    insurance_value: 2373.2
+    icms_value: 972.1
+    discount_value: 2089.1
+    basis_calculation_icms_st: 862.1
+    icms_value_st: 2231.3
+    other_expenditure: 2686.2
+    ipi_value: 239.1
+
+- model: invoice.invoice
+  pk: 6
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/forum1.pdf
+    text: RECEBEMOS DA FORUM PURILE AMERICAN EXPRESS OS PRODUTOS/SERVIÇOS
+    number: 757385636
+    operation_nature: Venda a vista
+    authorization_protocol: 529241002778245 23/04/2018 11:05:22
+    access_key: 31180915123464064104550350075027811004657545
+    state_registration: 460751306
+    receiver: 1
+    seller: 2
+    emission_date: "2018-06-03"
+    entry_exit_datetime: "2018-02-10T09:20:01Z"
+    total_invoice_value: 4632.13
+    basis_calculation_icms: 7339.3
+    freight_value: 9.35
+    insurance_value: 39.34
+    icms_value: 245.35
+    discount_value: 49.32
+    basis_calculation_icms_st: 2325.6
+    icms_value_st: 346.3
+    other_expenditure: 235.6
+    ipi_value: 3759.4
+
+- model: invoice.invoice
+  pk: 7
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/forum2.pdf
+    text: RECEBEMOS DA FORUM PURILE AMERICAN EXPRESS OS PRODUTOS/SERVIÇOS
+    number: 457385687
+    operation_nature: Venda a vista
+    authorization_protocol: 329241002778242 15/06/2018 12:01:20
+    access_key: 35180963129575000104550010640027811004640334
+    state_registration: 860351307
+    receiver: 1
+    seller: 2
+    emission_date: "2018-04-08"
+    entry_exit_datetime: "2018-09-12T09:20:10Z"
+    total_invoice_value: 9245.42
+    basis_calculation_icms: 2624.35
+    freight_value: 62.34
+    insurance_value: 624.34
+    icms_value: 2725.18
+    discount_value: 2325.16
+    basis_calculation_icms_st: 39.14
+    icms_value_st: 35.34
+    other_expenditure: 1712.24
+    ipi_value: 345.35
+
+- model: invoice.invoice
+  pk: 8
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/forum3.pdf
+    text: RECEBEMOS DA FORUM PURILE AMERICAN EXPRESS OS PRODUTOS/SERVIÇOS
+    number: 677385636
+    operation_nature: Venda a vista
+    authorization_protocol: 769241002778245 15/06/2018 13:04:28
+    access_key: 53180915129564750104556413500027811004644697
+    state_registration: 750571308
+    receiver: 1
+    seller: 2
+    emission_date: "2018-05-22"
+    entry_exit_datetime: "2018-02-12T08:45:59Z"
+    total_invoice_value: 234.38
+    basis_calculation_icms: 389.34
+    freight_value: 38.54
+    insurance_value: 9.13
+    icms_value: 42.32
+    discount_value: 2.34
+    basis_calculation_icms_st: 249.13
+    icms_value_st: 359.23
+    other_expenditure: 224.35
+    ipi_value: 70.12
+
+- model: invoice.invoice
+  pk: 9
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/forum4.pdf
+    text: RECEBEMOS DA FORUM PURILE AMERICAN EXPRESS OS PRODUTOS/SERVIÇOS
+    number: 687385643
+    operation_nature: Venda a vista
+    authorization_protocol: 359241002778275 15/06/2018 16:16:25
+    access_key: 97180934129564000107550010450027811004640386
+    state_registration: 460241309
+    receiver: 1
+    seller: 2
+    emission_date: "2018-05-25"
+    entry_exit_datetime: "2018-08-02T02:44:20Z"
+    total_invoice_value: 3947.98
+    basis_calculation_icms: 2353.12
+    freight_value: 25.86
+    insurance_value: 134.34
+    icms_value: 98.34
+    discount_value: 29.1
+    basis_calculation_icms_st: 229.34
+    icms_value_st: 2349.87
+    other_expenditure: 289.45
+    ipi_value: 27.34
+
+- model: invoice.invoice
+  pk: 10
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/forum5.pdf
+    text: RECEBEMOS DA FORUM PURILE AMERICAN EXPRESS OS PRODUTOS/SERVIÇOS
+    number: 537385697
+    operation_nature: Venda a vista
+    authorization_protocol: 459241002778264 15/06/2018 17:09:10
+    access_key: 57180915129564000105450010620027811004640335
+    state_registration: 630451310
+    receiver: 1
+    seller: 2
+    emission_date: "2018-05-18"
+    entry_exit_datetime: "2017-08-09T16:32:02Z"
+    total_invoice_value: 5098.12
+    basis_calculation_icms: 1234.21
+    freight_value: 27.76
+    insurance_value: 234.32
+    icms_value: 32.11
+    discount_value: 223.32
+    basis_calculation_icms_st: 109.65
+    icms_value_st: 112.23
+    other_expenditure: 1345.24
+    ipi_value: 134.32
+
+- model: invoice.invoice
+  pk: 11
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/star1.pdf
+    text: OS PRODUTOS DA STAR LIMP FORAM RECEBIDO EM PERFEITO ESTADO
+    number: 687385646
+    operation_nature: Venda a vista
+    authorization_protocol: 879241002778246 22/04/2018 07:43:45
+    access_key: 64180915129564036104550520530027811004640335
+    state_registration: 150365311
+    receiver: 1
+    seller: 3
+    emission_date: "2018-06-12"
+    entry_exit_datetime: "2017-12-12T12:36:09Z"
+    total_invoice_value: 2789.1
+    basis_calculation_icms: 2789.1
+    freight_value: 34.45
+    insurance_value: 259.23
+    icms_value: 468.24
+    discount_value: 398.23
+    basis_calculation_icms_st: 3489.10
+    icms_value_st: 275.12
+    other_expenditure: 2239.12
+    ipi_value: 2134.23
+
+- model: invoice.invoice
+  pk: 12
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/star2.pdf
+    text: OS PRODUTOS DA STAR LIMP FORAM RECEBIDO EM PERFEITO ESTADO
+    number: 987385674
+    operation_nature: Venda a vista
+    authorization_protocol: 369241002778264 30/08/2018 10:20:30
+    access_key: 72180915129564000104554615700027811004640335
+    state_registration: 290341312
+    receiver: 1
+    seller: 3
+    emission_date: "2018-10-04"
+    entry_exit_datetime: "2017-05-10T10:38:02Z"
+    total_invoice_value: 5746.21
+    basis_calculation_icms: 789.12
+    freight_value: 278.76
+    insurance_value: 2723.23
+    icms_value: 167.23
+    discount_value: 24.56
+    basis_calculation_icms_st: 2341.76
+    icms_value_st: 23.23
+    other_expenditure: 234.23
+    ipi_value: 143.12
+
+- model: invoice.invoice
+  pk: 13
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/star3.pdf
+    text: OS PRODUTOS DA STAR LIMP FORAM RECEBIDO EM PERFEITO ESTADO
+    number: 477385663
+    operation_nature: Venda a vista
+    authorization_protocol: 769241002778245 26/01/2018 11:14:13
+    access_key: 14180915129564740104545010340027811004640351
+    state_registration: 650251313
+    receiver: 1
+    seller: 3
+    emission_date: "2017-06-29"
+    entry_exit_datetime: "2017-06-12T09:40:04Z"
+    total_invoice_value: 62329.23
+    basis_calculation_icms: 234.86
+    freight_value: 2734.09
+    insurance_value: 179.54
+    icms_value: 2319.23
+    discount_value: 2359.34
+    basis_calculation_icms_st: 389.1
+    icms_value_st: 124.15
+    other_expenditure: 239.12
+    ipi_value: 27.12
+
+- model: invoice.invoice
+  pk: 14
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/star4.pdf
+    text: OS PRODUTOS DA STAR LIMP FORAM RECEBIDO EM PERFEITO ESTADO
+    number: 757346694
+    operation_nature: Venda a vista
+    authorization_protocol: 879241002778254 08/04/2018 12:15:40
+    access_key: 25180915129563500164550010260027811004640386
+    state_registration: 685461314
+    receiver: 1
+    seller: 3
+    emission_date: "2017-06-20"
+    entry_exit_datetime: "2017-12-30T18:30:04Z"
+    total_invoice_value: 3467.21
+    basis_calculation_icms: 789.31
+    freight_value: 235.24
+    insurance_value: 2179.84
+    icms_value: 2245.34
+    discount_value: 2239.19
+    basis_calculation_icms_st: 2129.12
+    icms_value_st: 135.16
+    other_expenditure: 112.11
+    ipi_value: 2234.12
+
+- model: invoice.invoice
+  pk: 15
+  fields:
+    file: http://localhost:8000/api/invoice/invoice/invoice/images/star5.pdf
+    text: OS PRODUTOS DA STAR LIMP FORAM RECEBIDO EM PERFEITO ESTADO
+    number: 657355663
+    operation_nature: Venda a vista
+    authorization_protocol: 369241002778264 09/04/2018 12:15:30
+    access_key: 26180915129564000104550010025027811004656376
+    state_registration: 850341315
+    receiver: 1
+    seller: 3
+    emission_date: "2017-07-10"
+    entry_exit_datetime: "2017-09-12T13:40:35Z" 
+    total_invoice_value: 2789.1
+    basis_calculation_icms: 2789.1
+    freight_value: 9569.11
+    insurance_value: 1335.21
+    icms_value: 25.21
+    discount_value: 35.23
+    basis_calculation_icms_st: 389.64
+    icms_value_st: 36.63
+    other_expenditure: 1239.12
+    ipi_value: 98.34
+    
+- model: invoice.Product_Service
+  pk: 1
+  fields:
+    code: 0948
+    description: PRODUTO DE ÓTIMA QUALIDADE
+    qtd: 3
+    unity_value: 12.31
+    total_value: 2309.12
+    discount_value: 312.12
+
+- model: invoice.Product_Service
+  pk: 2
+  fields:
+    code: 2093
+    description: MELHOR PRODUTO DO MERCADO
+    qtd: 3
+    unity_value: 39.31
+    total_value: 1131.32
+    discount_value: 23.32
+
+- model: invoice.Product_Service
+  pk: 3
+  fields:
+    code: 5432
+    description: PRODUTO SEM COMPARAÇÃO
+    qtd: 2
+    unity_value: 39.07
+    total_value: 1223.12
+    discount_value: 23.12
+
+- model: invoice.Product_Service
+  pk: 4
+  fields:
+    code: 9875
+    description: PRODUTO DE ÓTIMA QUALIDADE
+    qtd: 3
+    unity_value: 3209.07
+    total_value: 2149.31
+    discount_value: 39.42
+
+- model: invoice.Product_Service
+  pk: 5
+  fields:
+    code: 2654
+    description: MELHOR PRODUTO DO MERCADO
+    qtd: 2
+    unity_value: 23.09
+    total_value: 543.98
+    discount_value: 234.90
+
+- model: invoice.Product_Service
+  pk: 6
+  fields:
+    code: 9576
+    description: PRODUTO SEM COMPARAÇÃO
+    qtd: 687
+    unity_value: 20.10
+    total_value: 9780.98
+    discount_value: 90.09
+
+- model: invoice.Product_Service
+  pk: 7
+  fields:
+    code: 0574
+    description: MELHOR PRODUTO DO MERCADO
+    qtd: 76
+    unity_value: 123
+    total_value: 8708.78
+    discount_value: 107.98
+
+- model: invoice.Product_Service
+  pk: 8
+  fields:
+    code: 8576
+    description: MELHOR PRODUTO DO MERCADO
+    qtd: 67
+    unity_value: 98.00
+    total_value: 890.00
+    discount_value: 56.87
+
+- model: invoice.Product_Service
+  pk: 9
+  fields:
+    code: 1645
+    description: PRODUTO DE ÓTIMA QUALIDADE
+    qtd: 867
+    unity_value: 09.89
+    total_value: 8675.76
+    discount_value: 800.00
+
+- model: invoice.Product_Service
+  pk: 10
+  fields:
+    code: 7845
+    description: MELHOR PRODUTO DO MERCADO
+    qtd: 46
+    unity_value: 56.87
+    total_value: 786.00
+    discount_value: 90.87
+
+- model: invoice.Product_Service
+  pk: 11
+  fields:
+    code: 7956
+    description: PRODUTO DE ÓTIMA QUALIDADE
+    qtd: 97
+    unity_value: 09.88
+    total_value: 7986.00
+    discount_value: 780.00
+
+- model: invoice.Product_Service
+  pk: 12
+  fields:
+    code: 7845
+    description: MELHOR PRODUTO DO MERCADO
+    qtd: 198
+    unity_value: 1.09
+    total_value: 8765.09
+    discount_value: 79.66
+
+- model: invoice.Product_Service
+  pk: 13
+  fields:
+    code: 3753
+    description: PRODUTO DE ÓTIMA QUALIDADE
+    qtd: 978
+    unity_value: 2.09
+    total_value: 8686.68
+    discount_value: 675.00
+
+- model: invoice.Product_Service
+  pk: 14
+  fields:
+    code: 8653
+    description: MELHOR PRODUTO DO MERCADO
+    qtd: 967
+    unity_value: 3.19
+    total_value: 4563.09
+    discount_value: 309.08
+
+- model: invoice.Product_Service
+  pk: 15
+  fields:
+    code: 2353
+    description: PRODUTO DE ÓTIMA QUALIDADE
+    qtd: 109
+    unity_value: 23.09
+    total_value: 1293.43
+    discount_value: 87.00
