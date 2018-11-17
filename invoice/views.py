@@ -683,7 +683,7 @@ class InvoiceCreateList(View):
         print(total_invoice_value)
         print("-------------------")
 
-        dict_invoice['total_invoice_value'] = total_invoice_value
+        dict_invoice['total_invoice_value'] = float(total_invoice_value)
 
         i = 0
 
