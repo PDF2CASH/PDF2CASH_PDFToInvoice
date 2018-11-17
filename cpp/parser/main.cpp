@@ -1,7 +1,7 @@
 #include <QCoreApplication>
 
 #include "utils.h"
-#include "parser.h"
+#include "Parser.h"
 
 #include <QElapsedTimer>
 
@@ -218,16 +218,15 @@ int main(int argc, char *argv[])
         int timeOutMS = 1000;
         long remainingTime = 0;
 
+        // Just for give some delay in program for poppler library finish everything.
         for (;;)
         {
             remainingTime = timeOutMS - timer.elapsed();
             if(remainingTime <= 0)
-            {
-                // Now to read xml created.
-                //ReadInvoiceXML(fileName);
                 break;
-            }
         }
+
+        Parser* parser = new Parser(fileName);
     }
     else
     {
