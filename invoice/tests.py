@@ -38,25 +38,6 @@ class SellerTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(json.loads(response.content)), 1)
 
-    def test_seller_object_post(self):
-        data = {
-            'name': "PRISMA DISTRIBUIDORA LTDA ME",
-            'cnpj': "12123544000104",
-            'cep': "41852690",
-            'uf_code': 55
-        }
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 201)
-        data['id'] = json.loads(response.content)['id']
-        self.assertEqual(json.loads(response.content), data)
-
-    def test_seller_object_delete(self):
-        self.url += '{}/'.format(self.seller1.id)
-        response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, 204)
-        response = self.client.get('/api/invoice/seller/')
-        self.assertEqual(len(json.loads(response.content)), 0)
-
     def test_seller_object_read(self):
         self.url += '{}/'.format(self.seller1.id)
         response = self.client.get(self.url)
@@ -118,29 +99,6 @@ class ReceiverTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(json.loads(response.content)), 1)
 
-    def test_receiver_object_post(self):
-        data = {
-            'name': 'Rafael Teodosio',
-            'cpf_cnpj': '39403757102',
-            'address': 'Qr 400 conjunto K casa 20',
-            'neighborhood': 'Gama',
-            'cep': '68394002',
-            'county': 'BRASILIA',
-            'uf': 'DF',
-            'phone': '6133420214'
-        }
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 201)
-        data['id'] = json.loads(response.content)['id']
-        self.assertEqual(json.loads(response.content), data)
-
-    def test_receiver_object_delete(self):
-        self.url += '{}/'.format(self.receiver1.id)
-        response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, 204)
-        response = self.client.get('/api/invoice/receiver/')
-        self.assertEqual(len(json.loads(response.content)), 0)
-
     def test_receiver_object_read(self):
         self.url += '{}/'.format(self.receiver1.id)
         response = self.client.get(self.url)
@@ -197,27 +155,6 @@ class ProductServiceTest(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(json.loads(response.content)), 1)
-
-    def test_product_service_object_post(self):
-        data = {
-            'code': '123213214',
-            'description': 'Pneu',
-            'qtd': 2,
-            'unity_value': 50.00,
-            'total_value': 100.00,
-            'discount_value': 0.0
-        }
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 201)
-        data['id'] = json.loads(response.content)['id']
-        self.assertEqual(json.loads(response.content), data)
-
-    def test_product_service_object_delete(self):
-        self.url += '{}/'.format(self.product_service1.id)
-        response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, 204)
-        response = self.client.get('/api/invoice/product-service/')
-        self.assertEqual(len(json.loads(response.content)), 0)
 
     def test_product_service_object_read(self):
         self.url += '{}/'.format(self.product_service1.id)
@@ -349,7 +286,7 @@ class InvoiceTest(TestCase):
             data={},
             content_type='application/json'
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 405)
 
     def test_invoice_object_partial_update(self):
         self.url += '{}/'.format(self.invoice1.id)
@@ -358,7 +295,7 @@ class InvoiceTest(TestCase):
             data={},
             content_type='application/json'
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 405)
 
     def test_invoice_object_create(self):
         file = open("invoice/test.pdf", 'rb')

@@ -1,5 +1,5 @@
-from rest_framework.response import Response
-from rest_framework import viewsets, status
+import json
+from django.http import HttpResponse
 from .models import (
         Invoice,
         Seller,
@@ -13,7 +13,6 @@ from .serializers import (
         ProductServiceSerializer
         )
 import PyPDF2
-from nltk.tokenize import word_tokenize
 import re
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
@@ -21,6 +20,9 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 from io import StringIO
 from rest_framework.parsers import MultiPartParser
+from django.views import View
+from django.http import Http404
+from rest_framework.decorators import parser_classes
 
 
 def convert_pdf_to_txt(file):
@@ -220,18 +222,57 @@ def search_create_seller(cnpj_seller, text, uf_code_seller):
     return seller
 
 
-class InvoiceViewSet(viewsets.ModelViewSet):
-    queryset = Invoice.objects.all()
-    serializer_class = InvoiceSerializer
-    parser_classes = (MultiPartParser,)
+def get_object_invoice(pk):
+    try:
+        return Invoice.objects.get(pk=pk)
+    except Invoice.DoesNotExist:
+        raise Http404
 
-    def update(self, request, pk=None):
-        return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def partial_update(self, request, pk=None):
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+def get_object_seller(pk):
+    try:
+        return Seller.objects.get(pk=pk)
+    except Seller.DoesNotExist:
+        raise Http404
 
-    def create(self, request, format=None):
+
+def get_object_receiver(pk):
+    try:
+        return Receiver.objects.get(pk=pk)
+    except Receiver.DoesNotExist:
+        raise Http404
+
+
+def get_object_product_service(pk):
+    try:
+        return Product_Service.objects.get(pk=pk)
+    except Product_Service.DoesNotExist:
+        raise Http404
+
+
+class InvoiceShowDelete(View):
+
+    def get(self, request, pk):
+        invoice = get_object_invoice(pk)
+        serializer = InvoiceSerializer(invoice)
+        return HttpResponse(json.dumps(serializer.data), status=200)
+
+    def delete(self, request, pk):
+        invoice = get_object_invoice(pk)
+        invoice.delete()
+        return HttpResponse(status=204)
+
+
+class InvoiceCreateList(View):
+
+    def get(self, request):
+
+        invoices = Invoice.objects.all()
+        serializer = InvoiceSerializer(invoices, many=True)
+        return HttpResponse(json.dumps(serializer.data))
+
+    @parser_classes((MultiPartParser,))
+    def post(self, request):
 
         dict_invoice = {}
 
@@ -257,29 +298,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         if text != "":
             text = text
         else:
-            return Response(status=400)
-
-        tokens = word_tokenize(text)
-
-        punctuations = ['(', ')', ';', ':', '[', ']', ',']
-
-        keywords = [word for word in tokens if not (word in punctuations)]
-
-        validation_words = [
-                "WWW.NFE.FAZENDA.GOV.BR/PORTAL",
-                "www.nfe.fazenda.gov.br/portal",
-                "WWW.NFE.FAZENDA.GOV.BR",
-                "www.nfe.fazenda.gov.br",
-                ]
-
-        i = 0
-
-        for word in validation_words:
-            if word in keywords:
-                i = i + 1
-
-        if i < 1:
-            return Response(status=400)
+            return HttpResponse(status=400)
 
         dict_invoice['text'] = text
 
@@ -296,7 +315,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 )
 
         if not access_key:
-            return Response({'error': 'Chave de acesso da nota fiscal não encontrada no pdf!'}, status=400)
+            return HttpResponse(
+                json.dumps({'error': 'Chave de acesso da nota fiscal não encontrada no pdf!'}),
+                status=400
+            )
 
         access_key = str(access_key.group()).replace(' ', '')
 
@@ -322,7 +344,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 )
 
         if not cpnj_cpf_receiver or len(cpnj_cpf_receiver) < 2:
-            return Response({'error': 'Cnpj ou cpf do destinatário da nota fiscal não encontrado no pdf!'}, status=400)
+            return HttpResponse(
+                json.dumps({'error': 'Cnpj ou cpf do destinatário da nota fiscal não encontrado no pdf!'}),
+                status=400
+            )
 
         for i in range(len(cpnj_cpf_receiver)):
             cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('-', '')
@@ -344,8 +369,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         receiver = search_create_receiver(cpnj_cpf_receiver, text)
         if not receiver:
-            return Response(
-                    {'error': 'Atributos referentes ao destinatário da nota fiscal não encontrados no pdf!'},
+            return HttpResponse(
+                    json.dumps({'error': 'Atributos referentes ao destinatário da nota fiscal não encontrados!'}),
                     status=400
                     )
 
@@ -353,8 +378,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         seller = search_create_seller(cnpj_seller, text, uf_code_seller)
         if not seller:
-            return Response(
-                    {'error': 'Atributos referentes ao emitente da nota fiscal não encontrados no pdf!'},
+            return HttpResponse(
+                    json.dumps({'error': 'Atributos referentes ao emitente da nota fiscal não encontrados no pdf!'}),
                     status=400
                     )
 
@@ -368,10 +393,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 re.M | re.I
                 )
         if not operation_nature:
-            return Response(
-                    {'error': 'Naturaza da operação da nota fiscal não encontrada no pdf!'},
+            return HttpResponse(
+                    json.dumps({'error': 'Naturaza da operação da nota fiscal não encontrada no pdf!'}),
                     status=400
-                    )
+            )
         operation_nature = str(operation_nature.group()).replace('NATUREZA DA OPERAÇÃO', '')
         operation_nature = operation_nature.replace('\n', '')
 
@@ -389,8 +414,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 re.M | re.I
                 )
         if not authorization_protocol:
-            return Response(
-                    {'error': 'Protocolo de autorização da nota fiscal não encontrado no pdf!'},
+            return HttpResponse(
+                    json.dumps({'error': 'Protocolo de autorização da nota fiscal não encontrado no pdf!'}),
                     status=400
                     )
         authorization_protocol = str(authorization_protocol.group())
@@ -406,7 +431,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         state_registration = re.search(r'INSCRIÇÃO ESTADUAL\s+(\d+)\s', text, re.M | re.I)
         if not state_registration:
-            return Response({'error': 'Inscrição estadual da nota fiscal não encontrada no pdf!'}, status=400)
+            return HttpResponse(
+                json.dumps({'error': 'Inscrição estadual da nota fiscal não encontrada no pdf!'}),
+                status=400
+            )
         state_registration = str(state_registration.group())
         state_registration = state_registration.replace('INSCRIÇÃO ESTADUAL', '')
         state_registration = state_registration.replace(' ', '')
@@ -424,10 +452,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             r'BASE DE CÁLCULO DE ICMS\s+([\d+|\.]+\,\d{2})\s', text,
             re.M | re.I)
         if not basis_calculation_icms:
-            return Response({
+            return HttpResponse(json.dumps({
                 'error':
                 'Base do cálculo de ICMS da nota fiscal não encontrada no pdf!'
-            },
+            }),
                             status=400)
         basis_calculation_icms = str(basis_calculation_icms.group(1))
         basis_calculation_icms = basis_calculation_icms.replace(
@@ -447,10 +475,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         freight_value = re.search(
             r'VALOR DO FRETE\s+.*\s+([\d+|\.]+\,\d{2})\s', text, re.M | re.I)
         if not freight_value:
-            return Response({
+            return HttpResponse(json.dumps({
                 'error':
                 'Valor do Frete da nota fiscal não encontrada no pdf!'
-            },
+            }),
                             status=400)
         freight_value = str(freight_value.group(1))
         freight_value = freight_value.replace('VALOR DO FRETE', '')
@@ -470,10 +498,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         insurance_value = re.search(
             r'VALOR DO SEGURO\s+.*\s+([\d+|\.]+\,\d{2})\s', text, re.M | re.I)
         if not insurance_value:
-            return Response({
+            return HttpResponse(json.dumps({
                 'error':
                 'Valor do Seguro da nota fiscal não encontrada no pdf!'
-            },
+            }),
                             status=400)
         insurance_value = str(insurance_value.group(1))
         insurance_value = insurance_value.replace('VALOR DO SEGURO', '')
@@ -493,10 +521,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             r'VALOR DO ICMS\n.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})\s', text,
             re.M | re.I)
         if not icms_value:
-            return Response({
+            return HttpResponse(json.dumps({
                 'error':
                 'Valor do ICMS da nota fiscal não encontrada no pdf!'
-            },
+            }),
                             status=400)
         icms_value = str(icms_value.group(1))
         icms_value = icms_value.replace(' ', '')
@@ -513,10 +541,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         discount_value = re.search(r'DESCONTO\s+([\d+|\.]+\,\d{2})\s', text,
                                    re.M | re.I)
         if not discount_value:
-            return Response(
-                {
+            return HttpResponse(
+                json.dumps({
                     'error': 'Desconto da nota fiscal não encontrada no pdf!'
-                },
+                }),
                 status=400)
         discount_value = str(discount_value.group(1))
         discount_value = discount_value.replace(' ', '')
@@ -534,10 +562,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             r'BASE DE CÁLCULO ICMS S.*\s+.*\s+.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})',
             text, re.M | re.I)
         if not basis_calculation_icms_st:
-            return Response({
+            return HttpResponse(json.dumps({
                 'error':
                 'Base do cálculo de ICMS ST da nota fiscal não encontrada no pdf!'
-            },
+            }),
                             status=400)
         basis_calculation_icms_st = str(basis_calculation_icms_st.group(1))
         basis_calculation_icms_st = basis_calculation_icms_st.replace(' ', '')
@@ -556,10 +584,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             r'VALOR DO ICMS S.*\s+.*\s+.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})',
             text, re.M | re.I)
         if not icms_value_st:
-            return Response({
+            return HttpResponse(json.dumps({
                 'error':
                 'Valor do ICMS ST da nota fiscal não encontrada no pdf!'
-            },
+            }),
                             status=400)
         icms_value_st = str(icms_value_st.group(1))
         icms_value_st = icms_value_st.replace(' ', '')
@@ -578,10 +606,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             r'DESPESAS ACESSÓRIAS.*\s+.*\s+([\d+|\.]+\,\d{2})', text,
             re.M | re.I)
         if not other_expenditure:
-            return Response({
+            return HttpResponse(json.dumps({
                 'error':
                 'Despesas Acessórias da nota fiscal não encontrada no pdf!'
-            },
+            }),
                             status=400)
         other_expenditure = str(other_expenditure.group(1))
         other_expenditure = other_expenditure.replace(' ', '')
@@ -599,10 +627,10 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         ipi_value = re.search(r'VALOR DO IPI.*\s+([\d+|\.]+\,\d{2})', text,
                               re.M | re.I)
         if not ipi_value:
-            return Response({
+            return HttpResponse(json.dumps({
                 'error':
                 'Valor do IPI da nota fiscal não encontrada no pdf!'
-            },
+            }),
                             status=400)
         ipi_value = str(ipi_value.group(1))
         ipi_value = ipi_value.replace(' ', '')
@@ -629,7 +657,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 re.M | re.I
                 )
         if not total_invoice_value or not values:
-            return Response({'error': 'Valor da nota fiscal não encontrada no pdf!'}, status=400)
+            return HttpResponse(json.dumps({'error': 'Valor da nota fiscal não encontrada no pdf!'}), status=400)
         total_invoice_value = str(total_invoice_value.group())
         total_invoice_value = total_invoice_value.replace(' ', '')
         total_invoice_value = total_invoice_value.replace('/', '')
@@ -680,7 +708,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         dates = re.findall(r'(\d{2}\/\d{2}\/\d{4})', text1, re.M | re.I)
         hours = re.findall(r'(\d{2}\:\d{2}(\:\d{2})?)', text, re.M | re.I)
         if not dates or not hours:
-            return Response({'error': 'Datas não encontradas no pdf!'}, status=400)
+            return HttpResponse(json.dumps({'error': 'Datas não encontradas no pdf!'}), status=400)
 
         print("-------------------")
         print(dates)
@@ -713,39 +741,54 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=200)
+            return HttpResponse(json.dumps(serializer.data), status=200)
         else:
-            return Response(serializer.errors, status=400)
+            return HttpResponse(json.dumps(serializer.errors), status=400)
 
 
-class SellerViewSet(viewsets.ModelViewSet):
-    queryset = Seller.objects.all()
-    serializer_class = SellerSerializer
-
-    def update(self, request, pk=None):
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    def partial_update(self, request, pk=None):
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+def sellerShow(request, pk):
+    if request.method == 'GET':
+        seller = get_object_seller(pk)
+        serializer = SellerSerializer(seller)
+        return HttpResponse(json.dumps(serializer.data), status=200)
+    return HttpResponse(status=400)
 
 
-class ReceiverViewSet(viewsets.ModelViewSet):
-    queryset = Receiver.objects.all()
-    serializer_class = ReceiverSerializer
-
-    def update(self, request, pk=None):
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    def partial_update(self, request, pk=None):
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+def receiverShow(request, pk):
+    if request.method == 'GET':
+        receiver = get_object_receiver(pk)
+        serializer = ReceiverSerializer(receiver)
+        return HttpResponse(json.dumps(serializer.data), status=200)
+    return HttpResponse(status=400)
 
 
-class ProductServiceViewSet(viewsets.ModelViewSet):
-    queryset = Product_Service.objects.all()
-    serializer_class = ProductServiceSerializer
+def productShow(request, pk):
+    if request.method == 'GET':
+        product_service = get_object_product_service(pk)
+        serializer = ProductServiceSerializer(product_service)
+        return HttpResponse(json.dumps(serializer.data), status=200)
+    return HttpResponse(status=400)
 
-    def update(self, request, pk=None):
-        return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def partial_update(self, request, pk=None):
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+def sellerList(request):
+    if request.method == 'GET':
+        seller = Seller.objects.all()
+        serializer = SellerSerializer(seller, many=True)
+        return HttpResponse(json.dumps(serializer.data))
+    return HttpResponse(status=400)
+
+
+def receiverList(request):
+    if request.method == 'GET':
+        receiver = Receiver.objects.all()
+        serializer = ReceiverSerializer(receiver, many=True)
+        return HttpResponse(json.dumps(serializer.data))
+    return HttpResponse(status=400)
+
+
+def productList(request):
+    if request.method == 'GET':
+        product_service = Product_Service.objects.all()
+        serializer = ProductServiceSerializer(product_service, many=True)
+        return HttpResponse(json.dumps(serializer.data))
+    return HttpResponse(status=400)
