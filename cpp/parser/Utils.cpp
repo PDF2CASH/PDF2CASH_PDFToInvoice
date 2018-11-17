@@ -1,6 +1,8 @@
-#include "utils.h"
+#include "Utils.h"
 
-namespace utils
+#include <QFileInfo>
+
+namespace Utils
 {
 
 bool IsNumber(QString text)
@@ -152,6 +154,20 @@ GooString* getInfoString(Dict *infoDict, const char *key)
     }
 
     return encodedString;
+}
+
+bool FileExists(QString path)
+{
+    QFileInfo check_file(path);
+    // check if file exists and if yes: Is it really a file and no directory?
+    if (check_file.exists() && check_file.isFile())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 }

@@ -12,13 +12,17 @@
 
 #include <html/HtmlOutputDev.h>
 
-namespace utils
+namespace Utils
 {
+
 bool CheckPossibleHeader(QString text);
 bool IsNumber(QString text);
 
 GooString* getInfoDate(Dict *infoDict, const char *key);
 GooString* getInfoString(Dict *infoDict, const char *key);
+
+bool FileExists(QString path);
+
 }
 
 #endif // UTILS_H
