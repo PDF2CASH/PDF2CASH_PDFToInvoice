@@ -1,5 +1,5 @@
 #include "Parser.h"
-#include "utils.h"
+#include "Utils.h"
 
 #include <QFile>
 #include <QXmlStreamReader>
@@ -7,9 +7,9 @@
 
 #include <QDebug>
 
-Parser::Parser(QString fileName)
+Parser::Parser()
 {
-    ReadInvoiceXML(fileName);
+    _fileName = "";
 }
 
 ///
@@ -1164,12 +1164,12 @@ int Parser::GetMaxDataHeader(int header)
     }
 }
 
-void Parser::DebugShow(QMap<int, QList<sINVOICEDATA*>> map)
+void Parser::DebugShow()
 {
     QString tmpStr;
     sINVOICEDATA* tmpInvoice = nullptr;
 
-    for(auto it = map.begin(); it != map.end(); ++it)
+    for(auto it = _invoicesMap.begin(); it != _invoicesMap.end(); ++it)
     {
         switch(it.key())
         {
@@ -1335,7 +1335,7 @@ QString Parser::GenerateJson(QMap<int, QList<sINVOICEDATA*>> map)
                 }
                 else
                 {
-                    if(utils::IsNumber(tmpInvoice->value))
+                    if(Utils::IsNumber(tmpInvoice->value))
                     {
                         json += tmpInvoice->value;
                         json += ",\n";
@@ -1362,18 +1362,53 @@ QString Parser::GenerateJson(QMap<int, QList<sINVOICEDATA*>> map)
     return json;
 }
 
+bool Parser::ConvertToJson()
+{
+    QString filename = "";
+
+    if(_fileName.contains(".xml"))
+        filename = _fileName.replace(".xml", "");
+    else if(_fileName.contains(".pdf"))
+        filename = _fileName.replace(".pdf", "");
+    else
+        filename = _fileName;
+
+    filename += ".json";
+
+    //printf("JSON will be saved in: %s\n", filename.toStdString().c_str());
+    QFile file(filename);
+
+    QString buffer = GenerateJson(_invoicesMap);
+    if(buffer.isEmpty() || buffer.isNull())
+    {
+        printf("Failed to generate Json.\n");
+        return false;
+    }
+
+    if (file.open(QIODevice::ReadWrite))
+    {
+        QTextStream stream(&file);
+        stream << buffer << endl;
+    }
+
+    if(file.isOpen())
+        file.close();
+
+    //printf("%s", buffer.toStdString().c_str());
+    return Utils::FileExists(filename);
+}
+
 ///
 /// \brief GetInvoiceData
 /// \param pageMap
 /// \return
 ///
-bool Parser::GetInvoiceData(QString fileName)
+bool Parser::GetInvoiceData()
 {
     // List with possibles headers.
     QList<sTEXTDATA*> headers;
     QList<sTEXTDATA*> values;
     QMap<int, QList<sTEXTDATA*>> valuesMap;
-    QMap<int, QList<sINVOICEDATA*>> invoicesMap;
     QList<sINVOICEHEADER*> invoiceHeaderList;
 
     QList<sTEXTDATA*> failed;
@@ -1389,7 +1424,7 @@ bool Parser::GetInvoiceData(QString fileName)
     QMap<int, sPAGE*>::iterator itPage;
 
     // 0. Process each page.
-    for(itPage = pageMap->begin(); itPage != pageMap->end(); ++itPage)
+    for(itPage = _pageMap->begin(); itPage != _pageMap->end(); ++itPage)
     {
         page = itPage.value();
 
@@ -1402,7 +1437,7 @@ bool Parser::GetInvoiceData(QString fileName)
 
             // Process all the data obtained in the XML and add only
             // data that has a number of characters larger than numbers.
-            if(utils::CheckPossibleHeader(textData->text))
+            if(Utils::CheckPossibleHeader(textData->text))
             {
                 headers.push_back(textData);
             }
@@ -1520,39 +1555,11 @@ bool Parser::GetInvoiceData(QString fileName)
                 }
             }
 
-            invoicesMap.insert(i, tmpInvoiceList);
+            _invoicesMap.insert(i, tmpInvoiceList);
         }
     }
 
-    //DebugShow(invoicesMap);
-
-    //QString croped_fileName= fileName.split(".",QString::SkipEmptyParts).at(0);
-
-    // Create JSON file.
-    //QString filename = "data.json";
-    //QString filename = croped_fileName + ".json";
-
-    QString filename = fileName.replace(".xml", ".json");
-
-    //printf("JSON will be saved in: %s\n", filename.toStdString().c_str());
-    QFile file(filename);
-
-    QString buffer = GenerateJson(invoicesMap);
-    if(buffer.isEmpty() || buffer.isNull())
-    {
-        printf("Failed to generate Json.\n");
-        return false;
-    }
-
-    if (file.open(QIODevice::ReadWrite))
-    {
-        QTextStream stream(&file);
-        stream << buffer << endl;
-    }
-
-    //printf("%s", buffer.toStdString().c_str());
-
-    return true;
+    return (_invoicesMap.size() > 0) ? true : false;
 }
 
 ///
@@ -1561,6 +1568,7 @@ bool Parser::GetInvoiceData(QString fileName)
 ///
 bool Parser::ReadInvoiceXML(QString fileName)
 {
+    _fileName = fileName;
     QString tmp = fileName.replace(".pdf", ".xml");
 
     printf("XML: %s\n", tmp.toStdString().c_str());
@@ -1572,7 +1580,7 @@ bool Parser::ReadInvoiceXML(QString fileName)
         return false;
     }
 
-    pageMap = new QMap<int, sPAGE*>();
+    _pageMap = new QMap<int, sPAGE*>();
 
     QXmlStreamReader reader(&file);
 
@@ -1683,20 +1691,10 @@ bool Parser::ReadInvoiceXML(QString fileName)
 
                 // loaded everything from current page node,
                 // now let to save in map.
-                pageMap->insert(static_cast<int>(pageData->number), pageData);
+                _pageMap->insert(static_cast<int>(pageData->number), pageData);
             }
         }
     }
 
-    // If loaded with successfuly, let to process invoice data.
-    if(pageMap->size() > 0)
-    {
-        return GetInvoiceData(fileName);
-    }
-    else
-    {
-        // Failed to load.
-        qDebug() << "page map is null.";
-        return false;
-    }
+    return (_pageMap && _pageMap->size() > 0) ? true : false;
 }

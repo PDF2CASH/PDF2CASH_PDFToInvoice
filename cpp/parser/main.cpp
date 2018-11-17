@@ -1,6 +1,6 @@
 #include <QCoreApplication>
 
-#include "utils.h"
+#include "Utils.h"
 #include "Parser.h"
 
 #include <QElapsedTimer>
@@ -116,13 +116,13 @@ bool ProcessPDF(QString pdfFileName)
     info = doc->getDocInfo();
     if (info.isDict())
     {
-        docTitle = utils::getInfoString(info.getDict(), "Title");
-        author = utils::getInfoString(info.getDict(), "Author");
-        keywords = utils::getInfoString(info.getDict(), "Keywords");
-        subject = utils::getInfoString(info.getDict(), "Subject");
-        date = utils::getInfoDate(info.getDict(), "ModDate");
+        docTitle = Utils::getInfoString(info.getDict(), "Title");
+        author = Utils::getInfoString(info.getDict(), "Author");
+        keywords = Utils::getInfoString(info.getDict(), "Keywords");
+        subject = Utils::getInfoString(info.getDict(), "Subject");
+        date = Utils::getInfoDate(info.getDict(), "ModDate");
         if (!date)
-            date = utils::getInfoDate(info.getDict(), "CreationDate");
+            date = Utils::getInfoDate(info.getDict(), "CreationDate");
     }
 
     if (!docTitle) docTitle = new GooString(htmlFileName);
@@ -190,16 +190,14 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-
-    // TODO : DEBUG PURPOSE !
+//    // TODO : DEBUG PURPOSE !
 //    argc = 2;
 //    argv = new char*[2];
 //
 //    //argv[1] = "/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/test.pdf";
 //    //argv[1] = "/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/build-parser-Desktop_Qt_5_11_2_GCC_64bit-Debug/pnc1.pdf";
 //    argv[1] = "/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/test.pdf";
-    // END -------------------------
-
+//    // END -------------------------
 
     if(argc <= 1 || argc > 2)
     {
@@ -226,11 +224,31 @@ int main(int argc, char *argv[])
                 break;
         }
 
-        Parser* parser = new Parser(fileName);
+        Parser* parser = new Parser();
+        if(parser == nullptr)
+        {
+            printf("Some problem happened.\n");
+            return -1;
+        }
+
+        if(parser->ReadInvoiceXML(fileName) && parser->GetInvoiceData())
+        {
+            if(!parser->ConvertToJson())
+            {
+                printf("Failed to convert pdf to json.\n");
+                return -1;
+            }
+        }
+        else
+        {
+            printf("Failed to read xml or get invoice data.\n");
+            return -1;
+        }
     }
     else
     {
         printf("Error to process PDF.\n");
+        return -1;
     }
 
     printf("Finished.\n");

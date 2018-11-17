@@ -178,11 +178,13 @@ struct sINVOICEDATA
 class Parser
 {
 public:
-    Parser(QString fileName);
+    Parser();
 
     bool ReadInvoiceXML(QString fileName);
+    bool GetInvoiceData();
+    bool ConvertToJson();
 
-    void DebugShow(QMap<int, QList<sINVOICEDATA*>> map);
+    void DebugShow();
 
     int GetMaxDataHeader(int header);
 
@@ -202,10 +204,11 @@ private:
     QString ConvertToJsonHeader(int header, int value);
     QString GenerateJson(QMap<int, QList<sINVOICEDATA*>> map);
 
-    bool GetInvoiceData(QString fileName);
-
 private:
-    QMap<int, sPAGE*>* pageMap;
+    QString _fileName;
+
+    QMap<int, sPAGE*>* _pageMap;
+    QMap<int, QList<sINVOICEDATA*>> _invoicesMap;
 };
 
 #endif // PARSER_H

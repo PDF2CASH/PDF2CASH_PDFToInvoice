@@ -16,8 +16,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    utils.cpp \
-    Parser.cpp
+    Parser.cpp \
+    Utils.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -38,5 +38,5 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../p
 else:unix: PRE_TARGETDEPS += $$PWD/../poppler-library/build/lib/libpoppler-library.a
 
 HEADERS += \
-    utils.h \
-    Parser.h
+    Parser.h \
+    Utils.h
