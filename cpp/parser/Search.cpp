@@ -1,10 +1,15 @@
 #include "Search.h"
 
+#include "Utils.h"
+
 #include <QChar>
 #include <QRegularExpression>
 
+#include <QDebug>
+
 Search::Search()
 {
+    // Init abbreviation's map.
     Initialization();
 }
 
@@ -209,13 +214,10 @@ bool Search::RemoveSpecialCharacter(QString* str)
                 c == "$" || c == "%" || c == "(" || c == ")" ||
                 c == "-" || c == "+" || c == "=" || c == "&" ||
                 c == "[" || c == "]" || c == "~" || c == "^" ||
-                c == "{" || c == "}" || c == "`" || c == "|")
+                c == "{" || c == "}" || c == "`" || c == "|" ||
+                c == "/" || c == "\\")
         {
             data[i] = QChar::Space;
-        }
-        else if(c == "\\")
-        {
-            data[i] = '/';
         }
         else
         {
@@ -378,4 +380,130 @@ int Search::SearchByLevenstein(TrieNode* node, QString word, int minCost)
     }
 
     return min_cost;
+}
+
+// ---------------------------------------------------------------
+// Functions related for test.
+// ---------------------------------------------------------------
+
+QList<QString>* Search::CreateListTest()
+{
+    QList<QString>* lst = new QList<QString>();
+
+    //lst->push_back(L"CHAVE DE ACESSO");
+    lst->push_back(Convert("CHAVE DE ACESSO DA NF-e P/ CONSULTA DE AUTENTICIDADE NO SITE WWW.NFE.FAZENDA.GOV.BR"));
+    lst->push_back(Convert("NATUREZA DA OPERAÇÃO"));
+    lst->push_back(Convert("PROTOCOLO DE AUTORIZAÇÃO DE USO"));
+    lst->push_back(Convert("INSCRIÇÃO ESTADUAL"));
+    lst->push_back(Convert("INSCRIÇÃO ESTADUAL SUB. TRIBUTARIA"));
+    //lst->push_back(L"INSC.ESTADUAL DO SUBST. TRIBUTÁRIO");
+    lst->push_back(Convert("CNPJ"));
+    lst->push_back(Convert("NOME/RAZÃO SOCIAL"));
+    lst->push_back(Convert("CNPJ/CPF"));
+    lst->push_back(Convert("DATA DA EMISSÃO"));
+    lst->push_back(Convert("ENDEREÇO"));
+    lst->push_back(Convert("BAIRRO/DISTRITO"));
+    lst->push_back(Convert("BAIRRO / DISTRITO"));
+    lst->push_back(Convert("CEP"));
+    lst->push_back(Convert("DATA DE SAÍDA/ENTRADA"));
+    //lst->push_back(L"DATA DA SAÍDA/ENTRADA");
+    lst->push_back(Convert("MUNICÍPIO"));
+    lst->push_back(Convert("TELEFONE/FAX"));
+    lst->push_back(Convert("FONE/FAX"));
+    lst->push_back(Convert("UF"));
+    lst->push_back(Convert("INSCRIÇÃO ESTADUAL"));
+    lst->push_back(Convert("HORA DE SAÍDA"));
+    lst->push_back(Convert("DESTINATÁRIO/REMETENTE"));
+    //lst->push_back(L"DESTINATÁRIO / REMETENTE");
+    lst->push_back(Convert("BASE DE CÁLCULO DE ICMS"));
+    //lst->push_back(L"BASE DE CÁLCULO DO ICMS");
+    lst->push_back(Convert("VALOR DO ICMS"));
+    lst->push_back(Convert("BASE DE CÁLCULO ICMS ST"));
+    //lst->push_back(L"BASE DE CÁLCULO DO ICMS ST");
+    lst->push_back(Convert("VALOR DO ICMS SUBSTITUIÇÃO"));
+    lst->push_back(Convert("VALOR DO ICMS ST"));
+    lst->push_back(Convert("VALOR TOTAL DOS PRODUTOS"));
+    lst->push_back(Convert("VALOR DO FRETE"));
+    lst->push_back(Convert("VALOR DO SEGURO"));
+    lst->push_back(Convert("DESCONTO"));
+    lst->push_back(Convert("OUTRAS DESPESAS ACESSÓRIAS"));
+    lst->push_back(Convert("VALOR DO IPI"));
+    lst->push_back(Convert("VALOR APROX. DOS TRIBUTOS"));
+    lst->push_back(Convert("VALOR TOTAL DA NOTA"));
+    lst->push_back(Convert("CÁLCULO DO IMPOSTO"));
+    lst->push_back(Convert("RAZÃO SOCIAL"));
+    lst->push_back(Convert("FRETE POR CONTA"));
+    lst->push_back(Convert("CÓDIGO ANTT"));
+    lst->push_back(Convert("PLACA DO VEÍCULO"));
+    lst->push_back(Convert("UF"));
+    lst->push_back(Convert("CNPJ/CPF"));
+    //lst->push_back(L"CNPJ / CPF");
+    lst->push_back(Convert("ENDEREÇO"));
+    lst->push_back(Convert("MUNICÍPIO"));
+    lst->push_back(Convert("UF"));
+    lst->push_back(Convert("INSCRIÇÃO ESTADUAL"));
+    lst->push_back(Convert("QUANTIDADE"));
+    lst->push_back(Convert("ESPÉCIE"));
+    lst->push_back(Convert("MARCA"));
+    lst->push_back(Convert("NUMERAÇÃO"));
+    lst->push_back(Convert("PESO BRUTO"));
+    //lst->push_back(L"PESO LIQUIDO");
+    lst->push_back(Convert("PESO LÍQUIDO"));
+    lst->push_back(Convert("TRANSPORTADOR/VOLUMES TRANSPORTADOS"));
+    //lst->push_back(L"TRANSPORTADOR / VOLUMES TRANSPORTADOS DADOS");
+    lst->push_back(Convert("DADOS DO PRODUTO/SERVIÇO"));
+    //lst->push_back(L"DADOS DO PRODUTO / SERVIÇO");
+    lst->push_back(Convert("INSCRIÇÃO MUNICIPAL"));
+    lst->push_back(Convert("VALOR TOTAL DOS SERVIÇOS"));
+    //lst->push_back(L"BASE DE CALCULO DO ISSQN");
+    lst->push_back(Convert("BASE DE CÁLCULO DO ISSQN"));
+    lst->push_back(Convert("VALOR DO ISSQN"));
+    lst->push_back(Convert("CÁLCULO DO ISSQN"));
+    lst->push_back(Convert("DADOS ADICIONAIS"));
+
+    return lst;
+}
+
+void Search::TestByLevenstein()
+{
+    QString t = Convert("BASE DE CÁLCULO DO ICMS", false);
+
+    auto tree = new TrieNode();
+
+    tree->insert(t);
+
+    qInfo() << "[Database]:\t" << t << "\n\n";
+
+    auto dictionary = CreateListTest();
+    QList<SearchDataDistance> possiblesLst;
+
+    int tmpTax = 0;
+
+    for (auto it = dictionary->begin(); it != dictionary->end(); ++it)
+    {
+        QString s = (*it);
+        if (s.isEmpty() || s.isNull())
+            continue;
+
+        tmpTax = SearchByLevenstein(tree, s);
+        if (tmpTax > 20)
+            continue;
+
+        possiblesLst.push_back(*(new SearchDataDistance(tmpTax, s)));
+    }
+
+    std::sort(possiblesLst.begin(), possiblesLst.end(), [](const SearchDataDistance & data1, const SearchDataDistance & data2)
+    {
+        return data1.rate < data2.rate;
+    });
+
+    SearchDataDistance* tmpData = nullptr;
+
+    for (auto it = possiblesLst.begin(); it != possiblesLst.end(); ++it)
+    {
+        tmpData = &(*it);
+        qInfo() << "[Rate]:" << "\t" << tmpData->rate << "\t" << "[String]: " << tmpData->str;
+    }
+
+    qInfo() << "\nFinished.\n";
 }
