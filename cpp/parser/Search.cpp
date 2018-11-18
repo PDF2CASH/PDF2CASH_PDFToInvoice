@@ -21,7 +21,10 @@ QString Search::Convert(QString str)
     RemoveAccents(data);
 
     // 3. remove extra spaces on strings, example: "Str1  Str2" -> "Str1 Str2".
-    RemoveExtraSpaces(data);
+    RemoveExtraCharacter(data, QChar::Space);
+
+    // 3. remove extra character.
+    RemoveExtraCharacter(data, '/');
 
     return QString(*data);
 }
@@ -74,6 +77,10 @@ bool Search::RemoveAccents(QString* str)
         {
             data[i] = 'c';
         }
+        else if(c == "ñ")
+        {
+            data[i] = 'n';
+        }
         else
         {
             continue;
@@ -86,17 +93,18 @@ bool Search::RemoveAccents(QString* str)
     return true;
 }
 
-bool Search::RemoveExtraSpaces(QString* str)
+bool Search::RemoveExtraCharacter(QString* str, const QChar c)
 {
     if(str == nullptr)
         return false;
 
     QString data = "";
+
     std::unique_copy(str->begin(), str->end(),
                      std::back_insert_iterator<QString>(data),
-                    [](QChar a, QChar b)
+                    [c](QChar a, QChar b)
                     {
-                        return a.isSpace() && b.isSpace();
+                        return a == c && b == c;
                     });
 
     *str = data;
