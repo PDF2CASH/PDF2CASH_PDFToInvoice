@@ -324,6 +324,37 @@ bool Search::RemoveAbnormal(QString* str)
 // Functions related for search.
 // ---------------------------------------------------------------
 
+sTEXTDATA* Search::CalculeDistance(const QRect rect, const QList<sTEXTDATA*> dataList)
+{
+    QRect tmpRect;
+    sTEXTDATA* tmpData = nullptr;
+    sTEXTDATA* currentData = nullptr;
+
+    const QPoint rectCenter = rect.center();
+    QPoint tmpCenter;
+
+    int distance = 9999;
+    int currentDistance = 0;
+
+    for(auto it = dataList.begin(); it != dataList.end(); ++it)
+    {
+        tmpData = (*it);
+        tmpRect = QRect(QPoint(tmpData->left, tmpData->top), QSize(tmpData->width, tmpData->height));
+        tmpCenter = tmpRect.center();
+
+        currentDistance = qMax((qAbs(rectCenter.x() - tmpCenter.x()) - (rect.width() + tmpRect.width())) / 2,
+             (qAbs(rectCenter.y() - tmpCenter.y()) - (rect.height() + tmpRect.height())) / 2);
+
+        if(currentDistance < distance)
+        {
+            distance = currentDistance;
+            currentData = &(*tmpData);
+        }
+    }
+
+    return (tmpData != nullptr) ? tmpData : dataList.first();
+}
+
 sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, int averageLevenstein,
                               bool checkDistance, QRect* rect)
 {
@@ -393,13 +424,6 @@ sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, 
         }
     }
 
-    // Sort list of levenstein by rate.
-    std::sort(strLevensteinLst.begin(), strLevensteinLst.end(),
-              [](const SearchDataDistance & s1, const SearchDataDistance & s2)
-                {
-                    return s1.rate < s2.rate;
-                });
-
     // Check if found some exact string.
     if(strExactLst.size() > 0)
     {
@@ -409,40 +433,9 @@ sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, 
         }
         else
         {
-            if(!checkDistance || (checkDistance == true && rect == nullptr))
-            {
-                return strExactLst.first();
-            }
-            else
-            {
-                QRect tmpRect;
-                sTEXTDATA* tmpData = nullptr;
-                sTEXTDATA* currentData = nullptr;
-
-                const QPoint rectCenter = rect->center();
-                QPoint tmpCenter;
-
-                int distance = 9999;
-                int currentDistance = 0;
-
-                for(auto it = strExactLst.begin(); it != strExactLst.end(); ++it)
-                {
-                    tmpData = (*it);
-                    tmpRect = QRect(QPoint(tmpData->left, tmpData->top), QSize(tmpData->width, tmpData->height));
-                    tmpCenter = tmpRect.center();
-
-                    currentDistance = qMax((qAbs(rectCenter.x() - tmpCenter.x()) - (rect->width() + tmpRect.width())) / 2,
-                         (qAbs(rectCenter.y() - tmpCenter.y()) - (rect->height() + tmpRect.height())) / 2);
-
-                    if(currentDistance < distance)
-                    {
-                        distance = currentDistance;
-                        currentData = &(*tmpData);
-                    }
-                }
-
-                return (currentData != nullptr) ? currentData : strExactLst.first();
-            }
+            return (!checkDistance || (checkDistance == true && rect == nullptr)) ?
+                        strExactLst.first() :
+                        CalculeDistance(*rect, strExactLst);
         }
     }
     else
@@ -452,15 +445,58 @@ sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, 
         // 2. - let to check if has string match with KMP algorithm.
         if(strKMPLst.size() > 0)
         {
-
+            return (strKMPLst.size() == 1 || !checkDistance || (checkDistance == true && rect == nullptr)) ?
+                        strKMPLst.first() :
+                        CalculeDistance(*rect, strKMPLst);
         }
         else
         {
-            TrieNode* node = new TrieNode();
-            node->insert(patternConverted);
+            // 3. - let to check if has string match with levenstein algorithm.
+            if(strLevensteinLst.size() > 0)
+            {
+                // Sort list of levenstein by rate.
+                std::sort(strLevensteinLst.begin(), strLevensteinLst.end(),
+                          [](const SearchDataDistance & s1, const SearchDataDistance & s2)
+                            {
+                                return s1.rate < s2.rate;
+                            });
+
+                QList<sTEXTDATA*> tmpList;
+                SearchDataDistance* tmpSearchData = nullptr;
+                const int rate = strLevensteinLst.first().rate;
+
+                for(auto it = strLevensteinLst.begin(); it != strLevensteinLst.end(); ++it)
+                {
+                    tmpSearchData = &(*it);
+                    if(tmpSearchData == nullptr)
+                        continue;
+
+                    if(tmpSearchData->rate == rate)
+                    {
+                        tmpList.push_back(tmpSearchData->data);
+                    }
+                }
+
+                if(tmpList.size() > 0)
+                {
+                    return (tmpList.size() == 1 || !checkDistance || (checkDistance == true && rect == nullptr)) ?
+                                tmpList.first() :
+                                CalculeDistance(*rect, tmpList);
+                }
+                else
+                {
+                    return strLevensteinLst.first().data;
+                }
+            }
+            else
+            {
+                return nullptr;
+            }
+
         }
     }
 
+    // TODO : this return will never be executed.
     return nullptr;
 }
 
