@@ -4,15 +4,30 @@
 
 Search::Search()
 {
+    Initialization();
+}
 
+void Search::Initialization()
+{
+    // Telefone.
+    _abbreviationsMap.insert("telefone",
+                             QList<QString>
+                             {
+                                 "fone",
+                                 "tel"
+                             });
+}
+
+QStringList Search::Split(QString str)
+{
+    return str.split(QChar::Space, QString::SkipEmptyParts);
 }
 
 QString Search::Convert(QString str)
 {
-    if(str.isEmpty() || str.isNull())
-        return "";
+    if(str.isEmpty() || str.isNull()) return "";
 
-    QString* data = new QString(str);
+    auto data = new QString(str);
 
     // 1. convert to lower.
     ToLowerCase(data);
@@ -28,6 +43,8 @@ QString Search::Convert(QString str)
 
     // 4. remove extra character.
     RemoveExtraCharacter(data, '/');
+
+    RemoveAbbreviation(data);
 
     return QString(*data);
 }
@@ -46,7 +63,7 @@ bool Search::RemoveAccents(QString* str)
     if(str == nullptr) return false;
 
     QChar c = QChar::Null;
-    QString data = QString(*str);
+    auto data = QString(*str);
 
     for(auto i = 0; i < data.length(); i++)
     {
@@ -88,9 +105,10 @@ bool Search::RemoveAccents(QString* str)
         }
     }
 
+    auto isEdited = (*(str) == data) ? true : false;
     *str = data;
 
-    return true;
+    return isEdited;
 }
 
 bool Search::RemoveSpecialCharacter(QString* str)
@@ -98,7 +116,7 @@ bool Search::RemoveSpecialCharacter(QString* str)
     if(str == nullptr) return false;
 
     QChar c = QChar::Null;
-    QString data = QString(*str);
+    auto data = QString(*str);
 
     for(auto i = 0; i < data.length(); i++)
     {
@@ -126,9 +144,10 @@ bool Search::RemoveSpecialCharacter(QString* str)
         }
     }
 
+    auto isEdited = (*(str) == data) ? true : false;
     *str = data;
 
-    return true;
+    return isEdited;
 }
 
 bool Search::RemoveExtraCharacter(QString* str, const QChar c)
@@ -144,7 +163,47 @@ bool Search::RemoveExtraCharacter(QString* str, const QChar c)
                         return a == c && b == c;
                     });
 
+    auto isEdited = (*(str) == data) ? true : false;
     *str = data;
+
+    return isEdited;
+}
+
+bool Search::RemoveAbbreviation(QString* str)
+{
+    if(str == nullptr)
+        return false;
+
+    auto strList = Split(*str);
+    if(strList.size() <= 0)
+        return false;
+
+    QList<QString>* tmpList = nullptr;
+    QString tmpStr = "";
+
+    for(auto it = _abbreviationsMap.begin(); it != _abbreviationsMap.end(); ++it)
+    {
+        tmpList = &(*it);
+        if(tmpList == nullptr)
+            continue;
+
+        for(auto itLst = tmpList->begin(); itLst != tmpList->end(); ++itLst)
+        {
+            tmpStr = (*itLst);
+            if(tmpStr.isEmpty() || tmpStr.isNull())
+                continue;
+
+            for(auto i = 0; i < strList.count(); i++)
+            {
+                if(strList[i] == tmpStr)
+                {
+                    strList[i] = it.key();
+                }
+            }
+        }
+    }
+
+    *str = strList.join(QChar::Space);
 
     return true;
 }
