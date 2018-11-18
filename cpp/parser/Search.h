@@ -64,6 +64,9 @@ public:
     // Function's related to search string's.
     int SearchByLevenstein(TrieNode* node, QString word, int minCost = 0x3f3f3f3f);
 
+    // Function's related to test.
+    void TestByLevenstein();
+
 private:
     // Function's related to edit string's.
     bool ToLowerCase(QString* str);
@@ -77,6 +80,9 @@ private:
 
     // Function's related to search string's.
     void SearchImpl(TrieNode* tree, QChar ch, QVector<int> last_row, const QString& word, int* minCost);
+
+    // Function's related to test.
+    QList<QString>* CreateListTest();
 
 private:
     QMap<QString, QList<QString>> _abbreviationsMap;
