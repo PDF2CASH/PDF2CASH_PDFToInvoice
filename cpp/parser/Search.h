@@ -61,14 +61,26 @@ public:
 
     QString Convert(QString str, bool useAbbreviation = true);
 
+    // -------------------------------------------
     // Function's related to search string's.
+    // -------------------------------------------
+
+    // Levenstein algorithm.
     int SearchByLevenstein(TrieNode* node, QString word, int minCost = 0x3f3f3f3f);
 
+    // KMP algorithm.
+    bool SearchKMP(QString pat, QString txt);
+
+    // -------------------------------------------
     // Function's related to test.
+    // -------------------------------------------
     void TestByLevenstein();
+    void TestByKMP();
 
 private:
+    // -------------------------------------------
     // Function's related to edit string's.
+    // -------------------------------------------
     bool ToLowerCase(QString* str);
     bool RemoveAccents(QString* str);
     bool RemoveSpecialCharacter(QString* str);
@@ -78,10 +90,19 @@ private:
 
     bool RemoveAbnormal(QString* str);
 
+    // -------------------------------------------
     // Function's related to search string's.
+    // -------------------------------------------
+
+    // Levenstein algorithm.
     void SearchImpl(TrieNode* tree, QChar ch, QVector<int> last_row, const QString& word, int* minCost);
 
+    // KMP algorithm.
+    void ComputeLPSArray(QString pat, int M, int* lps);
+
+    // -------------------------------------------
     // Function's related to test.
+    // -------------------------------------------
     QList<QString>* CreateListTest();
 
 private:
