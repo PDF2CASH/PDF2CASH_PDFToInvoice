@@ -13,7 +13,7 @@ void Search::Initialization()
     // Telefone.
     _abbreviationsMap.insert(Convert("telefone", false),
                              QList<QString>
-                             {
+    {
                                  "fone",
                                  "tel"
                              });
@@ -21,7 +21,7 @@ void Search::Initialization()
     // Substituição
     _abbreviationsMap.insert(Convert("substituição", false),
                              QList<QString>
-                             {
+    {
                                  "st",
                                  "subst",
                                  "substit"
@@ -30,28 +30,28 @@ void Search::Initialization()
     // Inscrição
     _abbreviationsMap.insert(Convert("inscrição", false),
                              QList<QString>
-                             {
+    {
                                  "insc"
                              });
 
     // Estadual
     _abbreviationsMap.insert(Convert("estadual", false),
                              QList<QString>
-                             {
+    {
                                  "est"
                              });
 
     // Código
     _abbreviationsMap.insert(Convert("codigo", false),
                              QList<QString>
-                             {
+    {
                                  "cod"
                              });
 
     // Produto
     _abbreviationsMap.insert(Convert("produto", false),
                              QList<QString>
-                             {
+    {
                                  "prod",
                                  "produt"
                              });
@@ -59,28 +59,28 @@ void Search::Initialization()
     // Unidade
     _abbreviationsMap.insert(Convert("unidade", false),
                              QList<QString>
-                             {
+    {
                                  "un"
                              });
 
     // Valor
     _abbreviationsMap.insert(Convert("valor", false),
                              QList<QString>
-                             {
+    {
                                  "v"
                              });
 
     // Base de Cálculo
     _abbreviationsMap.insert(Convert("base de cálculo", false),
                              QList<QString>
-                             {
+    {
                                  "bc"
                              });
 
     // Quantidade
     _abbreviationsMap.insert(Convert("quantidade", false),
                              QList<QString>
-                             {
+    {
                                  "qt",
                                  "quant",
                                  "quantid",
@@ -90,7 +90,7 @@ void Search::Initialization()
     // Aproximado
     _abbreviationsMap.insert(Convert("aproximado", false),
                              QList<QString>
-                             {
+    {
                                  "aprox"
                              });
 }
@@ -204,12 +204,12 @@ bool Search::RemoveSpecialCharacter(QString* str)
         if(c.isNull()) continue;
 
         if(c == "!" || c == "?" || c == ":" || c == ";" ||
-           c == "*" || c == "'" || c == "," || c == "." ||
-           c == "<" || c == ">" || c == "@" || c == "#" ||
-           c == "$" || c == "%" || c == "(" || c == ")" ||
-           c == "-" || c == "+" || c == "=" || c == "&" ||
-           c == "[" || c == "]" || c == "~" || c == "^" ||
-           c == "{" || c == "}" || c == "`" || c == "|")
+                c == "*" || c == "'" || c == "," || c == "." ||
+                c == "<" || c == ">" || c == "@" || c == "#" ||
+                c == "$" || c == "%" || c == "(" || c == ")" ||
+                c == "-" || c == "+" || c == "=" || c == "&" ||
+                c == "[" || c == "]" || c == "~" || c == "^" ||
+                c == "{" || c == "}" || c == "`" || c == "|")
         {
             data[i] = QChar::Space;
         }
@@ -237,10 +237,10 @@ bool Search::RemoveExtraCharacter(QString* str, const QChar c)
 
     std::unique_copy(str->begin(), str->end(),
                      std::back_insert_iterator<QString>(data),
-                    [c](QChar a, QChar b)
-                    {
-                        return a == c && b == c;
-                    });
+                     [c](QChar a, QChar b)
+    {
+        return a == c && b == c;
+    });
 
     auto isEdited = (*(str) == data) ? true : false;
     *str = data;
@@ -300,4 +300,80 @@ bool Search::RemoveAbnormal(QString* str)
     *str = data;
 
     return isEdited;
+}
+
+// ---------------------------------------------------------------
+// Functions related for search.
+// ---------------------------------------------------------------
+
+// The tree
+TrieNode tree;
+
+// The minimum cost of a given word to be changed to a word of the dictionary
+int min_cost;
+
+//
+void SearchImpl(TrieNode* tree, QChar ch, QVector<int> last_row, const QString& word)
+{
+    int sz = last_row.size();
+
+    QVector<int> current_row(sz);
+    current_row[0] = last_row[0] + 1;
+
+    // Calculate the min cost of insertion, deletion, match or substution
+    int insert_or_del, replace;
+    for (auto i = 1; i < sz; ++i)
+    {
+        insert_or_del = qMin(current_row[i - 1] + 1, last_row[i] + 1);
+        replace = (word[i - 1] == ch) ? last_row[i - 1] : (last_row[i - 1] + 1);
+
+        current_row[i] = qMin(insert_or_del, replace);
+    }
+
+    // When we find a cost that is less than the min_cost, is because
+    // it is the minimum until the current row, so we update
+    if ((current_row[sz - 1] < min_cost) && (tree->word != ""))
+    {
+        min_cost = current_row[sz - 1];
+    }
+
+    // If there is an element wich is smaller than the current minimum cost,
+    // we can have another cost smaller than the current minimum cost
+    if (*std::min_element(current_row.begin(), current_row.end()) < min_cost)
+    {
+        for (auto it = tree->next.begin(); it != tree->next.end(); ++it)
+        {
+            SearchImpl(it.value(), it.key(), current_row, word);
+        }
+    }
+}
+
+int SearchByDistance(QString word)
+{
+    word = QString("$") + word;
+
+    auto sz = word.size();
+    min_cost = 0x3f3f3f3f;
+
+    QVector<int> current_row(sz + 1);
+
+    // Naive DP initialization
+    for (auto i = 0; i < sz; ++i)
+    {
+        current_row[i] = i;
+    }
+
+    current_row[sz] = sz;
+
+    // For each letter in the root map wich matches with a
+    //  letter in word, we must call the search
+    for (auto i = 0; i < sz; ++i)
+    {
+        if (tree.next.find(word[i]) != tree.next.end())
+        {
+            SearchImpl(tree.next[word[i]], word[i], current_row, word);
+        }
+    }
+
+    return min_cost;
 }
