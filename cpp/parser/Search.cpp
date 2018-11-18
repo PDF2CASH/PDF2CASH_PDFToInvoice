@@ -505,5 +505,116 @@ void Search::TestByLevenstein()
         qInfo() << "[Rate]:" << "\t" << tmpData->rate << "\t" << "[String]: " << tmpData->str;
     }
 
-    qInfo() << "\nFinished.\n";
+    qInfo() << "\nFinished Test Levenstein algorithm.\n";
+}
+
+// Fills lps[] for given patttern pat[0..M-1]
+void Search::ComputeLPSArray(QString pat, int M, int* lps)
+{
+    // length of the previous longest prefix suffix
+    int len = 0;
+
+    lps[0] = 0; // lps[0] is always 0
+
+    // the loop calculates lps[i] for i = 1 to M-1
+    int i = 1;
+    while (i < M)
+    {
+        if (pat[i] == pat[len])
+        {
+            len++;
+            lps[i] = len;
+            i++;
+        }
+        else // (pat[i] != pat[len])
+        {
+            // This is tricky. Consider the example.
+            // AAACAAAA and i = 7. The idea is similar
+            // to search step.
+            if (len != 0)
+            {
+                len = lps[len - 1];
+
+                // Also, note that we do not increment
+                // i here
+            }
+            else // if (len == 0)
+            {
+                lps[i] = 0;
+                i++;
+            }
+        }
+    }
+}
+
+
+bool Search::SearchKMP(QString pat, QString txt)
+{
+    bool found = false;
+
+    int M = pat.length();
+    int N = txt.length();
+
+    // create lps[] that will hold the longest prefix suffix
+    // values for pattern
+    int lps[M];
+
+    // Preprocess the pattern (calculate lps[] array)
+    ComputeLPSArray(pat, M, lps);
+
+    int i = 0; // index for txt[]
+    int j = 0; // index for pat[]
+    while (i < N)
+    {
+        if (pat[j] == txt[i])
+        {
+            j++;
+            i++;
+        }
+
+        if (j == M)
+        {
+            //qInfo() << "Found pattern at index\n" << i - j;
+            j = lps[j - 1];
+
+            // found pattern in current txt
+            found = true;
+        }
+
+        // mismatch after j matches
+        else if (i < N && pat[j] != txt[i])
+        {
+            // Do not match lps[0..lps[j-1]] characters,
+            // they will match anyway
+            if (j != 0)
+                j = lps[j - 1];
+            else
+                i = i + 1;
+        }
+    }
+
+    return found;
+}
+
+void Search::TestByKMP()
+{
+    auto list = CreateListTest();
+    QList<QString> foundList;
+
+    QString t = Convert("CHAVE DE ACESSO", false);
+
+    for(auto it = list->begin(); it != list->end(); ++it)
+    {
+        if(SearchKMP(t, (*it)))
+        {
+            foundList.push_back((*it));
+        }
+    }
+
+    for(auto it = foundList.begin(); it != foundList.end(); ++it)
+    {
+        qInfo() << (*it);
+    }
+
+    qInfo() << "\nFinished Test Levenstein algorithm.\n";
 }
