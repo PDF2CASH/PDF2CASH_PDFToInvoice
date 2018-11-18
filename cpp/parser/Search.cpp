@@ -1,6 +1,7 @@
 #include "Search.h"
 
 #include <QChar>
+#include <QRegExp>
 
 Search::Search()
 {
@@ -39,6 +40,52 @@ void Search::Initialization()
                              {
                                  "est"
                              });
+
+    // Código
+    _abbreviationsMap.insert(Convert("codigo", false),
+                             QList<QString>
+                             {
+                                 "cod"
+                             });
+
+    // Produto
+    _abbreviationsMap.insert(Convert("produto", false),
+                             QList<QString>
+                             {
+                                 "prod",
+                                 "produt"
+                             });
+
+    // Unidade
+    _abbreviationsMap.insert(Convert("unidade", false),
+                             QList<QString>
+                             {
+                                 "un"
+                             });
+
+    // Valor
+    _abbreviationsMap.insert(Convert("valor", false),
+                             QList<QString>
+                             {
+                                 "v"
+                             });
+
+    // Base de Cálculo
+    _abbreviationsMap.insert(Convert("base de cálculo", false),
+                             QList<QString>
+                             {
+                                 "bc"
+                             });
+
+    // Quantidade
+    _abbreviationsMap.insert(Convert("quantidade", false),
+                             QList<QString>
+                             {
+                                 "qt",
+                                 "quant",
+                                 "quantid",
+                                 "qtd"
+                             });
 }
 
 QString Search::Convert(QString str, bool useAbbreviation)
@@ -67,6 +114,9 @@ QString Search::Convert(QString str, bool useAbbreviation)
     {
         RemoveAbbreviation(data);
     }
+
+    // 6. remove abnormal characters.
+    RemoveAbnormal(data);
 
     return QString(*data);
 }
@@ -237,7 +287,7 @@ bool Search::RemoveAbnormal(QString* str)
     QString data = *str;
 
     data = data.replace(" / ", " ");
-
+    data = data.replace(QRegExp(" d[aeiou] "), " ");
 
     auto isEdited = (*(str) == data) ? true : false;
     *str = data;
