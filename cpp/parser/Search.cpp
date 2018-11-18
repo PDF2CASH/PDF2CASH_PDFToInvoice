@@ -1,7 +1,7 @@
 #include "Search.h"
 
 #include <QChar>
-#include <QRegExp>
+#include <QRegularExpression>
 
 Search::Search()
 {
@@ -85,6 +85,13 @@ void Search::Initialization()
                                  "quant",
                                  "quantid",
                                  "qtd"
+                             });
+
+    // Aproximado
+    _abbreviationsMap.insert(Convert("aproximado", false),
+                             QList<QString>
+                             {
+                                 "aprox"
                              });
 }
 
@@ -287,7 +294,7 @@ bool Search::RemoveAbnormal(QString* str)
     QString data = *str;
 
     data = data.replace(" / ", " ");
-    data = data.replace(QRegExp(" d[aeiou] "), " ");
+    data = data.replace(QRegularExpression(" d[aeiou](?:[s])? "), " ");
 
     auto isEdited = (*(str) == data) ? true : false;
     *str = data;
