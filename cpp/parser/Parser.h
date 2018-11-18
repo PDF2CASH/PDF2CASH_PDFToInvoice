@@ -11,6 +11,7 @@
 #include <QSize>
 #include <QString>
 
+const int AVERAGE_LEVENSTEIN_VALUE = 30;
 const int SPACE_HEIGHT_BETWEEN_HEADER_VALUE = 14;
 
 enum eHEADER_NFE                            /// CABEÇALHO
