@@ -12,59 +12,67 @@ QString Search::Convert(QString str)
     if(str.isEmpty() || str.isNull())
         return "";
 
-    QString data = "";
+    QString* data = new QString(str);
 
     // 1. convert to lower.
-    data = ToLowerCase(str);
+    ToLowerCase(data);
 
     // 2. remove all accents from string (case has accents).
-    data = RemoveAccents(data);
+    RemoveAccents(data);
 
     // 3. remove extra spaces on strings, example: "Str1  Str2" -> "Str1 Str2".
-    data = RemoveExtraSpaces(data);
+    RemoveExtraSpaces(data);
 
-    return data;
+    return QString(*data);
 }
 
-QString Search::ToLowerCase(QString str)
+bool Search::ToLowerCase(QString* str)
 {
-    return str.toLower();
+    if(str == nullptr)
+        return false;
+
+    *str = str->toLower();
+
+    return true;
 }
 
-QString Search::RemoveAccents(QString str)
+bool Search::RemoveAccents(QString* str)
 {
-    QChar c;
+    if(str == nullptr)
+        return false;
 
-    for(auto i = 0; i < str.length(); i++)
+    QChar c = QChar::Null;
+    QString data = QString(*str);
+
+    for(auto i = 0; i < data.length(); i++)
     {
-        c = str.at(i);
+        c = str->at(i);
 
-        if(c.isNull())
-            continue;
+        if(c.isNull()) continue;
 
         if(c == "â" || c == "ã" || c == "á" || c == "à" || c == "ä")
         {
-            str.insert(i, "a");
+            data[i] = 'a';
         }
         else if(c == "é" || c == "è" || c == "ê" || c == "ë")
         {
-            str.insert(i, "e");
+            data[i] = 'e';
         }
         else if(c == "í" || c == "ì" || c == "î" || c == "ï")
         {
-            str.insert(i, "i");
+            data[i] = 'i';
         }
         else if(c == "ó" || c == "ò" || c == "ô" || c == "õ" || c == "ö")
         {
-            str.insert(i, "o");
+            data[i] = 'o';
         }
         else if(c == "ú" || c == "ù" || c == "û" || c == "ü")
         {
-            str.insert(i, "u");
+            data[i] = 'u';
         }
         else if(c == "ç" || c == "ć")
         {
-            str.insert(i, "c");
+            data[i] = 'c';
         }
         else
         {
@@ -72,18 +80,26 @@ QString Search::RemoveAccents(QString str)
         }
     }
 
-    return str;
+    //str->clear();
+    *str = data;
+
+    return true;
 }
 
-QString Search::RemoveExtraSpaces(QString str)
+bool Search::RemoveExtraSpaces(QString* str)
 {
+    if(str == nullptr)
+        return false;
+
     QString data = "";
-    std::unique_copy(str.begin(), str.end(),
+    std::unique_copy(str->begin(), str->end(),
                      std::back_insert_iterator<QString>(data),
                     [](QChar a, QChar b)
                     {
                         return a.isSpace() && b.isSpace();
                     });
 
-    return data;
+    *str = data;
+
+    return true;
 }

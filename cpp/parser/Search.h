@@ -11,9 +11,10 @@ public:
     QString Convert(QString str);
 
 private:
-    QString ToLowerCase(QString str);
-    QString RemoveAccents(QString str);
-    QString RemoveExtraSpaces(QString str);
+    bool ToLowerCase(QString* str);
+    bool RemoveAccents(QString* str);
+    bool RemoveExtraSpaces(QString* str);
+
 };
 
 #endif // SEARCH_H
