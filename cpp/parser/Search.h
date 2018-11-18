@@ -14,8 +14,7 @@ public:
 
     void Initialization();
 
-    QString Convert(QString str);
-    QStringList Split(QString str);
+    QString Convert(QString str, bool useAbbreviation = true);
 
 private:
     bool ToLowerCase(QString* str);
@@ -24,6 +23,8 @@ private:
     bool RemoveExtraCharacter(QString* str, const QChar c);
 
     bool RemoveAbbreviation(QString* str);
+
+    bool RemoveAbnormal(QString* str);
 
 private:
     QMap<QString, QList<QString>> _abbreviationsMap;

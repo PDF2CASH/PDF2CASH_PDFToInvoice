@@ -10,20 +10,38 @@ Search::Search()
 void Search::Initialization()
 {
     // Telefone.
-    _abbreviationsMap.insert("telefone",
+    _abbreviationsMap.insert(Convert("telefone", false),
                              QList<QString>
                              {
                                  "fone",
                                  "tel"
                              });
+
+    // Substituição
+    _abbreviationsMap.insert(Convert("substituição", false),
+                             QList<QString>
+                             {
+                                 "st",
+                                 "subst",
+                                 "substit"
+                             });
+
+    // Inscrição
+    _abbreviationsMap.insert(Convert("inscrição", false),
+                             QList<QString>
+                             {
+                                 "insc"
+                             });
+
+    // Estadual
+    _abbreviationsMap.insert(Convert("estadual", false),
+                             QList<QString>
+                             {
+                                 "est"
+                             });
 }
 
-QStringList Search::Split(QString str)
-{
-    return str.split(QChar::Space, QString::SkipEmptyParts);
-}
-
-QString Search::Convert(QString str)
+QString Search::Convert(QString str, bool useAbbreviation)
 {
     if(str.isEmpty() || str.isNull()) return "";
 
@@ -44,7 +62,11 @@ QString Search::Convert(QString str)
     // 4. remove extra character.
     RemoveExtraCharacter(data, '/');
 
-    RemoveAbbreviation(data);
+    // 5. remove abbreviation and replace for original text.
+    if(useAbbreviation)
+    {
+        RemoveAbbreviation(data);
+    }
 
     return QString(*data);
 }
@@ -174,7 +196,7 @@ bool Search::RemoveAbbreviation(QString* str)
     if(str == nullptr)
         return false;
 
-    auto strList = Split(*str);
+    auto strList = str->split(QChar::Space, QString::SkipEmptyParts);
     if(strList.size() <= 0)
         return false;
 
@@ -206,4 +228,19 @@ bool Search::RemoveAbbreviation(QString* str)
     *str = strList.join(QChar::Space);
 
     return true;
+}
+
+bool Search::RemoveAbnormal(QString* str)
+{
+    if(str == nullptr) return false;
+
+    QString data = *str;
+
+    data = data.replace(" / ", " ");
+
+
+    auto isEdited = (*(str) == data) ? true : false;
+    *str = data;
+
+    return isEdited;
 }
