@@ -141,7 +141,9 @@ QString Search::Convert(QString str, bool useAbbreviation)
     // 6. remove abnormal characters.
     RemoveAbnormal(data);
 
-    return QString(*data);
+    return (data == nullptr || data->isNull() || data->isEmpty()) ?
+                str :
+                QString(*data);
 }
 
 bool Search::ToLowerCase(QString* str)
@@ -358,8 +360,14 @@ sTEXTDATA* Search::CalculeDistance(const QRect rect, const QList<sTEXTDATA*> dat
 sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, int averageLevenstein,
                               bool checkDistance, QRect* rect)
 {
+    // Check if list is null.
+    if(strList.size() <= 0)
+        return nullptr;
+
+    // List will be used for convert all texts.
     QList<sTEXTDATA> strListProcessed;
 
+    // Process every element from list and convert text's.
     for(auto it = strList.begin(); it != strList.end(); ++it)
     {
         sTEXTDATA data;
