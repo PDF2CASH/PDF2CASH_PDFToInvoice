@@ -70,6 +70,7 @@ public:
 
     // Main search.
     sTEXTDATA* SearchText(const QString pattern, QList<sTEXTDATA*> strList, int averageLevenstein, bool checkDistance = false, QRect* rect = nullptr);
+    sTEXTDATA* CalculeDistance(const QRect rect, const QList<sTEXTDATA*> dataList);
 
     // Exact search.
     bool SearchByExact(const QString pattern, QString str);
