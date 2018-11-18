@@ -13,6 +13,7 @@ public:
 private:
     bool ToLowerCase(QString* str);
     bool RemoveAccents(QString* str);
+    bool RemoveSpecialCharacter(QString* str);
     bool RemoveExtraCharacter(QString* str, const QChar c);
 
 };

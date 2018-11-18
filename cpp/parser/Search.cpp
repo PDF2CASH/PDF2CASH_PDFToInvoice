@@ -20,10 +20,13 @@ QString Search::Convert(QString str)
     // 2. remove all accents from string (case has accents).
     RemoveAccents(data);
 
-    // 3. remove extra spaces on strings, example: "Str1  Str2" -> "Str1 Str2".
+    // 3. remove special character from string.
+    RemoveSpecialCharacter(data);
+
+    // 4. remove extra spaces on strings, example: "Str1  Str2" -> "Str1 Str2".
     RemoveExtraCharacter(data, QChar::Space);
 
-    // 3. remove extra character.
+    // 4. remove extra character.
     RemoveExtraCharacter(data, '/');
 
     return QString(*data);
@@ -31,8 +34,7 @@ QString Search::Convert(QString str)
 
 bool Search::ToLowerCase(QString* str)
 {
-    if(str == nullptr)
-        return false;
+    if(str == nullptr) return false;
 
     *str = str->toLower();
 
@@ -41,8 +43,7 @@ bool Search::ToLowerCase(QString* str)
 
 bool Search::RemoveAccents(QString* str)
 {
-    if(str == nullptr)
-        return false;
+    if(str == nullptr) return false;
 
     QChar c = QChar::Null;
     QString data = QString(*str);
@@ -87,7 +88,44 @@ bool Search::RemoveAccents(QString* str)
         }
     }
 
-    //str->clear();
+    *str = data;
+
+    return true;
+}
+
+bool Search::RemoveSpecialCharacter(QString* str)
+{
+    if(str == nullptr) return false;
+
+    QChar c = QChar::Null;
+    QString data = QString(*str);
+
+    for(auto i = 0; i < data.length(); i++)
+    {
+        c = str->at(i);
+
+        if(c.isNull()) continue;
+
+        if(c == "!" || c == "?" || c == ":" || c == ";" ||
+           c == "*" || c == "'" || c == "," || c == "." ||
+           c == "<" || c == ">" || c == "@" || c == "#" ||
+           c == "$" || c == "%" || c == "(" || c == ")" ||
+           c == "-" || c == "+" || c == "=" || c == "&" ||
+           c == "[" || c == "]" || c == "~" || c == "^" ||
+           c == "{" || c == "}" || c == "`" || c == "|")
+        {
+            data[i] = QChar::Space;
+        }
+        else if(c == "\\")
+        {
+            data[i] = '/';
+        }
+        else
+        {
+            continue;
+        }
+    }
+
     *str = data;
 
     return true;
@@ -95,8 +133,7 @@ bool Search::RemoveAccents(QString* str)
 
 bool Search::RemoveExtraCharacter(QString* str, const QChar c)
 {
-    if(str == nullptr)
-        return false;
+    if(str == nullptr) return false;
 
     QString data = "";
 
