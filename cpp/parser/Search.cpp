@@ -8,6 +8,9 @@
 
 #include <QDebug>
 
+#include <QSize>
+#include <QPoint>
+
 Search::Search()
 {
     // Init abbreviation's map.
@@ -406,18 +409,39 @@ sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, 
         }
         else
         {
-            if(!checkDistance)
+            if(!checkDistance || (checkDistance == true && rect == nullptr))
             {
                 return strExactLst.first();
             }
             else
             {
                 QRect tmpRect;
+                sTEXTDATA* tmpData = nullptr;
+                sTEXTDATA* currentData = nullptr;
+
+                const QPoint rectCenter = rect->center();
+                QPoint tmpCenter;
+
+                int distance = 9999;
+                int currentDistance = 0;
 
                 for(auto it = strExactLst.begin(); it != strExactLst.end(); ++it)
                 {
+                    tmpData = (*it);
+                    tmpRect = QRect(QPoint(tmpData->left, tmpData->top), QSize(tmpData->width, tmpData->height));
+                    tmpCenter = tmpRect.center();
 
+                    currentDistance = qMax((qAbs(rectCenter.x() - tmpCenter.x()) - (rect->width() + tmpRect.width())) / 2,
+                         (qAbs(rectCenter.y() - tmpCenter.y()) - (rect->height() + tmpRect.height())) / 2);
+
+                    if(currentDistance < distance)
+                    {
+                        distance = currentDistance;
+                        currentData = &(*tmpData);
+                    }
                 }
+
+                return (currentData != nullptr) ? currentData : strExactLst.first();
             }
         }
     }
@@ -436,6 +460,8 @@ sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, 
             node->insert(patternConverted);
         }
     }
+
+    return nullptr;
 }
 
 bool Search::SearchByExact(const QString pattern, QString str)
