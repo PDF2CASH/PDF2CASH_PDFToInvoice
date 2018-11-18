@@ -17,6 +17,12 @@ QString Search::Convert(QString str)
     // 1. convert to lower.
     data = ToLowerCase(str);
 
+    // 2. remove all accents from string (case has accents).
+    data = RemoveAccents(data);
+
+    // 3. remove extra spaces on strings, example: "Str1  Str2" -> "Str1 Str2".
+    data = RemoveExtraSpaces(data);
+
     return data;
 }
 
@@ -56,6 +62,10 @@ QString Search::RemoveAccents(QString str)
         {
             str.insert(i, "u");
         }
+        else if(c == "ç" || c == "ć")
+        {
+            str.insert(i, "c");
+        }
         else
         {
             continue;
@@ -63,4 +73,17 @@ QString Search::RemoveAccents(QString str)
     }
 
     return str;
+}
+
+QString Search::RemoveExtraSpaces(QString str)
+{
+    QString data = "";
+    std::unique_copy(str.begin(), str.end(),
+                     std::back_insert_iterator<QString>(data),
+                    [](QChar a, QChar b)
+                    {
+                        return a.isSpace() && b.isSpace();
+                    });
+
+    return data;
 }
