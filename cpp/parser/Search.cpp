@@ -98,6 +98,13 @@ void Search::Initialization()
     {
                                  "aprox"
                              });
+
+    // Tributario
+    _abbreviationsMap.insert(Convert("tributario", false),
+                             QList<QString>
+    {
+                                 "tributaria"
+                             });
 }
 
 QString Search::Convert(QString str, bool useAbbreviation)
@@ -296,7 +303,12 @@ bool Search::RemoveAbnormal(QString* str)
     QString data = *str;
 
     data = data.replace(" / ", " ");
+
+    // Remove from string: da(s) de(s) di(s) do(s) du(s).
     data = data.replace(QRegularExpression(" d[aeiou](?:[s])? "), " ");
+
+    // Remove from string: a(s) e(s) i(s) o(s) u(s).
+    data = data.replace(QRegularExpression(" [aeiou](?:[s])? "), " ");
 
     auto isEdited = (*(str) == data) ? true : false;
     *str = data;
@@ -587,9 +599,13 @@ bool Search::SearchKMP(QString pat, QString txt)
             // Do not match lps[0..lps[j-1]] characters,
             // they will match anyway
             if (j != 0)
+            {
                 j = lps[j - 1];
+            }
             else
+            {
                 i = i + 1;
+            }
         }
     }
 
