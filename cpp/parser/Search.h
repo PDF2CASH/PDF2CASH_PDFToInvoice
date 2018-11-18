@@ -13,6 +13,7 @@ public:
 private:
     QString ToLowerCase(QString str);
     QString RemoveAccents(QString str);
+    QString RemoveExtraSpaces(QString str);
 };
 
 #endif // SEARCH_H
