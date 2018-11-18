@@ -7,6 +7,9 @@
 #include <QMap>
 #include <QList>
 #include <QVector>
+#include <QRect>
+
+struct sTEXTDATA;
 
 struct TrieNode
 {
@@ -43,12 +46,12 @@ struct TrieNode
 struct SearchDataDistance
 {
     int rate;
-    QString str;
+    sTEXTDATA* data;
 
-    SearchDataDistance(int r, QString s)
+    SearchDataDistance(int r, sTEXTDATA* d)
     {
         rate = r;
-        str = s;
+        data = d;
     }
 };
 
@@ -65,11 +68,17 @@ public:
     // Function's related to search string's.
     // -------------------------------------------
 
+    // Main search.
+    sTEXTDATA* SearchText(const QString pattern, QList<sTEXTDATA*> strList, int averageLevenstein, bool checkDistance = false, QRect* rect = nullptr);
+
+    // Exact search.
+    bool SearchByExact(const QString pattern, QString str);
+
     // Levenstein algorithm.
     int SearchByLevenstein(TrieNode* node, QString word, int minCost = 0x3f3f3f3f);
 
     // KMP algorithm.
-    bool SearchKMP(QString pat, QString txt);
+    bool SearchByKMP(QString pattern, QString str);
 
     // -------------------------------------------
     // Function's related to test.
