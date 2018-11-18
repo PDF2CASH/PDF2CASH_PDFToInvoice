@@ -1,5 +1,6 @@
 #include "Search.h"
 
+#include "Parser.h"
 #include "Utils.h"
 
 #include <QChar>
@@ -320,6 +321,131 @@ bool Search::RemoveAbnormal(QString* str)
 // Functions related for search.
 // ---------------------------------------------------------------
 
+sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, int averageLevenstein,
+                              bool checkDistance, QRect* rect)
+{
+    QList<sTEXTDATA> strListProcessed;
+
+    for(auto it = strList.begin(); it != strList.end(); ++it)
+    {
+        sTEXTDATA data;
+
+        data.fontIndex = (*it)->fontIndex;
+        data.height = (*it)->height;
+        data.left = (*it)->left;
+        data.top = (*it)->top;
+        data.width = (*it)->width;
+        data.text = Convert((*it)->text);
+
+        strListProcessed.push_back(data);
+    }
+
+    // List's.
+    QList<sTEXTDATA*> strExactLst;
+    QList<sTEXTDATA*> strKMPLst;
+    QList<SearchDataDistance> strLevensteinLst;
+
+    // Temp variables.
+    QString tmpStr = "";
+    QString tmpConvertedStr = "";
+
+    const QString patternConverted = Convert(pattern);
+
+    // Trie Node.
+    TrieNode* node = new TrieNode();
+    node->insert(patternConverted);
+
+    int tmpTax = 0;
+
+    // 1. - let to check if has string with exact string.
+    for(auto it = strListProcessed.begin(); it != strListProcessed.end(); ++it)
+    {
+        tmpStr = (*it).text;
+        if(tmpStr.isEmpty() || tmpStr.isNull())
+            continue;
+
+        tmpConvertedStr = Convert(tmpStr);
+        if(tmpConvertedStr.isEmpty() || tmpConvertedStr.isNull())
+        {
+            tmpConvertedStr = tmpStr;
+        }
+
+        // First let to search by exact algorithm.
+        if(SearchByExact(patternConverted, tmpConvertedStr))
+        {
+            strExactLst.push_back(&(*it));
+        }
+
+        // Second let to search by KMP algorithm.
+        if(SearchByKMP(patternConverted, tmpConvertedStr))
+        {
+            strKMPLst.push_back(&(*it));
+        }
+
+        // Third let to searby by Levenstein algorithm.
+        tmpTax = SearchByLevenstein(node, patternConverted);
+        if(tmpTax <= averageLevenstein)
+        {
+            strLevensteinLst.push_back(*(new SearchDataDistance(tmpTax, &(*it))));
+        }
+    }
+
+    // Sort list of levenstein by rate.
+    std::sort(strLevensteinLst.begin(), strLevensteinLst.end(),
+              [](const SearchDataDistance & s1, const SearchDataDistance & s2)
+                {
+                    return s1.rate < s2.rate;
+                });
+
+    // Check if found some exact string.
+    if(strExactLst.size() > 0)
+    {
+        if(strExactLst.size() == 1)
+        {
+            return strExactLst.first();
+        }
+        else
+        {
+            if(!checkDistance)
+            {
+                return strExactLst.first();
+            }
+            else
+            {
+                QRect tmpRect;
+
+                for(auto it = strExactLst.begin(); it != strExactLst.end(); ++it)
+                {
+
+                }
+            }
+        }
+    }
+    else
+    {
+        // Not found exact string, now try to find using KMP algorithm.
+
+        // 2. - let to check if has string match with KMP algorithm.
+        if(strKMPLst.size() > 0)
+        {
+
+        }
+        else
+        {
+            TrieNode* node = new TrieNode();
+            node->insert(patternConverted);
+        }
+    }
+}
+
+bool Search::SearchByExact(const QString pattern, QString str)
+{
+    if(pattern.length() != str.length())
+        return false;
+
+    return (pattern.compare(str, Qt::CaseInsensitive) == 0) ? true : false;
+}
+
 void Search::SearchImpl(TrieNode* tree, QChar ch, QVector<int> last_row, const QString& word, int* minCost)
 {
     int sz = last_row.size();
@@ -501,7 +627,7 @@ void Search::TestByLevenstein()
         if (tmpTax > 20)
             continue;
 
-        possiblesLst.push_back(*(new SearchDataDistance(tmpTax, s)));
+        possiblesLst.push_back(*(new SearchDataDistance(tmpTax, new sTEXTDATA(0, 0, 0, 0, 0, s))));
     }
 
     std::sort(possiblesLst.begin(), possiblesLst.end(), [](const SearchDataDistance & data1, const SearchDataDistance & data2)
@@ -514,7 +640,7 @@ void Search::TestByLevenstein()
     for (auto it = possiblesLst.begin(); it != possiblesLst.end(); ++it)
     {
         tmpData = &(*it);
-        qInfo() << "[Rate]:" << "\t" << tmpData->rate << "\t" << "[String]: " << tmpData->str;
+        qInfo() << "[Rate]:" << "\t" << tmpData->rate << "\t" << "[String]: " << tmpData->data->text;
     }
 
     qInfo() << "\nFinished Test Levenstein algorithm.\n";
@@ -560,25 +686,25 @@ void Search::ComputeLPSArray(QString pat, int M, int* lps)
 }
 
 
-bool Search::SearchKMP(QString pat, QString txt)
+bool Search::SearchByKMP(QString pattern, QString str)
 {
     bool found = false;
 
-    int M = pat.length();
-    int N = txt.length();
+    int M = pattern.length();
+    int N = str.length();
 
     // create lps[] that will hold the longest prefix suffix
     // values for pattern
     int lps[M];
 
     // Preprocess the pattern (calculate lps[] array)
-    ComputeLPSArray(pat, M, lps);
+    ComputeLPSArray(pattern, M, lps);
 
     int i = 0; // index for txt[]
     int j = 0; // index for pat[]
     while (i < N)
     {
-        if (pat[j] == txt[i])
+        if (pattern[j] == str[i])
         {
             j++;
             i++;
@@ -594,7 +720,7 @@ bool Search::SearchKMP(QString pat, QString txt)
         }
 
         // mismatch after j matches
-        else if (i < N && pat[j] != txt[i])
+        else if (i < N && pattern[j] != str[i])
         {
             // Do not match lps[0..lps[j-1]] characters,
             // they will match anyway
@@ -621,7 +747,7 @@ void Search::TestByKMP()
 
     for(auto it = list->begin(); it != list->end(); ++it)
     {
-        if(SearchKMP(t, (*it)))
+        if(SearchByKMP(t, (*it)))
         {
             foundList.push_back((*it));
         }

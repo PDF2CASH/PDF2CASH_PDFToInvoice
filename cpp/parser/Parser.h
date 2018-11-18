@@ -1,6 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "Search.h"
+
 #include <QMap>
 #include <QList>
 
@@ -209,6 +211,8 @@ private:
 
     QMap<int, sPAGE*>* _pageMap;
     QMap<int, QList<sINVOICEDATA*>> _invoicesMap;
+
+    Search* _search;
 };
 
 #endif // PARSER_H
