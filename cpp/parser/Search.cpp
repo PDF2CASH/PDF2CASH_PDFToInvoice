@@ -306,14 +306,7 @@ bool Search::RemoveAbnormal(QString* str)
 // Functions related for search.
 // ---------------------------------------------------------------
 
-// The tree
-TrieNode tree;
-
-// The minimum cost of a given word to be changed to a word of the dictionary
-int min_cost;
-
-//
-void SearchImpl(TrieNode* tree, QChar ch, QVector<int> last_row, const QString& word)
+void Search::SearchImpl(TrieNode* tree, QChar ch, QVector<int> last_row, const QString& word, int* minCost)
 {
     int sz = last_row.size();
 
@@ -332,28 +325,37 @@ void SearchImpl(TrieNode* tree, QChar ch, QVector<int> last_row, const QString& 
 
     // When we find a cost that is less than the min_cost, is because
     // it is the minimum until the current row, so we update
-    if ((current_row[sz - 1] < min_cost) && (tree->word != ""))
+    if ((current_row[sz - 1] < (*minCost)) && (tree->word != ""))
     {
-        min_cost = current_row[sz - 1];
+        *minCost = current_row[sz - 1];
     }
 
     // If there is an element wich is smaller than the current minimum cost,
     // we can have another cost smaller than the current minimum cost
-    if (*std::min_element(current_row.begin(), current_row.end()) < min_cost)
+    if (*std::min_element(current_row.begin(), current_row.end()) < (*minCost))
     {
         for (auto it = tree->next.begin(); it != tree->next.end(); ++it)
         {
-            SearchImpl(it.value(), it.key(), current_row, word);
+            SearchImpl(it.value(), it.key(), current_row, word, minCost);
         }
     }
 }
 
-int SearchByDistance(QString word)
+int Search::SearchByLevenstein(TrieNode* node, QString word, int minCost)
 {
+    // Check if trie node is not null.
+    if(node == nullptr)
+    {
+        printf("TrieNode is null.\n");
+        return -1;
+    }
+
     word = QString("$") + word;
 
     auto sz = word.size();
-    min_cost = 0x3f3f3f3f;
+
+    // The minimum cost of a given word to be changed to a word of the dictionary
+    int min_cost = minCost;
 
     QVector<int> current_row(sz + 1);
 
@@ -369,9 +371,9 @@ int SearchByDistance(QString word)
     //  letter in word, we must call the search
     for (auto i = 0; i < sz; ++i)
     {
-        if (tree.next.find(word[i]) != tree.next.end())
+        if (node->next.find(word[i]) != node->next.end())
         {
-            SearchImpl(tree.next[word[i]], word[i], current_row, word);
+            SearchImpl(node->next[word[i]], word[i], current_row, word, &min_cost);
         }
     }
 

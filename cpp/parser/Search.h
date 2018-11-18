@@ -40,6 +40,18 @@ struct TrieNode
     }
 };
 
+struct SearchDataDistance
+{
+    int rate;
+    QString str;
+
+    SearchDataDistance(int r, QString s)
+    {
+        rate = r;
+        str = s;
+    }
+};
+
 class Search
 {
 public:
@@ -50,7 +62,7 @@ public:
     QString Convert(QString str, bool useAbbreviation = true);
 
     // Function's related to search string's.
-    int SearchByDistance(QString word);
+    int SearchByLevenstein(TrieNode* node, QString word, int minCost = 0x3f3f3f3f);
 
 private:
     // Function's related to edit string's.
@@ -64,7 +76,7 @@ private:
     bool RemoveAbnormal(QString* str);
 
     // Function's related to search string's.
-    void SearchImpl(TrieNode* tree, QChar ch, QVector<int> last_row, const QString& word);
+    void SearchImpl(TrieNode* tree, QChar ch, QVector<int> last_row, const QString& word, int* minCost);
 
 private:
     QMap<QString, QList<QString>> _abbreviationsMap;
