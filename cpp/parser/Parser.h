@@ -12,7 +12,7 @@
 #include <QString>
 
 const int AVERAGE_LEVENSTEIN_VALUE = 30;
-const int SPACE_HEIGHT_BETWEEN_HEADER_VALUE = 14;
+const int SPACE_HEIGHT_BETWEEN_HEADER_VALUE = 16;
 
 enum eHEADER_NFE                            /// CABEÇALHO
 {
@@ -98,6 +98,7 @@ enum eINVOICE_HEADER
 {
     MAIN = 0,
     ADDRESSEE_SENDER,                       // DESTINATÁRIO/REMETENTE
+    FATURE,                                 // FATURA
     TAX_CALCULATION,                        // CÁLCULO DO IMPOSTO
     CONVEYOR_VOLUMES,                       // TRANSPORTADOR/VOLUMES TRANSPORTADOS
     PRODUCT_SERVICE_DATA,                   // DADOS DO PRODUTO/SERVIÇO
@@ -205,8 +206,6 @@ private:
     bool TryGetValue(sTEXTDATA* header, QList<sTEXTDATA*>* possibleValues, QString* value, int maxPageHeight, int maxPageWidth);
 
     QString ConvertEnumToText(int header, int value = -1);
-
-    bool FindValueData(QString value, QList<sTEXTDATA*> list, QRect* rect);
 
     sINVOICEHEADER* GetInvoiceHeader(QList<sINVOICEHEADER*> list, int value);
     QList<sINVOICEHEADER*> ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHeaders, int maxWidth, int maxHeight);

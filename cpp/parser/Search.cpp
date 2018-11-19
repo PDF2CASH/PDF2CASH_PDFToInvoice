@@ -359,7 +359,7 @@ sTEXTDATA* Search::CalculeDistance(const QRect rect, const QList<sTEXTDATA*> dat
 }
 
 sTEXTDATA* Search::SearchText(const QString pattern, const QList<sTEXTDATA*> strList, const int averageLevenstein,
-                              const bool checkDistance, const QRect* rect)
+                              const QString mainPattern, const bool checkDistance, const QRect* rect)
 {
     // Check if list is null.
     if(strList.size() <= 0)
@@ -385,26 +385,11 @@ sTEXTDATA* Search::SearchText(const QString pattern, const QList<sTEXTDATA*> str
 
     tmpData = nullptr;
 
-    // TODO : Debug purpose.
-    // Check if has text repeated.
-    //for(auto it = strListProcessed.begin(); it != strListProcessed.end(); ++it)
-    //{
-    //    tmpData = (*it);
-    //
-    //    for(auto it2 = strListProcessed.begin(); it2 != strListProcessed.end(); ++it2)
-    //    {
-    //        if(tmpData->text == (*it2)->text &&
-    //                tmpData->left != (*it2)->left && tmpData->top != (*it2)->top)
-    //        {
-    //            qDebug() << "Repeated text: " << tmpData->text;
-    //        }
-    //    }
-    //}
-
     // List's.
     QList<sTEXTDATA*> strExactLst;
     QList<sTEXTDATA*> strKMPLst;
     QList<SearchDataDistance> strLevensteinLst;
+    QList<SearchDataDistance> strTagsLst;
 
     // Temp variables.
     QString tmpStr = "";
@@ -415,6 +400,8 @@ sTEXTDATA* Search::SearchText(const QString pattern, const QList<sTEXTDATA*> str
     // Trie Node.
     TrieNode* node = new TrieNode();
     node->insert(patternConverted);
+
+    QStringList patternLst = patternConverted.split(QChar::Space, QString::SkipEmptyParts);
 
     int tmpTax = 0;
 
@@ -449,6 +436,12 @@ sTEXTDATA* Search::SearchText(const QString pattern, const QList<sTEXTDATA*> str
         {
             strLevensteinLst.push_back(*(new SearchDataDistance(tmpTax, (*it))));
         }
+
+        tmpTax = SearchByTags(patternLst, tmpConvertedStr, mainPattern);
+        if(tmpTax > 0)
+        {
+            strTagsLst.push_back(*(new SearchDataDistance(tmpTax, (*it))));
+        }
     }
 
     // Sort list of levenstein by rate.
@@ -456,6 +449,13 @@ sTEXTDATA* Search::SearchText(const QString pattern, const QList<sTEXTDATA*> str
               [](const SearchDataDistance & s1, const SearchDataDistance & s2)
                 {
                     return s1.rate < s2.rate;
+                });
+
+    // Sort list of levenstein by rate.
+    std::sort(strTagsLst.begin(), strTagsLst.end(),
+              [](const SearchDataDistance & s1, const SearchDataDistance & s2)
+                {
+                    return s1.rate > s2.rate;
                 });
 
     // Check if found some exact string.
@@ -486,7 +486,7 @@ sTEXTDATA* Search::SearchText(const QString pattern, const QList<sTEXTDATA*> str
         else
         {
             // 3. - let to check if has string match with levenstein algorithm.
-            if(strLevensteinLst.size() > 0)
+            if(strLevensteinLst.size() > 0 && strTagsLst.size() > 0)
             {
                 QList<sTEXTDATA*> tmpList;
                 SearchDataDistance* tmpSearchData = nullptr;
@@ -506,25 +506,44 @@ sTEXTDATA* Search::SearchText(const QString pattern, const QList<sTEXTDATA*> str
 
                 if(tmpList.size() > 0)
                 {
-                    return (tmpList.size() == 1 || !checkDistance || (checkDistance == true && rect == nullptr)) ?
-                                tmpList.first() :
-                                CalculeDistance(*rect, tmpList);
+                    if(checkDistance == true && rect != nullptr)
+                    {
+                        QList<sTEXTDATA*> tmpTagList;
+
+                        for(auto it = strTagsLst.begin(); it != strTagsLst.end(); ++it)
+                        {
+                            tmpSearchData = &(*it);
+                            if(tmpSearchData == nullptr)
+                                continue;
+
+                            if(tmpSearchData->rate == rate)
+                            {
+                                tmpTagList.push_back(tmpSearchData->data);
+                            }
+                        }
+
+                        return CalculeDistance(*rect, tmpTagList);
+                    }
+                    else
+                    {
+                        return strTagsLst.first().data;
+                    }
+
+                    //return (tmpList.size() == 1 || !checkDistance || (checkDistance == true && rect == nullptr)) ?
+                    //            tmpList.first() :
+                    //            CalculeDistance(*rect, tmpList);
                 }
                 else
                 {
-                    return strLevensteinLst.first().data;
+                    return strTagsLst.first().data;
                 }
             }
             else
             {
                 return nullptr;
             }
-
         }
     }
-
-    // TODO : this return will never be executed.
-    return nullptr;
 }
 
 bool Search::SearchByExact(const QString pattern, QString str)
@@ -848,4 +867,33 @@ void Search::TestByKMP()
     }
 
     qInfo() << "\nFinished Test Levenstein algorithm.\n";
+}
+
+int Search::SearchByTags(QStringList pattern, QString str, QString mainPattern)
+{
+    int matches = 0;
+
+    bool checkPattern = (mainPattern.isEmpty() || mainPattern.isNull()) ? false : true;
+    bool containPattern = false;
+
+    QStringList strLst = str.split(QChar::Space, QString::SkipEmptyParts);
+
+    for(auto i = 0; i < strLst.length(); i++)
+    {
+        for(auto k = 0; k < pattern.length(); k++)
+        {
+            if(checkPattern && strLst[i] == mainPattern)
+            {
+                containPattern = true;
+            }
+
+            if(strLst[i] == pattern[k])
+            {
+                matches++;
+                break;
+            }
+        }
+    }
+
+    return (checkPattern == true && containPattern == false) ? 0 : matches;
 }
