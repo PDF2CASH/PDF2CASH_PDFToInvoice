@@ -1123,7 +1123,6 @@ QString Parser::ConvertToJsonHeader(int header, int value)
     {
         return "product_service_data";
     }
-    break;
     case ISSQN_CALCULATION:
     {
         switch(value)
@@ -1139,7 +1138,6 @@ QString Parser::ConvertToJsonHeader(int header, int value)
     {
         return "additional_data";
     }
-    break;
     }
 
     return "";
@@ -1208,9 +1206,6 @@ QString Parser::GenerateJson()
     json += "\n";
     json += "}";
 
-    // TODO : Debug purpose.
-    //printf("%s\n", json.toStdString().c_str());
-
     return json;
 }
 
@@ -1234,7 +1229,6 @@ bool Parser::ConvertToJson()
         QFile::remove(filename);
     }
 
-    //printf("JSON will be saved in: %s\n", filename.toStdString().c_str());
     QFile file(filename);
 
     QString buffer = GenerateJson();
@@ -1253,7 +1247,6 @@ bool Parser::ConvertToJson()
     if(file.isOpen())
         file.close();
 
-    //printf("%s", buffer.toStdString().c_str());
     return Utils::FileExists(filename);
 }
 
@@ -1277,7 +1270,6 @@ bool Parser::GetInvoiceData()
     // Temporary variables.
     sPAGE* page = nullptr;
     sTEXTDATA* textData = nullptr;
-    sINVOICEDATA* invoiceData = nullptr;
     QString currentData;
     QString tmpStr;
 
@@ -1335,7 +1327,6 @@ bool Parser::GetInvoiceData()
         QList<sINVOICEDATA*> tmpInvoiceList;
         sINVOICEHEADER* tmpHeader = nullptr;
         QRect tmpRect;
-        //QList<QString> tmpStringList;
         int forMax = 0;
 
         sTEXTDATA* tmpValueData = nullptr;
@@ -1395,17 +1386,6 @@ bool Parser::GetInvoiceData()
 
             for(int k = 0; k < forMax; k++)
             {
-                //tmpHeaderStr = _search->Convert((ConvertEnumToText(invoiceHeader->header)));
-                //tmpTextData = _search->SearchText(tmpHeaderStr, possibleHeaders, AVERAGE_LEVENSTEIN_VALUE);
-                //if(tmpTextData != nullptr)
-                //{
-                //    tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
-                //                    QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
-                //
-                //    invoiceHeader->rect = tmpRect;
-                //    invoiceHeaderList.push_back(invoiceHeader);
-                //}
-
                 tmpStr = ConvertEnumToText(i, k);
                 if(tmpStr.isNull() || tmpStr.isEmpty())
                 {
@@ -1439,12 +1419,6 @@ bool Parser::GetInvoiceData()
 
                     if(TryGetValue(textData, &tmpTxtList, &currentData, page->height, page->width))
                     {
-                        //invoiceData = new sINVOICEDATA();
-                        //invoiceData->header = textData->text;
-                        //invoiceData->value = currentData;
-                        //invoiceData->headerID = i;
-                        //invoiceData->subHeaderID = k;
-
                         tmpInvoiceList.push_back(new sINVOICEDATA(textData->text,
                                                                   QString(currentData),
                                                                   i,
@@ -1455,41 +1429,6 @@ bool Parser::GetInvoiceData()
                         failed.push_back(textData);
                     }
                 }
-
-
-                // TODO : Litwin
-                //tmpStringList = ConvertEnumToText(static_cast<eINVOICE_HEADER>(i), k);
-                //if(tmpStringList.length() <= 0)
-                //{
-                //    qDebug() << "Maybe error?";
-                //    continue;
-                //}
-                //
-                //tmpTxtList = valuesMap[i];
-                //for(auto it = tmpStringList.begin(); it != tmpStringList.end(); ++it)
-                //{
-                //    tmpStr = (*it);
-                //    textData = GetTextData(tmpStr, tmpTxtList);
-                //
-                //    if(textData != nullptr)
-                //    {
-                //        if(TryGetValue(textData, &tmpTxtList, &currentData, page->height, page->width))
-                //        {
-                //            invoiceData = new sINVOICEDATA();
-                //            invoiceData->header = textData->text;
-                //            invoiceData->value = currentData;
-                //            invoiceData->headerID = i;
-                //            invoiceData->subHeaderID = k;
-                //
-                //            tmpInvoiceList.push_back(invoiceData);
-                //            break;
-                //        }
-                //        else
-                //        {
-                //            failed.push_back(textData);
-                //        }
-                //    }
-                //}
             }
 
             tmpInvoicesMap.insert(i, tmpInvoiceList);
@@ -1510,8 +1449,6 @@ bool Parser::ReadInvoiceXML(QString fileName)
     _fileName = fileName;
     QString tmp = fileName.replace(".pdf", ".xml");
 
-    //printf("XML: %s\n", tmp.toStdString().c_str());
-
     QFile file(tmp);
     if(!file.open(QFile::ReadOnly | QFile::Text))
     {
@@ -1527,14 +1464,8 @@ bool Parser::ReadInvoiceXML(QString fileName)
     sFONTDESCRIPTION* fontDesc = nullptr;
     sTEXTDATA* txtData = nullptr;
 
-    //printf("Let to read XML now.\n");
-
-    //int count = 0;
-
     while(!reader.atEnd() && !reader.hasError())
     {
-        //printf("[%d] - Reading XML.\n", count++);
-
         QXmlStreamReader::TokenType token = reader.readNext();
         if(token == QXmlStreamReader::StartDocument)
             continue;
@@ -1628,7 +1559,7 @@ bool Parser::ReadInvoiceXML(QString fileName)
                     reader.readNext();
                 }
 
-                // loaded everything from current page node,
+                // Loaded everything from current page node,
                 // now let to save in map.
                 _pageMap->insert(static_cast<int>(pageData->number), pageData);
             }
