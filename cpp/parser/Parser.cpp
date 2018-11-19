@@ -531,41 +531,6 @@ bool Parser::TryGetValue(sTEXTDATA* header, QList<sTEXTDATA*>* possibleValues, Q
     }
 }
 
-bool Parser::FindValueData(QString value, QList<sTEXTDATA*> list, QRect* rect)
-{
-    sTEXTDATA* data;
-
-    QList<sTEXTDATA*> find;
-
-    for(auto it = list.begin(); it != list.end(); ++it)
-    {
-        data = (*it);
-        if(data != nullptr && data->text == value)
-        {
-            find.push_back(data);
-        }
-    }
-
-    if(find.length() == 0)
-    {
-        *rect = QRect(QPoint(-1, -1), QSize(-1, -1));
-        return false;
-    }
-    else if(find.length() == 1)
-    {
-        data = find.first();
-
-        *rect = QRect(QPoint(data->left, data->top), QSize(data->width, data->height));
-        return true;
-    }
-    else
-    {
-        // TODO:
-    }
-
-    return false;
-}
-
 QString Parser::ConvertEnumToText(int header, int value)
 {
     switch(static_cast<eINVOICE_HEADER>(header))
@@ -793,43 +758,20 @@ QString Parser::ConvertEnumToText(int header, int value)
         }
         }
     }
-    //break;
-    case PRODUCT_SERVICE_DATA:
-    {
-        return "DADOS DO PRODUTO/SERVIÇO";
-    }
-    //break;
+    case PRODUCT_SERVICE_DATA: return "DADOS DO PRODUTO/SERVIÇO";
     case ISSQN_CALCULATION:
     {
         switch(value)
         {
-        case I_C_MUNICIPAL_REGISTRATION:
-        {
-            return "INSCRIÇÃO MUNICIPAL";
-        }
-        case I_C_TOTAL_COST_SERVICES:
-        {
-            return "VALOR TOTAL DOS SERVIÇOS";
-        }
-        case I_C_ISSQN_CALCULATION_BASE:
-        {
-            return "BASE DE CALCULO DO ISSQN";
-        }
-        case I_C_COST_ISSQN:
-        {
-            return "VALOR DO ISSQN";
-        }
-        default:
-        {
-            return "CÁLCULO DO ISSQN";
-        }
+        case I_C_MUNICIPAL_REGISTRATION: return "INSCRIÇÃO MUNICIPAL";
+        case I_C_TOTAL_COST_SERVICES: return "VALOR TOTAL DOS SERVIÇOS";
+        case I_C_ISSQN_CALCULATION_BASE: return "BASE DE CALCULO DO ISSQN";
+        case I_C_COST_ISSQN: return "VALOR DO ISSQN";
+        default: return "CÁLCULO DO ISSQN";
         }
     }
-    //break;
-    case ADDITIONAL_DATA:
-    {
-        return "DADOS ADICIONAIS";
-    }
+    case ADDITIONAL_DATA: return "DADOS ADICIONAIS";
+    case MAX: return "";
     }
 
     return "";
@@ -856,7 +798,6 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
     QRect tmpRect;
     QString tmpStr;
     QString tmpHeaderStr;
-    //QList<QString> tmpStrList;
 
     sTEXTDATA* tmpTextData = nullptr;
 
@@ -865,7 +806,6 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
     {
         tmpHeaderStr = "";
         tmpTextData = nullptr;
-        //tmpStrList.clear();
 
         switch(header)
         {
@@ -885,26 +825,6 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
                     invoiceHeader->rect = tmpRect;
                     invoiceHeaderList.push_back(invoiceHeader);
                 }
-
-                //tmpStrList = ConvertEnumToText(invoiceHeader->header);
-                //
-                //for(auto it = tmpStrList.begin(); it != tmpStrList.end(); ++it)
-                //{
-                //    tmpStr = (*it);
-                //    if(tmpStr.isEmpty())
-                //        continue;
-                //
-                //    if(FindValueData(tmpStr, possibleHeaders, &tmpRect))
-                //    {
-                //        tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
-                //                        QSize(maxWidth, maxHeight - tmpRect.top()));
-                //
-                //        invoiceHeader->rect = tmpRect;
-                //
-                //        invoiceHeaderList.push_back(invoiceHeader);
-                //        break;
-                //    }
-                //}
             }
             break;
             case ISSQN_CALCULATION:
@@ -1407,6 +1327,13 @@ bool Parser::ConvertToJson()
 
     filename += ".json";
 
+    // Check if already has a file with same name, if yes,
+    // let to delete.
+    if(Utils::FileExists(filename))
+    {
+        QFile::remove(filename);
+    }
+
     //printf("JSON will be saved in: %s\n", filename.toStdString().c_str());
     QFile file(filename);
 
@@ -1461,8 +1388,15 @@ bool Parser::GetInvoiceData()
     for(itPage = _pageMap->begin(); itPage != _pageMap->end(); ++itPage)
     {
         tmpInvoicesMap.clear();
+        headers.clear();
+        values.clear();
+        invoiceHeaderList.clear();
 
         page = itPage.value();
+
+        // We only need values from first page.
+        if(_invoicesMap.size() > 0)
+            break;
 
         // 1. Let to get possibles headers.
         // We will discard texts that only have values.
@@ -1550,6 +1484,7 @@ bool Parser::GetInvoiceData()
         {
             currentData = "";
             tmpInvoiceList.clear();
+            tmpTxtList.clear();
 
             if(i == PRODUCT_SERVICE_DATA)
                 continue;
@@ -1675,7 +1610,7 @@ bool Parser::ReadInvoiceXML(QString fileName)
     _fileName = fileName;
     QString tmp = fileName.replace(".pdf", ".xml");
 
-    printf("XML: %s\n", tmp.toStdString().c_str());
+    //printf("XML: %s\n", tmp.toStdString().c_str());
 
     QFile file(tmp);
     if(!file.open(QFile::ReadOnly | QFile::Text))
