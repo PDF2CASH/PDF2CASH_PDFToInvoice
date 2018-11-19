@@ -596,7 +596,8 @@ QString Parser::ConvertEnumToText(int header, int value)
         }
         case A_S_OUTPUT_INPUT_DATE:
         {
-            return "DATA DE SAÍDA/ENTRADA";
+            //return "DATA DE SAÍDA/ENTRADA";
+            return "DATA DE SAÍDA";
         }
         case A_S_COUNTY:
         {
@@ -624,7 +625,10 @@ QString Parser::ConvertEnumToText(int header, int value)
         }
         }
     }
-    //break;
+    case FATURE:
+    {
+        return "FATURA";
+    }
     case TAX_CALCULATION:
     {
         switch(value)
@@ -837,7 +841,7 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
                 invoiceHeader->header = ISSQN_CALCULATION;
 
                 tmpHeaderStr = ConvertEnumToText(invoiceHeader->header);
-                tmpTextData = _search->SearchText(tmpHeaderStr, possibleHeaders, AVERAGE_LEVENSTEIN_VALUE);
+                tmpTextData = _search->SearchText(tmpHeaderStr, possibleHeaders, AVERAGE_LEVENSTEIN_VALUE, _search->Convert("ISSQN"));
                 if(tmpTextData != nullptr)
                 {
                     tmpRect = QRect(QPoint(tmpTextData->left, tmpTextData->top), QSize(tmpTextData->width, tmpTextData->height));
@@ -853,7 +857,11 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
             {
                 tmpHeader = GetInvoiceHeader(invoiceHeaderList, ISSQN_CALCULATION);
                 if(tmpHeader == nullptr)
-                    continue;
+                {
+                    tmpHeader = GetInvoiceHeader(invoiceHeaderList, ADDITIONAL_DATA);
+                    if(tmpHeader == nullptr)
+                        continue;
+                }
 
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = PRODUCT_SERVICE_DATA;
@@ -915,11 +923,37 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
                 }
             }
             break;
-            case ADDRESSEE_SENDER:
+            case FATURE:
             {
                 tmpHeader = GetInvoiceHeader(invoiceHeaderList, TAX_CALCULATION);
                 if(tmpHeader == nullptr)
                     continue;
+
+                invoiceHeader = new sINVOICEHEADER();
+                invoiceHeader->header = FATURE;
+
+                tmpHeaderStr = ConvertEnumToText(invoiceHeader->header);
+                tmpTextData = _search->SearchText(tmpHeaderStr, possibleHeaders, AVERAGE_LEVENSTEIN_VALUE);
+                if(tmpTextData != nullptr)
+                {
+                    tmpRect = QRect(QPoint(tmpTextData->left, tmpTextData->top), QSize(tmpTextData->width, tmpTextData->height));
+                    tmpRect = QRect(QPoint(0, tmpRect.top()),
+                                    QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
+
+                    invoiceHeader->rect = tmpRect;
+                    invoiceHeaderList.push_back(invoiceHeader);
+                }
+            }
+            break;
+            case ADDRESSEE_SENDER:
+            {
+                tmpHeader = GetInvoiceHeader(invoiceHeaderList, FATURE);
+                if(tmpHeader == nullptr)
+                {
+                    tmpHeader = GetInvoiceHeader(invoiceHeaderList, TAX_CALCULATION);
+                    if(tmpHeader == nullptr)
+                        continue;
+                }
 
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = ADDRESSEE_SENDER;
@@ -1377,7 +1411,7 @@ bool Parser::GetInvoiceData()
             tmpInvoiceList.clear();
             tmpTxtList.clear();
 
-            if(i == PRODUCT_SERVICE_DATA)
+            if(i == PRODUCT_SERVICE_DATA || i == FATURE)
                 continue;
 
             forMax = GetMaxDataHeader(i);

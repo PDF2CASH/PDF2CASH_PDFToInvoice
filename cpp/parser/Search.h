@@ -69,7 +69,7 @@ public:
     // -------------------------------------------
 
     // Main search.
-    sTEXTDATA* SearchText(const QString pattern, const QList<sTEXTDATA*> strList, const int averageLevenstein, const bool checkDistance = false, const QRect* rect = nullptr);
+    sTEXTDATA* SearchText(const QString pattern, const QList<sTEXTDATA*> strList, const int averageLevenstein, const QString mainPattern = "", const bool checkDistance = false, const QRect* rect = nullptr);
     sTEXTDATA* CalculeDistance(const QRect rect, const QList<sTEXTDATA*> dataList);
 
     // Exact search.
@@ -80,6 +80,8 @@ public:
 
     // KMP algorithm.
     bool SearchByKMP(QString pattern, QString str);
+
+    int SearchByTags(QStringList pattern, QString str, QString mainPattern = "");
 
     // -------------------------------------------
     // Function's related to test.
