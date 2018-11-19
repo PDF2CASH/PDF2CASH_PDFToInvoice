@@ -32,6 +32,7 @@ void Search::Initialization()
                              QList<QString>
     {
                                  "st",
+                                 "sub",
                                  "subst",
                                  "substit"
                              });
@@ -357,30 +358,48 @@ sTEXTDATA* Search::CalculeDistance(const QRect rect, const QList<sTEXTDATA*> dat
     return (tmpData != nullptr) ? tmpData : dataList.first();
 }
 
-sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, int averageLevenstein,
-                              bool checkDistance, QRect* rect)
+sTEXTDATA* Search::SearchText(const QString pattern, const QList<sTEXTDATA*> strList, const int averageLevenstein,
+                              const bool checkDistance, const QRect* rect)
 {
     // Check if list is null.
     if(strList.size() <= 0)
         return nullptr;
 
     // List will be used for convert all texts.
-    QList<sTEXTDATA> strListProcessed;
+    QList<sTEXTDATA*> strListProcessed;
+
+    sTEXTDATA* tmpData = nullptr;
 
     // Process every element from list and convert text's.
     for(auto it = strList.begin(); it != strList.end(); ++it)
     {
-        sTEXTDATA data;
+        tmpData = (*it);
+        if(tmpData == nullptr)
+            continue;
 
-        data.fontIndex = (*it)->fontIndex;
-        data.height = (*it)->height;
-        data.left = (*it)->left;
-        data.top = (*it)->top;
-        data.width = (*it)->width;
-        data.text = Convert((*it)->text);
-
-        strListProcessed.push_back(data);
+        strListProcessed.push_back(new sTEXTDATA(tmpData->top, tmpData->left,
+                                                 tmpData->height, tmpData->width,
+                                                 tmpData->fontIndex,
+                                                 Convert(tmpData->text)));
     }
+
+    tmpData = nullptr;
+
+    // TODO : Debug purpose.
+    // Check if has text repeated.
+    //for(auto it = strListProcessed.begin(); it != strListProcessed.end(); ++it)
+    //{
+    //    tmpData = (*it);
+    //
+    //    for(auto it2 = strListProcessed.begin(); it2 != strListProcessed.end(); ++it2)
+    //    {
+    //        if(tmpData->text == (*it2)->text &&
+    //                tmpData->left != (*it2)->left && tmpData->top != (*it2)->top)
+    //        {
+    //            qDebug() << "Repeated text: " << tmpData->text;
+    //        }
+    //    }
+    //}
 
     // List's.
     QList<sTEXTDATA*> strExactLst;
@@ -402,7 +421,7 @@ sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, 
     // 1. - let to check if has string with exact string.
     for(auto it = strListProcessed.begin(); it != strListProcessed.end(); ++it)
     {
-        tmpStr = (*it).text;
+        tmpStr = (*it)->text;
         if(tmpStr.isEmpty() || tmpStr.isNull())
             continue;
 
@@ -415,22 +434,29 @@ sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, 
         // First let to search by exact algorithm.
         if(SearchByExact(patternConverted, tmpConvertedStr))
         {
-            strExactLst.push_back(&(*it));
+            strExactLst.push_back(*it);
         }
 
         // Second let to search by KMP algorithm.
         if(SearchByKMP(patternConverted, tmpConvertedStr))
         {
-            strKMPLst.push_back(&(*it));
+            strKMPLst.push_back(*it);
         }
 
         // Third let to searby by Levenstein algorithm.
-        tmpTax = SearchByLevenstein(node, patternConverted);
+        tmpTax = SearchByLevenstein(node, tmpConvertedStr);
         if(tmpTax <= averageLevenstein)
         {
-            strLevensteinLst.push_back(*(new SearchDataDistance(tmpTax, &(*it))));
+            strLevensteinLst.push_back(*(new SearchDataDistance(tmpTax, (*it))));
         }
     }
+
+    // Sort list of levenstein by rate.
+    std::sort(strLevensteinLst.begin(), strLevensteinLst.end(),
+              [](const SearchDataDistance & s1, const SearchDataDistance & s2)
+                {
+                    return s1.rate < s2.rate;
+                });
 
     // Check if found some exact string.
     if(strExactLst.size() > 0)
@@ -462,13 +488,6 @@ sTEXTDATA* Search::SearchText(const QString pattern, QList<sTEXTDATA*> strList, 
             // 3. - let to check if has string match with levenstein algorithm.
             if(strLevensteinLst.size() > 0)
             {
-                // Sort list of levenstein by rate.
-                std::sort(strLevensteinLst.begin(), strLevensteinLst.end(),
-                          [](const SearchDataDistance & s1, const SearchDataDistance & s2)
-                            {
-                                return s1.rate < s2.rate;
-                            });
-
                 QList<sTEXTDATA*> tmpList;
                 SearchDataDistance* tmpSearchData = nullptr;
                 const int rate = strLevensteinLst.first().rate;
