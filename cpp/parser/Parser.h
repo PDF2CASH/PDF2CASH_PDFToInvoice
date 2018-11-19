@@ -176,6 +176,15 @@ struct sINVOICEDATA
 
     int headerID;
     int subHeaderID;
+
+    sINVOICEDATA(QString h, QString v, int hID, int shID)
+    {
+        header = h;
+        value = v;
+
+        headerID = hID;
+        subHeaderID = shID;
+    }
 };
 
 class Parser
@@ -195,7 +204,7 @@ private:
     QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues, int maxPageHeight, int maxPageWidth);
     bool TryGetValue(sTEXTDATA* header, QList<sTEXTDATA*>* possibleValues, QString* value, int maxPageHeight, int maxPageWidth);
 
-    QString ConvertEnumToText(eINVOICE_HEADER header, int value = -1);
+    QString ConvertEnumToText(int header, int value = -1);
 
     bool FindValueData(QString value, QList<sTEXTDATA*> list, QRect* rect);
 
@@ -205,13 +214,13 @@ private:
     sTEXTDATA* GetTextData(QString header, QList<sTEXTDATA*> possibleValues);
 
     QString ConvertToJsonHeader(int header, int value);
-    QString GenerateJson(QMap<int, QList<sINVOICEDATA*>> map);
+    QString GenerateJson();
 
 private:
     QString _fileName;
 
     QMap<int, sPAGE*>* _pageMap;
-    QMap<int, QList<sINVOICEDATA*>> _invoicesMap;
+    QMap<int, QMap<int, QList<sINVOICEDATA*>>> _invoicesMap;
 
     Search* _search;
 };

@@ -566,9 +566,9 @@ bool Parser::FindValueData(QString value, QList<sTEXTDATA*> list, QRect* rect)
     return false;
 }
 
-QString Parser::ConvertEnumToText(eINVOICE_HEADER header, int value)
+QString Parser::ConvertEnumToText(int header, int value)
 {
-    switch(header)
+    switch(static_cast<eINVOICE_HEADER>(header))
     {
     case MAIN:
     {
@@ -874,10 +874,11 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = ADDITIONAL_DATA;
 
-                tmpHeaderStr = _search->Convert((ConvertEnumToText(invoiceHeader->header)));
+                tmpHeaderStr = ConvertEnumToText(invoiceHeader->header);
                 tmpTextData = _search->SearchText(tmpHeaderStr, possibleHeaders, AVERAGE_LEVENSTEIN_VALUE);
                 if(tmpTextData != nullptr)
                 {
+                    tmpRect = QRect(QPoint(tmpTextData->left, tmpTextData->top), QSize(tmpTextData->width, tmpTextData->height));
                     tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
                                     QSize(maxWidth, maxHeight - tmpRect.top()));
 
@@ -915,10 +916,11 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = ISSQN_CALCULATION;
 
-                tmpHeaderStr = _search->Convert((ConvertEnumToText(invoiceHeader->header)));
+                tmpHeaderStr = ConvertEnumToText(invoiceHeader->header);
                 tmpTextData = _search->SearchText(tmpHeaderStr, possibleHeaders, AVERAGE_LEVENSTEIN_VALUE);
                 if(tmpTextData != nullptr)
                 {
+                    tmpRect = QRect(QPoint(tmpTextData->left, tmpTextData->top), QSize(tmpTextData->width, tmpTextData->height));
                     tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
                                     QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
 
@@ -956,10 +958,11 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = PRODUCT_SERVICE_DATA;
 
-                tmpHeaderStr = _search->Convert((ConvertEnumToText(invoiceHeader->header)));
+                tmpHeaderStr = ConvertEnumToText(invoiceHeader->header);
                 tmpTextData = _search->SearchText(tmpHeaderStr, possibleHeaders, AVERAGE_LEVENSTEIN_VALUE);
                 if(tmpTextData != nullptr)
                 {
+                    tmpRect = QRect(QPoint(tmpTextData->left, tmpTextData->top), QSize(tmpTextData->width, tmpTextData->height));
                     tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
                                     QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
 
@@ -997,10 +1000,11 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = CONVEYOR_VOLUMES;
 
-                tmpHeaderStr = _search->Convert((ConvertEnumToText(invoiceHeader->header)));
+                tmpHeaderStr = ConvertEnumToText(invoiceHeader->header);
                 tmpTextData = _search->SearchText(tmpHeaderStr, possibleHeaders, AVERAGE_LEVENSTEIN_VALUE);
                 if(tmpTextData != nullptr)
                 {
+                    tmpRect = QRect(QPoint(tmpTextData->left, tmpTextData->top), QSize(tmpTextData->width, tmpTextData->height));
                     tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
                                     QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
 
@@ -1038,10 +1042,11 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = TAX_CALCULATION;
 
-                tmpHeaderStr = _search->Convert((ConvertEnumToText(invoiceHeader->header)));
+                tmpHeaderStr = ConvertEnumToText(invoiceHeader->header);
                 tmpTextData = _search->SearchText(tmpHeaderStr, possibleHeaders, AVERAGE_LEVENSTEIN_VALUE);
                 if(tmpTextData != nullptr)
                 {
+                    tmpRect = QRect(QPoint(tmpTextData->left, tmpTextData->top), QSize(tmpTextData->width, tmpTextData->height));
                     tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
                                     QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
 
@@ -1079,10 +1084,11 @@ QList<sINVOICEHEADER*> Parser::ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHe
                 invoiceHeader = new sINVOICEHEADER();
                 invoiceHeader->header = ADDRESSEE_SENDER;
 
-                tmpHeaderStr = _search->Convert((ConvertEnumToText(invoiceHeader->header)));
+                tmpHeaderStr = ConvertEnumToText(invoiceHeader->header);
                 tmpTextData = _search->SearchText(tmpHeaderStr, possibleHeaders, AVERAGE_LEVENSTEIN_VALUE);
                 if(tmpTextData != nullptr)
                 {
+                    tmpRect = QRect(QPoint(tmpTextData->left, tmpTextData->top), QSize(tmpTextData->width, tmpTextData->height));
                     tmpRect = QRect(QPoint(0 /*tmpRect.left()*/, tmpRect.top()),
                                     QSize(maxWidth, (tmpHeader->rect.top() - 1) - tmpRect.top()));
 
@@ -1170,30 +1176,46 @@ void Parser::DebugShow()
     QString tmpStr;
     sINVOICEDATA* tmpInvoice = nullptr;
 
+    QMap<int, QList<sINVOICEDATA*>> tmpInvoicesMap;
+
     for(auto it = _invoicesMap.begin(); it != _invoicesMap.end(); ++it)
     {
-        switch(it.key())
+        tmpInvoicesMap.clear();
+
+        tmpInvoicesMap = (*it);
+        if(tmpInvoicesMap.size() > 0)
         {
-            case MAIN: tmpStr = "NF-E"; break;
-            case ADDRESSEE_SENDER: tmpStr = "DESTINATÁRIO/REMETENTE"; break;
-            case TAX_CALCULATION: tmpStr = "CÁLCULO DO IMPOSTO"; break;
-            case CONVEYOR_VOLUMES: tmpStr = "TRANSPORTADOR/VOLUMES TRANSPORTADOS"; break;
-            case PRODUCT_SERVICE_DATA: tmpStr = "DADOS DO PRODUTO/SERVIÇO"; break;
-            case ISSQN_CALCULATION: tmpStr = "CÁLCULO DO ISSQN"; break;
+            printf("=============================================================================\n");
+            printf("Page: %d\n", it.key());
+            printf("=============================================================================\n");
+
+            for(auto it2 = tmpInvoicesMap.begin(); it2 != tmpInvoicesMap.end(); ++it2)
+            {
+                switch(it2.key())
+                {
+                    case MAIN: tmpStr = "NF-E"; break;
+                    case ADDRESSEE_SENDER: tmpStr = "DESTINATÁRIO/REMETENTE"; break;
+                    case TAX_CALCULATION: tmpStr = "CÁLCULO DO IMPOSTO"; break;
+                    case CONVEYOR_VOLUMES: tmpStr = "TRANSPORTADOR/VOLUMES TRANSPORTADOS"; break;
+                    case PRODUCT_SERVICE_DATA: tmpStr = "DADOS DO PRODUTO/SERVIÇO"; break;
+                    case ISSQN_CALCULATION: tmpStr = "CÁLCULO DO ISSQN"; break;
+                }
+
+                printf("###############################################\n");
+                printf("%s\n", tmpStr.toStdString().c_str());
+                printf("###############################################\n");
+
+                for(auto it3 = (*it2).begin(); it3 != (*it2).end(); ++it3)
+                {
+                    tmpInvoice = (*it3);
+                    printf("[%s]\n", tmpInvoice->header.toStdString().c_str());
+                    printf("%s\n", tmpInvoice->value.toStdString().c_str());
+                }
+
+                printf("\n");
+            }
         }
 
-        printf("=============================================================================\n");
-        printf("%s\n", tmpStr.toStdString().c_str());
-        printf("=============================================================================\n");
-
-        for(auto it2 = (*it).begin(); it2 != (*it).end(); ++it2)
-        {
-            tmpInvoice = (*it2);
-            printf("[%s]\n", tmpInvoice->header.toStdString().c_str());
-            printf("%s\n", tmpInvoice->value.toStdString().c_str());
-        }
-
-        printf("\n");
     }
 }
 
@@ -1303,50 +1325,59 @@ QString Parser::ConvertToJsonHeader(int header, int value)
     return "";
 }
 
-QString Parser::GenerateJson(QMap<int, QList<sINVOICEDATA*>> map)
+QString Parser::GenerateJson()
 {
     QString json("");
+
+    QMap<int, QList<sINVOICEDATA*>> map;
 
     QString tmpStr;
     sINVOICEDATA* tmpInvoice = nullptr;
 
     json += "{\n";
 
-    for(auto it = map.begin(); it != map.end(); ++it)
+    for(auto i = _invoicesMap.begin(); i != _invoicesMap.end(); ++i)
     {
-        for(auto it2 = (*it).begin(); it2 != (*it).end(); ++it2)
+        map = (*i);
+        if(map.size() <= 0)
+            continue;
+
+        for(auto it = map.begin(); it != map.end(); ++it)
         {
-            tmpInvoice = (*it2);
-            if(tmpInvoice != nullptr)
+            for(auto it2 = (*it).begin(); it2 != (*it).end(); ++it2)
             {
-                tmpStr = ConvertToJsonHeader(tmpInvoice->headerID, tmpInvoice->subHeaderID);
-                if(tmpStr.isEmpty())
-                    continue;
-
-                json += "\t";
-                json += "\"";
-                json += tmpStr;
-                json += "\"";
-                json += ": ";
-
-                if(tmpInvoice->value.isEmpty())
+                tmpInvoice = (*it2);
+                if(tmpInvoice != nullptr)
                 {
-                    json += "null";
-                    json += ",\n";
-                }
-                else
-                {
-                    if(Utils::IsNumber(tmpInvoice->value))
+                    tmpStr = ConvertToJsonHeader(tmpInvoice->headerID, tmpInvoice->subHeaderID);
+                    if(tmpStr.isEmpty())
+                        continue;
+
+                    json += "\t";
+                    json += "\"";
+                    json += tmpStr;
+                    json += "\"";
+                    json += ": ";
+
+                    if(tmpInvoice->value.isEmpty())
                     {
-                        json += tmpInvoice->value;
+                        json += "null";
                         json += ",\n";
                     }
                     else
                     {
-                        json += "\"";
-                        json += tmpInvoice->value;
-                        json += "\"";
-                        json += ",\n";
+                        if(Utils::IsNumber(tmpInvoice->value))
+                        {
+                            json += tmpInvoice->value;
+                            json += ",\n";
+                        }
+                        else
+                        {
+                            json += "\"";
+                            json += tmpInvoice->value;
+                            json += "\"";
+                            json += ",\n";
+                        }
                     }
                 }
             }
@@ -1379,7 +1410,7 @@ bool Parser::ConvertToJson()
     //printf("JSON will be saved in: %s\n", filename.toStdString().c_str());
     QFile file(filename);
 
-    QString buffer = GenerateJson(_invoicesMap);
+    QString buffer = GenerateJson();
     if(buffer.isEmpty() || buffer.isNull())
     {
         printf("Failed to generate Json.\n");
@@ -1412,6 +1443,8 @@ bool Parser::GetInvoiceData()
     QMap<int, QList<sTEXTDATA*>> valuesMap;
     QList<sINVOICEHEADER*> invoiceHeaderList;
 
+    QMap<int, QList<sINVOICEDATA*>> tmpInvoicesMap;
+
     QList<sTEXTDATA*> failed;
 
     // Temporary variables.
@@ -1427,6 +1460,8 @@ bool Parser::GetInvoiceData()
     // 0. Process each page.
     for(itPage = _pageMap->begin(); itPage != _pageMap->end(); ++itPage)
     {
+        tmpInvoicesMap.clear();
+
         page = itPage.value();
 
         // 1. Let to get possibles headers.
@@ -1468,6 +1503,8 @@ bool Parser::GetInvoiceData()
         QRect tmpRect;
         //QList<QString> tmpStringList;
         int forMax = 0;
+
+        sTEXTDATA* tmpValueData = nullptr;
 
         for(int i = MAIN; i < MAX; i++)
         {
@@ -1511,6 +1548,7 @@ bool Parser::GetInvoiceData()
         // Let to find values from headers.
         for(int i = MAIN; i < MAX; i++)
         {
+            currentData = "";
             tmpInvoiceList.clear();
 
             if(i == PRODUCT_SERVICE_DATA)
@@ -1533,13 +1571,55 @@ bool Parser::GetInvoiceData()
                 //    invoiceHeaderList.push_back(invoiceHeader);
                 //}
 
-                tmpStr = _search->Convert(ConvertEnumToText(static_cast<eINVOICE_HEADER>(i), k));
+                tmpStr = ConvertEnumToText(i, k);
                 if(tmpStr.isNull() || tmpStr.isEmpty())
                 {
                     qDebug() << "Failed to find str" << i << " " << k;
                     continue;
                 }
 
+                tmpTxtList = valuesMap[i];
+                if(tmpTxtList.size() <= 0)
+                {
+                    qDebug() << "Failed to find value from map " << ConvertEnumToText(static_cast<eINVOICE_HEADER>(i)) << " Index: " << i;
+                    continue;
+                }
+
+                textData = _search->SearchText(tmpStr, tmpTxtList, AVERAGE_LEVENSTEIN_VALUE);
+                if(textData != nullptr)
+                {
+                    for(auto it = values.begin(); it != values.end(); ++it)
+                    {
+                        tmpValueData = (*it);
+                        if(tmpValueData == nullptr)
+                            continue;
+
+                        if(tmpValueData->top == textData->top &&
+                           tmpValueData->left == textData->left)
+                        {
+                            textData = tmpValueData;
+                            break;
+                        }
+                    }
+
+                    if(TryGetValue(textData, &tmpTxtList, &currentData, page->height, page->width))
+                    {
+                        //invoiceData = new sINVOICEDATA();
+                        //invoiceData->header = textData->text;
+                        //invoiceData->value = currentData;
+                        //invoiceData->headerID = i;
+                        //invoiceData->subHeaderID = k;
+
+                        tmpInvoiceList.push_back(new sINVOICEDATA(textData->text,
+                                                                  QString(currentData),
+                                                                  i,
+                                                                  k));
+                    }
+                    else
+                    {
+                        failed.push_back(textData);
+                    }
+                }
 
 
                 // TODO : Litwin
@@ -1577,8 +1657,10 @@ bool Parser::GetInvoiceData()
                 //}
             }
 
-            _invoicesMap.insert(i, tmpInvoiceList);
+            tmpInvoicesMap.insert(i, tmpInvoiceList);
         }
+
+        _invoicesMap.insert(static_cast<int>(page->number), tmpInvoicesMap);
     }
 
     return (_invoicesMap.size() > 0) ? true : false;
