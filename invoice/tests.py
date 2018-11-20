@@ -7,7 +7,6 @@ from .models import (
     Invoice,
     Seller,
     Receiver,
-    Product_Service,
 )
 
 # Create your tests here.
@@ -127,63 +126,6 @@ class ReceiverTest(TestCase):
         Receiver.objects.all().delete()
 
 
-class ProductServiceTest(TestCase):
-    url = '/api/invoice/product-service/'
-
-    def setUp(self):
-        self.product_service1 = Product_Service.objects.create(
-            code='1232123',
-            description='PLACA VEICULO',
-            qtd=1,
-            total_value=146.00,
-            unity_value=146.00,
-            discount_value=0.00
-        )
-
-    def as_dict(self):
-        return {
-            'id': self.product_service1.id,
-            'code': self.product_service1.code,
-            'description': self.product_service1.description,
-            'qtd': self.product_service1.qtd,
-            'unity_value': self.product_service1.unity_value,
-            'total_value': self.product_service1.total_value,
-            'discount_value': self.product_service1.discount_value
-        }
-
-    def test_product_service_object_get(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(json.loads(response.content)), 1)
-
-    def test_product_service_object_read(self):
-        self.url += '{}/'.format(self.product_service1.id)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertAlmostEqual(json.loads(response.content), self.as_dict())
-
-    def test_product_service_object_update(self):
-        self.url += '{}/'.format(self.product_service1.id)
-        response = self.client.put(
-            self.url,
-            data={},
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 400)
-
-    def test_product_service_object_partial_update(self):
-        self.url += '{}/'.format(self.product_service1.id)
-        response = self.client.patch(
-            self.url,
-            data={},
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 400)
-
-    def tearDown(self):
-        Product_Service.objects.all().delete()
-
-
 class InvoiceTest(TestCase):
     url = '/api/invoice/invoice/'
     TestCase.maxDiff = None
@@ -211,7 +153,6 @@ class InvoiceTest(TestCase):
         )
 
         self.invoice1 = Invoice.objects.create(
-            text='QualquerCoisa - Pegar com o Matias',
             number='000441407',
             operation_nature='DFVENDA ACESSORIOS EM VN',
             authorization_protocol='353180007787599 27/02/2018 16:54',
@@ -221,7 +162,7 @@ class InvoiceTest(TestCase):
             receiver=self.receiver1,
             emission_date=datetime.date(2018, 2, 27),
             entry_exit_datetime=datetime.datetime(2018, 2, 27, 16, 20, 55),
-            # total_products_value=146.00,
+            total_products_value=146.00,
             total_invoice_value=146.00,
             basis_calculation_icms=0.0,
             freight_value=0.0,
@@ -237,9 +178,7 @@ class InvoiceTest(TestCase):
     def as_dict(self):
         return {
             'id': self.invoice1.id,
-            'text': self.invoice1.text,
             'number': self.invoice1.number,
-            'file': None,
             'operation_nature': self.invoice1.operation_nature,
             'authorization_protocol': self.invoice1.authorization_protocol,
             'access_key': self.invoice1.access_key,
@@ -277,7 +216,7 @@ class InvoiceTest(TestCase):
         self.url += '{}/'.format(self.invoice1.id)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content), self.as_dict())
+        self.assertDictContainsSubset(self.as_dict(), json.loads(response.content))
 
     def test_invoice_object_update(self):
         self.url += '{}/'.format(self.invoice1.id)
