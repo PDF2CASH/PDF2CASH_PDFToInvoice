@@ -31,25 +31,25 @@ class Invoice(models.Model):
 
     total_products_value = models.FloatField(max_length=30, blank=True)
 
-    total_invoice_value = models.FloatField(max_length=30, blank=True)
+    total_invoice_value = models.FloatField(blank=True)
 
-    basis_calculation_icms = models.FloatField(max_length=30, blank=True)
+    basis_calculation_icms = models.FloatField(blank=True)
 
-    freight_value = models.FloatField(max_length=30, blank=True)
+    freight_value = models.FloatField(blank=True)
 
-    insurance_value = models.FloatField(max_length=30, blank=True)
+    insurance_value = models.FloatField(blank=True)
 
-    icms_value = models.FloatField(max_length=30, blank=True)
+    icms_value = models.FloatField(blank=True)
 
-    discount_value = models.FloatField(max_length=30, blank=True)
+    discount_value = models.FloatField(blank=True)
 
-    basis_calculation_icms_st = models.FloatField(max_length=30, blank=True)
+    basis_calculation_icms_st = models.FloatField(blank=True)
 
-    icms_value_st = models.FloatField(max_length=30, blank=True)
+    icms_value_st = models.FloatField(blank=True)
 
-    other_expenditure = models.FloatField(max_length=30, blank=True)
+    other_expenditure = models.FloatField(blank=True)
 
-    ipi_value = models.FloatField(max_length=30, blank=True)
+    ipi_value = models.FloatField(blank=True)
 
 
 class Seller(models.Model):
