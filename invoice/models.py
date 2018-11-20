@@ -5,8 +5,6 @@ class Invoice(models.Model):
 
     file = models.FileField(upload_to='invoice/images/', blank=True)
 
-    text = models.TextField()
-
     number = models.CharField(max_length=9, blank=True)
 
     operation_nature = models.CharField(
@@ -31,7 +29,7 @@ class Invoice(models.Model):
 
     entry_exit_datetime = models.DateTimeField(blank=True)
 
-    # total_products_value = models.FloatField(max_length=30, blank=True)
+    total_products_value = models.FloatField(max_length=30, blank=True)
 
     total_invoice_value = models.FloatField(max_length=30, blank=True)
 
@@ -81,19 +79,4 @@ class Receiver(models.Model):
 
     uf = models.CharField(max_length=2, blank=True)
 
-    phone = models.CharField(max_length=13, blank=True)
-
-
-class Product_Service(models.Model):
-
-    code = models.CharField(max_length=100)
-
-    description = models.CharField(max_length=255)
-
-    qtd = models.IntegerField()
-
-    unity_value = models.FloatField(max_length=30)
-
-    total_value = models.FloatField(max_length=30)
-
-    discount_value = models.FloatField(max_length=30)
+    phone = models.CharField(max_length=13, blank=True, null=True)
