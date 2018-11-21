@@ -95,7 +95,7 @@
     state_registration: 210341301
     receiver: 1
     seller: 1
-    emission_date: "2018-03-14"
+    emission_date: "2018-01-21"
     entry_exit_datetime: "2018-11-16T14:40:03Z"
     total_invoice_value: 2789.1
     basis_calculation_icms: 2789.1
@@ -120,7 +120,7 @@
     state_registration: 760351303
     receiver: 1
     seller: 1
-    emission_date: "2018-03-23"
+    emission_date: "2018-01-21"
     entry_exit_datetime: "2018-10-14T12:35:04Z"
     total_invoice_value: 2739.1
     basis_calculation_icms: 2789.1
