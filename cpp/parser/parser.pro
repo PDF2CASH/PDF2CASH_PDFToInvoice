@@ -17,6 +17,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     Parser.cpp \
+    Utils.cpp \
+    Search.cpp
     Utils.cpp
 
 # Default rules for deployment.
@@ -39,4 +41,6 @@ else:unix: PRE_TARGETDEPS += $$PWD/../poppler-library/build/lib/libpoppler-libra
 
 HEADERS += \
     Parser.h \
+    Utils.h \
+    Search.h
     Utils.h

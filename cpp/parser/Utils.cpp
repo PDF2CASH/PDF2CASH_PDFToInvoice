@@ -170,6 +170,10 @@ bool FileExists(QString path)
     }
 }
 
+//QTextStream& qStdOut()
+//{
+//    static QTextStream ts( stdout );
+//    return ts;
+//}
+
 }
-
-

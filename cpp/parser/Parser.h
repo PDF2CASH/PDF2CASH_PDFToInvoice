@@ -1,6 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "Search.h"
+
 #include <QMap>
 #include <QList>
 
@@ -9,7 +11,8 @@
 #include <QSize>
 #include <QString>
 
-const int SPACE_HEIGHT_BETWEEN_HEADER_VALUE = 14;
+const int AVERAGE_LEVENSTEIN_VALUE = 30;
+const int SPACE_HEIGHT_BETWEEN_HEADER_VALUE = 16;
 
 enum eHEADER_NFE                            /// CABEÇALHO
 {
@@ -95,6 +98,7 @@ enum eINVOICE_HEADER
 {
     MAIN = 0,
     ADDRESSEE_SENDER,                       // DESTINATÁRIO/REMETENTE
+    FATURE,                                 // FATURA
     TAX_CALCULATION,                        // CÁLCULO DO IMPOSTO
     CONVEYOR_VOLUMES,                       // TRANSPORTADOR/VOLUMES TRANSPORTADOS
     PRODUCT_SERVICE_DATA,                   // DADOS DO PRODUTO/SERVIÇO
@@ -173,6 +177,15 @@ struct sINVOICEDATA
 
     int headerID;
     int subHeaderID;
+
+    sINVOICEDATA(QString h, QString v, int hID, int shID)
+    {
+        header = h;
+        value = v;
+
+        headerID = hID;
+        subHeaderID = shID;
+    }
 };
 
 class Parser
@@ -192,9 +205,7 @@ private:
     QRect TrySimulateRectHeader(QRect headerRect, QList<sTEXTDATA*>* possibleValues, int maxPageHeight, int maxPageWidth);
     bool TryGetValue(sTEXTDATA* header, QList<sTEXTDATA*>* possibleValues, QString* value, int maxPageHeight, int maxPageWidth);
 
-    QList<QString> ConvertEnumToText(eINVOICE_HEADER header, int value = -1);
-
-    bool FindValueData(QString value, QList<sTEXTDATA*> list, QRect* rect);
+    QString ConvertEnumToText(int header, int value = -1);
 
     sINVOICEHEADER* GetInvoiceHeader(QList<sINVOICEHEADER*> list, int value);
     QList<sINVOICEHEADER*> ProcessInvoiceHeader(QList<sTEXTDATA*> possibleHeaders, int maxWidth, int maxHeight);
@@ -202,13 +213,15 @@ private:
     sTEXTDATA* GetTextData(QString header, QList<sTEXTDATA*> possibleValues);
 
     QString ConvertToJsonHeader(int header, int value);
-    QString GenerateJson(QMap<int, QList<sINVOICEDATA*>> map);
+    QString GenerateJson();
 
 private:
     QString _fileName;
 
     QMap<int, sPAGE*>* _pageMap;
-    QMap<int, QList<sINVOICEDATA*>> _invoicesMap;
+    QMap<int, QMap<int, QList<sINVOICEDATA*>>> _invoicesMap;
+
+    Search* _search;
 };
 
 #endif // PARSER_H
