@@ -1,4 +1,6 @@
-[![Coverage Status](https://coveralls.io/repos/github/PDF2CASH/PDF2CASH_PDFToInvoice/badge.svg?branch=master)](https://coveralls.io/github/PDF2CASH/PDF2CASH_PDFToInvoice?branch=master)
+[![Build Status](https://travis-ci.org/PDF2CASH/PDF2CASH_PDFToInvoice.svg?branch=development)](https://travis-ci.org/PDF2CASH/PDF2CASH_PDFToInvoice)
+[![Coverage Status](https://coveralls.io/repos/github/PDF2CASH/PDF2CASH_PDFToInvoice/badge.svg?branch=development)](https://coveralls.io/github/PDF2CASH/PDF2CASH_PDFToInvoice?branch=master)
+
 
 # PDF2CASH_PDFToInvoice
 

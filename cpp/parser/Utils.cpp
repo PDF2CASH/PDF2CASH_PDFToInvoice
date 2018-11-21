@@ -177,5 +177,3 @@ bool FileExists(QString path)
 //}
 
 }
-
-

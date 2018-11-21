@@ -19,6 +19,7 @@ SOURCES += \
     Parser.cpp \
     Utils.cpp \
     Search.cpp
+    Utils.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -42,3 +43,4 @@ HEADERS += \
     Parser.h \
     Utils.h \
     Search.h
+    Utils.h

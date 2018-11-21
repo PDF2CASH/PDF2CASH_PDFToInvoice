@@ -1,39 +1,47 @@
 sudo: required
-
-env:
-  - DOCKER_COMPOSE_VERSION=1.20.0
-
 services:
   - docker
 
-before_install:
-  - sudo apt-get update
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y install docker-ce
-  - docker --version
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - docker-compose --version
+language: python
 
-install:
-  - echo 'Iniciando script de instalação'
-  - docker-compose up -d
-  - echo 'Iniciando migração'
-  - docker-compose exec web ./manage.py makemigrations
-  - docker-compose exec web ./manage.py migrate
+branches:
+  only:
+    - master
+    - development
+    - /^.*release.*$/
+
+python:
+  - "3.6"
+
+
+before_script:
+  - docker build -t pdf2invoice -f docker-homolog .
+  - docker run -d -p 8000:8000 --name pdf2invoice pdf2invoice
+   
 
 script:
-  - echo 'Iniciando script de teste'
-  - docker-compose exec web coverage erase
-  - docker-compose exec web coverage run --source='.' ./manage.py test
-  - docker-compose exec web coverage report 
-  - docker-compose exec web flake8
- 
+  - docker exec pdf2invoice coverage erase
+  - docker exec pdf2invoice coverage run --source='.' manage.py test
+  - docker exec pdf2invoice coverage report
+  - docker exec pdf2invoice flake8
+
 after_script:
-  - docker-compose down
-after_success:
-    docker-compose exec web coveralls
+  - docker stop pdf2invoice
+
+after_success: 
+  - coveralls
+
+deploy:
+  - provider: script
+    script: bash scripts/deploy.sh
+    on:
+      branch: development
+  - provider: script
+    script: bash scripts/sendZip.sh
+    on:
+      branch: master
+
+addons:
+  apt:
+    packages:
+      - docker-ce
