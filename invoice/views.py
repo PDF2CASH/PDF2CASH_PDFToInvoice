@@ -802,3 +802,29 @@ def format_date(old_date):
         old_date.year
     )
     return new_date
+
+
+def chart_total_value_per_time(request):
+    if request.method == 'GET':
+        invoices = Invoice.objects.all()
+        date = []
+        total = []
+        for invoice in invoices:
+            date.append(invoice.emission_date)
+            total.append(invoice.total_invoice_value)
+
+        df = pd.DataFrame({'date': date, 'total': total})
+        df = df.sort_values(by='date')
+        sf = df.groupby('date')['total'].sum()
+        df = pd.DataFrame({'date': sf.index, 'total': sf.values})
+        data = df.to_dict('list')
+
+        date = []
+        for i in data['date']:
+            date.append(format_date(i))
+        data = {
+            'date': date,
+            'total': data['total']
+        }
+        return HttpResponse(json.dumps(data))
+    return HttpResponse(status=400)
