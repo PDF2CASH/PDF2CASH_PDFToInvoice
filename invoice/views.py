@@ -23,6 +23,7 @@ from rest_framework.parsers import MultiPartParser
 from django.views import View
 from django.http import Http404
 from rest_framework.decorators import parser_classes
+import pandas as pd
 
 
 def convert_pdf_to_txt(file):
@@ -792,3 +793,12 @@ def productList(request):
         serializer = ProductServiceSerializer(product_service, many=True)
         return HttpResponse(json.dumps(serializer.data))
     return HttpResponse(status=400)
+
+
+def format_date(old_date):
+    new_date = '{}/{}/{}'.format(
+        old_date.day,
+        old_date.month,
+        old_date.year
+    )
+    return new_date
