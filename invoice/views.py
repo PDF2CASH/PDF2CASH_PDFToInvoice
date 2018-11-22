@@ -832,3 +832,23 @@ def chart_total_value_per_time(request):
 
         return HttpResponse(json.dumps(data))
     return HttpResponse(status=400)
+
+
+def chart_qtd_per_time(request):
+    if request.method == 'GET':
+        invoices = Invoice.objects.all()
+        date = []
+        for invoice in invoices:
+            date.append(invoice.emission_date)
+
+        df = pd.DataFrame({'date': date})
+        df = df.sort_values(by='date')
+        df['date'] = pd.to_datetime(df['date']).apply(lambda x: x.strftime('%Y-%m'))
+        sf = df.groupby('date').size()
+        df = pd.DataFrame({'date': sf.index, 'count': sf.values})
+        df['date'] = pd.to_datetime(df['date']).apply(lambda x: x.strftime('%m/%Y'))
+
+        data = df.to_dict('list')
+
+        return HttpResponse(json.dumps(data))
+    return HttpResponse(status=400)
