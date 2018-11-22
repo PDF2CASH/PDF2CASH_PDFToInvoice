@@ -186,11 +186,18 @@ bool ProcessPDF(QString pdfFileName)
     return true;
 }
 
-#include "Search.h"
-
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
+//    // TODO : DEBUG PURPOSE !
+//    argc = 2;
+//    argv = new char*[2];
+//
+//    //argv[1] = "/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/parser/test.pdf";
+//    //argv[1] = "/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/build-parser-Desktop_Qt_5_11_2_GCC_64bit-Debug/pnc1.pdf";
+//    argv[1] = "/home/litwin/MDS/PDF2CASH_PDFToInvoice/cpp/test.pdf";
+//    // END -------------------------
 
     if(argc <= 1 || argc > 2)
     {
@@ -206,7 +213,7 @@ int main(int argc, char *argv[])
     {
         QElapsedTimer timer;
         timer.start();
-        int timeOutMS = 500;
+        int timeOutMS = 1000;
         long remainingTime = 0;
 
         // Just for give some delay in program for poppler library finish everything.
@@ -226,8 +233,6 @@ int main(int argc, char *argv[])
 
         if(parser->ReadInvoiceXML(fileName) && parser->GetInvoiceData())
         {
-            // Function used for debug purpose.
-            //parser->DebugShow();
             if(!parser->ConvertToJson())
             {
                 printf("Failed to convert pdf to json.\n");
