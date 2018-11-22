@@ -795,15 +795,6 @@ def productList(request):
     return HttpResponse(status=400)
 
 
-def format_date(old_date):
-    new_date = '{}/{}/{}'.format(
-        old_date.day,
-        old_date.month,
-        old_date.year
-    )
-    return new_date
-
-
 def chart_total_value_per_time(request):
     if request.method == 'GET':
         invoices = Invoice.objects.all()
@@ -817,14 +808,27 @@ def chart_total_value_per_time(request):
         df = df.sort_values(by='date')
         sf = df.groupby('date')['total'].sum()
         df = pd.DataFrame({'date': sf.index, 'total': sf.values})
+        df['date'] = pd.to_datetime(df['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
         data = df.to_dict('list')
 
-        date = []
-        for i in data['date']:
-            date.append(format_date(i))
-        data = {
-            'date': date,
-            'total': data['total']
-        }
+        df = pd.DataFrame({'dateM': date, 'totalM': total})
+        df = df.sort_values(by='dateM')
+        df['dateM'] = pd.to_datetime(df['dateM']).apply(lambda x: x.strftime('%Y-%m'))
+        sf = df.groupby('dateM')['totalM'].sum()
+        df = pd.DataFrame({'dateM': sf.index, 'totalM': sf.values})
+        df['dateM'] = pd.to_datetime(df['dateM']).apply(lambda x: x.strftime('%m/%Y'))
+
+        data['dateM'] = df.to_dict('list')['dateM']
+        data['totalM'] = df.to_dict('list')['totalM']
+
+        df = pd.DataFrame({'dateY': date, 'totalY': total})
+        df = df.sort_values(by='dateY')
+        df['dateY'] = pd.to_datetime(df['dateY']).apply(lambda x: x.strftime('%Y'))
+        sf = df.groupby('dateY')['totalY'].sum()
+        df = pd.DataFrame({'dateY': sf.index, 'totalY': sf.values})
+
+        data['dateY'] = df.to_dict('list')['dateY']
+        data['totalY'] = df.to_dict('list')['totalY']
+
         return HttpResponse(json.dumps(data))
     return HttpResponse(status=400)
