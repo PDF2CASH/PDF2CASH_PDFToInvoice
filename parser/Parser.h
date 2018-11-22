@@ -180,6 +180,8 @@ class Parser
 public:
     Parser();
 
+    bool ProcessPDF(QString pdfFileName);
+
     bool ReadInvoiceXML(QString fileName);
     bool GetInvoiceData();
     bool ConvertToJson();

@@ -1,10 +1,20 @@
-QT -= gui
+#-------------------------------------------------
+#
+# Project created by QtCreator 2018-11-22T21:22:38
+#
+#-------------------------------------------------
 
-CONFIG += c++11 console
-CONFIG -= app_bundle
+QT       -= gui
+
+TARGET = parser
+TEMPLATE = lib
+CONFIG += staticlib
+
+PRJDIR    = ./
+include($$PRJDIR/commondir.pri)
 
 # The following define makes your compiler emit warnings if you use
-# any feature of Qt which as been marked deprecated (the exact warnings
+# any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
@@ -15,28 +25,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        main.cpp \
+        parser.cpp \
     Parser.cpp \
     Utils.cpp
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../poppler-library/build/lib/release/ -lpoppler-library
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../poppler-library/build/lib/debug/ -lpoppler-library
-else:unix: LIBS += -L$$PWD/../poppler-library/build/lib/ -lpoppler-library
-
-INCLUDEPATH += $$PWD/../poppler-library/build/include
-DEPENDPATH += $$PWD/../poppler-library/build/include
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../poppler-library/build/lib/release/libpoppler-library.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../poppler-library/build/lib/debug/libpoppler-library.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../poppler-library/build/lib/release/poppler-library.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../poppler-library/build/lib/debug/poppler-library.lib
-else:unix: PRE_TARGETDEPS += $$PWD/../poppler-library/build/lib/libpoppler-library.a
-
 HEADERS += \
+        parser.h \
     Parser.h \
     Utils.h
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../3rdparty/poppler-library/build/lib/release/ -lpoppler-library
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../3rdparty/poppler-library/build/lib/debug/ -lpoppler-library
+else:unix: LIBS += -L$$PWD/../3rdparty/poppler-library/build/lib/ -lpoppler-library
+
+INCLUDEPATH += $$PWD/../3rdparty/poppler-library/build/include
+DEPENDPATH += $$PWD/../3rdparty/poppler-library/build/include
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../3rdparty/poppler-library/build/lib/release/libpoppler-library.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../3rdparty/poppler-library/build/lib/debug/libpoppler-library.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../3rdparty/poppler-library/build/lib/release/poppler-library.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../3rdparty/poppler-library/build/lib/debug/poppler-library.lib
+else:unix: PRE_TARGETDEPS += $$PWD/../3rdparty/poppler-library/build/lib/libpoppler-library.a
