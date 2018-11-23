@@ -13,4 +13,5 @@ urlpatterns = [
     path(r'product-service/', views.productList),
     path(r'chart_total_value_per_time/', views.chart_total_value_per_time),
     path(r'chart_qtd_per_time/', views.chart_qtd_per_time),
+    path(r'chart_total_value_per_chosen_date/', views.chart_total_value_per_chosen_date),
 ]

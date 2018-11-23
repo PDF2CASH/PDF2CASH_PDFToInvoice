@@ -24,6 +24,7 @@ from django.views import View
 from django.http import Http404
 from rest_framework.decorators import parser_classes
 import pandas as pd
+import datetime as dt
 
 
 def convert_pdf_to_txt(file):
@@ -849,6 +850,58 @@ def chart_qtd_per_time(request):
         df['date'] = pd.to_datetime(df['date']).apply(lambda x: x.strftime('%m/%Y'))
 
         data = df.to_dict('list')
+
+        return HttpResponse(json.dumps(data))
+    return HttpResponse(status=400)
+
+
+def chart_total_value_per_chosen_date(request):
+    if request.method == 'GET':
+        invoices = Invoice.objects.all()
+        date = []
+        total = []
+        for invoice in invoices:
+            date.append(invoice.emission_date)
+            total.append(invoice.total_invoice_value)
+
+        df = pd.DataFrame({'date': date, 'total': total})
+        df = df.sort_values(by='date')
+        sf = df.groupby('date')['total'].sum()
+        df = pd.DataFrame({'date': sf.index, 'total': sf.values})
+
+        week = dt.datetime.now().date() - dt.timedelta(days=7)
+        month = dt.datetime.now().date() - dt.timedelta(days=30)
+        semester = dt.datetime.now().date() - dt.timedelta(days=182)
+        year = dt.datetime.now().date() - dt.timedelta(days=365)
+
+        yearDf = df.groupby('date').filter(lambda x: (x['date'] > year))
+        semesterDf = yearDf.groupby('date').filter(lambda x: (x['date'] > semester))
+        monthDf = semesterDf.groupby('date').filter(lambda x: (x['date'] > month))
+        weekDf = monthDf.groupby('date').filter(lambda x: (x['date'] > week))
+
+        sf = weekDf.groupby('date')['total'].mean()
+        weekDf = pd.DataFrame({'date': sf.index, 'total': sf.values})
+        sf = monthDf.groupby('date')['total'].mean()
+        monthDf = pd.DataFrame({'date': sf.index, 'total': sf.values})
+        sf = semesterDf.groupby('date')['total'].mean()
+        semesterDf = pd.DataFrame({'date': sf.index, 'total': sf.values})
+        sf = yearDf.groupby('date')['total'].mean()
+        yearDf = pd.DataFrame({'date': sf.index, 'total': sf.values})
+
+        weekDf['date'] = pd.to_datetime(weekDf['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
+        monthDf['date'] = pd.to_datetime(monthDf['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
+        semesterDf['date'] = pd.to_datetime(semesterDf['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
+        yearDf['date'] = pd.to_datetime(yearDf['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
+
+        data = {}
+        data['dateW'] = weekDf.to_dict('list')['date']
+        data['totalW'] = weekDf.to_dict('list')['total']
+        data['dateM'] = monthDf.to_dict('list')['date']
+        data['totalM'] = monthDf.to_dict('list')['total']
+        data['dateS'] = semesterDf.to_dict('list')['date']
+        data['totalS'] = semesterDf.to_dict('list')['total']
+        data['dateY'] = yearDf.to_dict('list')['date']
+        data['totalY'] = yearDf.to_dict('list')['total']
 
         return HttpResponse(json.dumps(data))
     return HttpResponse(status=400)
