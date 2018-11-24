@@ -4,35 +4,55 @@
 
 # PDF2CASH_PDFToInvoice
 
-## Iniciando usando docker
+## Como compilar
+Antes de compilar, é necessário compilar as 2 bibliotecas utilizadas no projeto do Parser.
 
 ### Pré-requisitos
 
-A fim de conseguir iniciar o serviço, os seguintes pacotes são necessários:
+- Qt 5.11.2
 
-  -  docker
-  -  docker-compose
+### 1. Poppler
+Vá na pasta do Poppler, é encontrada no diretório:
 
-Caso esteja usando uma plataforma linux, verifique na documentação de sua distro, como obter os referidos pacotes.
+`PROJDIR/3rdparty/poppler-library`
 
-### Instalando
+Logo após, execute os comandos abaixo para compilação.:
 
-Construa os containers:
-```bash
-docker-compose build
-```
-### Uso
+`$ make`
+`$ sudo make install`
 
-Execute o compose:
-```bash
-docker-compose up
-```
+> PROJDIR = pasta root do projeto onde foi clonado.
 
-O comando acima irá deixar o container rodando o servidor e escutando pela porta 8000
+### 2. QHTTP
+Vá na pasta do QHTTP, é encontrada no diretório:
 
-```bash
-http://localhost:8000/
-```
+`PROJDIR/3rdparty/qhttp`
+
+Para compilação do QHTTP, primeiramente é necessário instalar as dependências exigidas.
+
+Execute o comando abaixo.:
+
+`$ ./update-dependencies.sh`
+
+Logo após, compile o QHTTP.:
+
+`$ qmake -r qhttp.pro`
+`$ make -j 8`
+
+E instale.:
+
+`$ sudo make install`
+
+> PROJDIR = pasta root do projeto onde foi clonado.
+
+### 3. Servidor
+Depois de ter compilado todos as bibliotecas utilizadas no projeto, agora por último, será o processo da compilação do servidor do parser.
+
+Vá na pasta do Servidor, é encontrada no diretório:
+
+`PROJDIR/server`
+
+> PROJDIR = pasta root do projeto onde foi clonado.
 
 ## Contribuindo
 
