@@ -238,7 +238,37 @@ class InvoiceTest(TestCase):
 
     def test_invoice_object_create(self):
         file = open("invoice/test.pdf", 'rb')
-        response = self.client.post('/api/invoice/invoice/', {'file': file}, format='multipart')
+        json_test = {
+                    "number": '000441407',
+                    "main_nature_operation": 'DFVENDA ACESSORIOS EM VN',
+                    "main_protocol_authorization_use": '353180007787599 27/02/2018 16:54',
+                    "main_access_key": '53180204621724000187550000004414071007026370',
+                    "main_state_registration": '0742544700104',
+                    "sender_cnpj_cpf": "12345678911",
+                    "sender_emission_date": "27/02/2018",
+                    "sender_out_input_date": "27/02/2018",
+                    "sender_output_time": "16: 20: 55",
+                    "tax_total_cost_products": "146,00",
+                    "tax_cost_total_note": "146,00",
+                    "tax_icms_basis": "0,0",
+                    "tax_cost_freight": "0,0",
+                    "tax_cost_insurance": "0,0",
+                    "tax_cost_icms": "0,0",
+                    "tax_discount": "0,0",
+                    "tax_icms_basis_st": "0,0",
+                    "tax_cost_icms_replacement": "0,0",
+                    "tax_other_expenditure": "0,0",
+                    "tax_cost_ipi": "0,0",
+                    "sender_name_social": self.receiver1.name,
+                    "sender_address": self.receiver1.address,
+                    "sender_neighborhood_district":  self.receiver1.neighborhood,
+                    "sender_cep": self.receiver1.cep,
+                    "sender_county": self.receiver1.county,
+                    "sender_uf": self.receiver1.uf,
+                    "sender_phone_fax": self.receiver1.phone,
+                }
+        json_test['file'] = file
+        response = self.client.post('/api/invoice/invoice/', json_test, format='multipart')
         self.assertEqual(response.status_code, 200)
 
     def tearDown(self):

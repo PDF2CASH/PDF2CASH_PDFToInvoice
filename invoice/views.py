@@ -15,8 +15,6 @@ from rest_framework.parsers import MultiPartParser
 from django.views import View
 from django.http import Http404
 from rest_framework.decorators import parser_classes
-import subprocess
-import os
 
 
 def get_object_invoice(pk):
@@ -70,22 +68,9 @@ class InvoiceCreateList(View):
 
         dict_receiver = {}
 
-        # Criar pdf
-        pdf = open('pdf_aux.pdf', 'wb')
-        pdf.write(request.FILES['file'].read())
+        dict_invoice['file'] = request.FILES['file']
 
-        dict_invoice['pdf'] = pdf
-
-        # Extrair dados
-        path = os.path.abspath(pdf.name)
-        process = subprocess.Popen(['./bin/parser', path])
-        process.wait()
-
-        _json = open(path.split('/')[-1].split('.')[0] + '.json', 'r')
-
-        json_dict = json.loads(_json.read())
-
-        _json.close()
+        json_dict = request.POST
 
         # access_key, uf_code_seller, cnpj_seller, number
 
@@ -108,7 +93,7 @@ class InvoiceCreateList(View):
         cpf_cnpj_receiver = json_dict['sender_cnpj_cpf']
 
         cpf_cnpj_receiver = re.search(
-                r'([\s+|\n]\d{11}\s+|[\s+|\n]\d{14}\s+|\d{3}\.\d{3}\.\d{3}\-\d{2}|\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2})',
+                r'\d{11}|\d{14}|\d{3}\.\d{3}\.\d{3}\-\d{2}|\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}',
                 cpf_cnpj_receiver,
                 re.M | re.I
                 )
@@ -137,7 +122,7 @@ class InvoiceCreateList(View):
 
         emission_date = json_dict['sender_emission_date']
 
-        emission_date = re.search(r'(\d{2}\/\d{2}\/\d{4})', emission_date, re.M | re.I)
+        emission_date = re.search(r'\d{2}\/\d{2}\/\d{4}', emission_date, re.M | re.I)
 
         emission_date = str(emission_date.group())
 
@@ -295,7 +280,6 @@ class InvoiceCreateList(View):
         if invoice_serializer.is_valid():
             invoice_serializer.save()
         else:
-
             return HttpResponse(
                 json.dumps(
                     invoice_serializer.errors
