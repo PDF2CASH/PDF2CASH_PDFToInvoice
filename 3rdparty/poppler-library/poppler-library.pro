@@ -10,8 +10,11 @@ TARGET = poppler-library
 TEMPLATE = lib
 CONFIG += staticlib
 
-# Use c++ 14 compiler.
-CONFIG += c++14
+# Qt5.5.1 on OSX needs both c++11 and c++14!! the c++14 is not enough
+CONFIG  += c++11 c++14
+
+PRJDIR       = ./
+include($$PRJDIR/commondir.pri)
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
