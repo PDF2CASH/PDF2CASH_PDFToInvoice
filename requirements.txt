@@ -6,8 +6,5 @@ coveralls
 psycopg2-binary
 django-cors-headers
 mock
-pdfminer.six
-PyPDF2
-nltk
 django-seed
 PyYAML
