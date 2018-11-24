@@ -54,6 +54,7 @@ Vá na pasta do Servidor, é encontrado no diretório:
 
 E compile-o.:
 
+`qmake -server.pro`
 `make`
 
 > PROJDIR = pasta root do projeto onde foi clonado.
