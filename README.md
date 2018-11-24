@@ -18,7 +18,11 @@ Vá na pasta do Poppler, é encontrada no diretório:
 
 Logo após, execute os comandos abaixo para compilação.:
 
+`$ qmake poppler-library.pro`
 `$ make`
+
+E instale.:
+
 `$ sudo make install`
 
 > PROJDIR = pasta root do projeto onde foi clonado.
