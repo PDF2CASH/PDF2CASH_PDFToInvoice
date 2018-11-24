@@ -140,7 +140,7 @@ class InvoiceCreateList(View):
 
         time = json_dict['sender_output_time']
 
-        u = entry_exit_datetime[2] + '-' + entry_exit_datetime[1] + '-' + entry_exit_datetime[0] + ' ' + time
+        u = entry_exit_datetime[2] + '-' + entry_exit_datetime[1] + '-' + entry_exit_datetime[0] + 'T' + time
 
         entry_exit_datetime = u
 

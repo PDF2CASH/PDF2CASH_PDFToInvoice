@@ -247,7 +247,7 @@ class InvoiceTest(TestCase):
                     "sender_cnpj_cpf": "12345678911",
                     "sender_emission_date": "27/02/2018",
                     "sender_out_input_date": "27/02/2018",
-                    "sender_output_time": "16: 20: 55",
+                    "sender_output_time": "16:20:55",
                     "tax_total_cost_products": "146,00",
                     "tax_cost_total_note": "146,00",
                     "tax_icms_basis": "0,0",
