@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -125,8 +126,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+HOST_DOMAIN=os.environ['HOST_DOMAIN']
+
+
 CORS_ORIGIN_WHITELIST = (
-    'localhost:3000',
+    HOST_DOMAIN,
 )
 
 CORS_ALLOW_METHODS = (
