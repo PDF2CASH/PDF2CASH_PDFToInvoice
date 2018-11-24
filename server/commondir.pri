@@ -8,22 +8,25 @@ DEFINES *= QHTTP_HAS_CLIENT
 CONFIG  += c++11 c++14
 
 unix {
-    TEMPDIR      = $$PRJDIR/tmp/unix/$$TARGET
-    macx:TEMPDIR = $$PRJDIR/tmp/osx/$$TARGET
+    #TEMPDIR      = $$PRJDIR/tmp/unix/$$TARGET
+    #macx:TEMPDIR = $$PRJDIR/tmp/osx/$$TARGET
+    TEMPDIR      = $$PRJDIR/build/$$TARGET
+    macx:TEMPDIR = $$PRJDIR/build/$$TARGET
 }
 
 win32 {
-    TEMPDIR  = $$PRJDIR/tmp/win32/$$TARGET
+    #TEMPDIR  = $$PRJDIR/tmp/win32/$$TARGET
+    TEMPDIR  = $$PRJDIR/build/$$TARGET
     DEFINES += _WINDOWS WIN32_LEAN_AND_MEAN NOMINMAX
 }
 
 
-DESTDIR      = $$PRJDIR/xbin
+DESTDIR      = $$PRJDIR/build
 MOC_DIR      = $$TEMPDIR
 OBJECTS_DIR  = $$TEMPDIR
 RCC_DIR      = $$TEMPDIR
-UI_DIR       = $$TEMPDIR/Ui
-LIBS        += -L$$PRJDIR/xbin
+UI_DIR       = $$TEMPDIR/
+LIBS        += -L$$PRJDIR/build
 
 #INCLUDEPATH +=  .. $$PRJDIR/3rdparty/qhttp/src $$PRJDIR/3rdparty/qhttp/$$PRJDIR/3rdparty
 INCLUDEPATH += ../3rdparty/qhttp/src

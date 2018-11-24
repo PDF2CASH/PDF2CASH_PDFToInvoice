@@ -6,6 +6,8 @@ osx:CONFIG  -= app_bundle
 PRJDIR       = ./
 include($$PRJDIR/commondir.pri)
 
+TARGET = ParserServer
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -18,11 +20,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    HTTPServer.cpp \
     parser/Parser.cpp \
     parser/Search.cpp \
     parser/Utils.cpp \
-    CHandler.cpp \
-    HTTPServer.cpp
+    CHandler.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
