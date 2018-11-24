@@ -163,7 +163,8 @@ bool Search::RemoveAccents(QString* str)
 {
     if(str == nullptr) return false;
 
-    QChar c = QChar::Null;
+    //QChar c = QChar::Null;
+    QString c = "";
     auto data = QString(*str);
 
     for(auto i = 0; i < data.length(); i++)
@@ -225,14 +226,14 @@ bool Search::RemoveSpecialCharacter(QString* str)
 
         if(c.isNull()) continue;
 
-        if(c == "!" || c == "?" || c == ":" || c == ";" ||
-                c == "*" || c == "'" || c == "," || c == "." ||
-                c == "<" || c == ">" || c == "@" || c == "#" ||
-                c == "$" || c == "%" || c == "(" || c == ")" ||
-                c == "-" || c == "+" || c == "=" || c == "&" ||
-                c == "[" || c == "]" || c == "~" || c == "^" ||
-                c == "{" || c == "}" || c == "`" || c == "|" ||
-                c == "/" || c == "\\")
+        if(c == '!' || c == '?' || c == ':' || c == ';' ||
+                c == '*' || c == '\'' || c == ',' || c == '.' ||
+                c == '<' || c == '>' || c == '@' || c == '#' ||
+                c == '$' || c == '%' || c == '(' || c == ')' ||
+                c == '-' || c == '+' || c == '=' || c == '&' ||
+                c == '[' || c == ']' || c == '~' || c == '^' ||
+                c == '{' || c == '}' || c == '`' || c == '|' ||
+                c == '/' || c == '\\')
         {
             data[i] = QChar::Space;
         }

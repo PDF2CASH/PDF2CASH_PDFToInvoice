@@ -167,4 +167,3 @@ bool UtilsLit::FileExists(QString path)
         return false;
     }
 }
-

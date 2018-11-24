@@ -48,9 +48,13 @@ E instale.:
 ### 3. Servidor
 Depois de ter compilado todos as bibliotecas utilizadas no projeto, agora por último, será o processo da compilação do servidor do parser.
 
-Vá na pasta do Servidor, é encontrada no diretório:
+Vá na pasta do Servidor, é encontrado no diretório:
 
 `PROJDIR/server`
+
+E compile-o.:
+
+`make`
 
 > PROJDIR = pasta root do projeto onde foi clonado.
 
