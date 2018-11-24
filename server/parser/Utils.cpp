@@ -2,10 +2,8 @@
 
 #include <QFileInfo>
 
-namespace Utils
-{
 
-bool IsNumber(QString text)
+bool UtilsLit::IsNumber(QString text)
 {
     int len = text.size();
 
@@ -23,7 +21,7 @@ bool IsNumber(QString text)
 /// \param text
 /// \return
 ///
-bool CheckPossibleHeader(QString text)
+bool UtilsLit::CheckPossibleHeader(QString text)
 {
     int len = text.size();
     int lenNumber = 0;
@@ -40,7 +38,7 @@ bool CheckPossibleHeader(QString text)
     return (lenNumber == 0) ? true : (lenNumber > lenLetter) ? false : true;
 }
 
-std::string getFileName(const std::string& s)
+std::string UtilsLit::getFileName(const std::string& s)
 {
     char sep = '/';
 
@@ -57,7 +55,7 @@ std::string getFileName(const std::string& s)
     return("");
 }
 
-GooString* getInfoDate(Dict *infoDict, const char *key)
+GooString* UtilsLit::getInfoDate(Dict *infoDict, const char *key)
 {
     Object obj;
     const char *s;
@@ -102,7 +100,7 @@ GooString* getInfoDate(Dict *infoDict, const char *key)
     return result;
 }
 
-GooString* getInfoString(Dict *infoDict, const char *key)
+GooString* UtilsLit::getInfoString(Dict *infoDict, const char *key)
 {
     Object obj;
     // Raw value as read from PDF (may be in pdfDocEncoding or UCS2)
@@ -156,7 +154,7 @@ GooString* getInfoString(Dict *infoDict, const char *key)
     return encodedString;
 }
 
-bool FileExists(QString path)
+bool UtilsLit::FileExists(QString path)
 {
     QFileInfo check_file(path);
     // check if file exists and if yes: Is it really a file and no directory?
@@ -169,7 +167,4 @@ bool FileExists(QString path)
         return false;
     }
 }
-
-}
-
 
