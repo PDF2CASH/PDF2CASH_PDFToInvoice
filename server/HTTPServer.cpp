@@ -12,10 +12,18 @@
 #endif // Q_OS_UNIX
 
 #include <QCryptographicHash>
+#include <QDateTime>
 
 void messageInitialization()
 {
-    printf("Server is started.\n");
+    printf("\t\t\t ____   _    ____  ____  _____ ____  \n");
+    printf("\t\t\t|  _ \\ / \\  |  _ \\/ ___|| ____|  _ \\ \n");
+    printf("\t\t\t| |_) / _ \\ | |_) \\___ \\|  _| | |_) |\n");
+    printf("\t\t\t|  __/ ___ \\|  _ < ___) | |___|  _ < \n");
+    printf("\t\t\t|_| /_/   \\_|_| \\_|____/|_____|_| \\_\\ \n");
+
+    printf("\n> Server is started at [%s].\n", QDateTime::currentDateTime().toString().toUpper().toStdString().c_str());
+    printf("> To exit the server, click CTRL + C.\n\n");
 }
 
 int main(int argc, char ** argv)
@@ -66,7 +74,7 @@ int main(int argc, char ** argv)
 
     if ( !server.isListening() )
     {
-        fprintf(stderr, "can not listen on %s!\n", qPrintable(portOrUnixSocket));
+        fprintf(stderr, "Can not listen on port [%s].\n", qPrintable(portOrUnixSocket));
         return -1;
     }
 
