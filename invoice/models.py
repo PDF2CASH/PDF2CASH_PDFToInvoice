@@ -3,8 +3,6 @@ from django.db import models
 
 class Invoice(models.Model):
 
-    file = models.FileField(upload_to='invoice/images/', blank=True)
-
     number = models.CharField(max_length=9, blank=True, null=True)
 
     operation_nature = models.CharField(
@@ -79,4 +77,4 @@ class Receiver(models.Model):
 
     uf = models.CharField(max_length=2, blank=True, null=True)
 
-    phone = models.CharField(max_length=13, blank=True, null=True)
+    phone = models.CharField(max_length=30, blank=True, null=True)
