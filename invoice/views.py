@@ -810,6 +810,7 @@ def chart_total_value_per_time(request):
         sf = df.groupby('date')['total'].sum()
         df = pd.DataFrame({'date': sf.index, 'total': sf.values})
         df['date'] = pd.to_datetime(df['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
+        df['total'] = pd.to_numeric(df['total'].apply(lambda x: round(x, 2)))
         data = df.to_dict('list')
 
         df = pd.DataFrame({'dateM': date, 'totalM': total})
@@ -818,6 +819,7 @@ def chart_total_value_per_time(request):
         sf = df.groupby('dateM')['totalM'].sum()
         df = pd.DataFrame({'dateM': sf.index, 'totalM': sf.values})
         df['dateM'] = pd.to_datetime(df['dateM']).apply(lambda x: x.strftime('%m/%Y'))
+        df['totalM'] = pd.to_numeric(df['totalM'].apply(lambda x: round(x,2)))
 
         data['dateM'] = df.to_dict('list')['dateM']
         data['totalM'] = df.to_dict('list')['totalM']
@@ -827,6 +829,7 @@ def chart_total_value_per_time(request):
         df['dateY'] = pd.to_datetime(df['dateY']).apply(lambda x: x.strftime('%Y'))
         sf = df.groupby('dateY')['totalY'].sum()
         df = pd.DataFrame({'dateY': sf.index, 'totalY': sf.values})
+        df['totalY'] = pd.to_numeric(df['totalY'].apply(lambda x: round(x, 2)))
 
         data['dateY'] = df.to_dict('list')['dateY']
         data['totalY'] = df.to_dict('list')['totalY']
@@ -893,6 +896,11 @@ def chart_total_value_per_chosen_date(request):
         semesterDf['date'] = pd.to_datetime(semesterDf['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
         yearDf['date'] = pd.to_datetime(yearDf['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
 
+        weekDf['total'] = pd.to_numeric(weekDf['total'].apply(lambda x: round(x,2)))
+        monthDf['total'] = pd.to_numeric(monthDf['total'].apply(lambda x: round(x,2)))
+        semesterDf['total'] = pd.to_numeric(semesterDf['total'].apply(lambda x: round(x,2)))
+        yearDf['total'] = pd.to_numeric(yearDf['total'].apply(lambda x: round(x,2)))
+
         data = {}
         data['dateW'] = weekDf.to_dict('list')['date']
         data['totalW'] = weekDf.to_dict('list')['total']
@@ -902,6 +910,119 @@ def chart_total_value_per_chosen_date(request):
         data['totalS'] = semesterDf.to_dict('list')['total']
         data['dateY'] = yearDf.to_dict('list')['date']
         data['totalY'] = yearDf.to_dict('list')['total']
+
+        return HttpResponse(json.dumps(data))
+    return HttpResponse(status=400)
+
+def chart_total_value_current(request):
+    if request.method == 'GET':
+        invoices = Invoice.objects.all()
+        date = []
+        total = []
+        for invoice in invoices:
+            date.append(invoice.emission_date)
+            total.append(invoice.total_invoice_value)
+
+        df = pd.DataFrame({'date': date, 'total': total})
+        df = df.sort_values(by='date')
+        sf = df.groupby('date')['total'].sum()
+        df = pd.DataFrame({'date': sf.index, 'total': sf.values})
+        df['total'] = pd.to_numeric(df['total'].apply(lambda x: round(x,2)))
+
+        current_year = dt.date(
+            dt.datetime.now().year,
+            1,
+            1
+        )
+        current_month = dt.date(
+            dt.datetime.now().year,
+            dt.datetime.now().month,
+            1
+        )
+
+        df = df.groupby('date').filter(lambda x: (x['date'] > current_year))
+        sf = df.groupby('date')['total'].mean()
+        df = pd.DataFrame({'date': sf.index, 'total': sf.values})
+
+        dfM = df.groupby('date').filter(lambda x: (x['date'] > current_month))
+        sf = dfM.groupby('date')['total'].mean()
+        dfM = pd.DataFrame({'date': sf.index, 'total': sf.values})
+        df['date'] = pd.to_datetime(df['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
+        dfM['date'] = pd.to_datetime(dfM['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
+
+        data = df.to_dict('list')
+        print(dfM)
+        data['dateM'] = dfM.to_dict('list')['date']
+        data['totalM'] = dfM.to_dict('list')['total']
+
+        return HttpResponse(json.dumps(data))
+    return HttpResponse(status=400)
+
+def chart_total_value_per_category(request):
+    if request.method == 'GET':
+        invoices = Invoice.objects.all()
+        category = []
+        total = []
+        for invoice in invoices:
+            category.append(invoice.operation_nature)
+            total.append(invoice.total_invoice_value)
+
+        df = pd.DataFrame({'category': category, 'total': total})
+        df = df.sort_values(by='category')
+        sf = df.groupby('category')['total'].sum()
+        df = pd.DataFrame({'category': sf.index, 'total': sf.values})
+        df['total'] = pd.to_numeric(df['total'].apply(lambda x: round(x,2)))
+
+        data = df.to_dict('list')
+
+        return HttpResponse(json.dumps(data))
+    return HttpResponse(status=400)
+
+
+def chart_freight_value_per_date(request):
+    if request.method == 'GET':
+        invoices = Invoice.objects.all()
+        date = []
+        freight = []
+        for invoice in invoices:
+            date.append(invoice.emission_date)
+            freight.append(invoice.freight_value)
+
+        df = pd.DataFrame({'date': date, 'freight': freight})
+        df = df.sort_values(by='date')
+        sf = df.groupby('date')['freight'].sum()
+        df = pd.DataFrame({'date': sf.index, 'freight': sf.values})
+        df['date'] = pd.to_datetime(
+            df['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
+        df['freight'] = pd.to_numeric(
+            df['freight'].apply(lambda x: round(x, 2)))
+
+        data = df.to_dict('list')
+
+        return HttpResponse(json.dumps(data))
+    return HttpResponse(status=400)
+
+
+def chart_total_valueBySeller(request):
+    if request.method == 'GET':
+        invoices = Invoice.objects.all()
+        sellers = []
+        total = []
+        for invoice in invoices:
+            sellers.append(invoice.seller)
+            total.append(invoice.total_invoice_value)
+
+        for i,seller in enumerate(sellers):
+            sellers[i] = seller.name
+
+        df = pd.DataFrame({'total': total, 'seller': sellers})
+        df = df.sort_values(by='total')
+        sf = df.groupby('seller')['total'].sum()
+        df = pd.DataFrame({'seller': sf.index, 'total': sf.values})
+        df['total'] = pd.to_numeric(df['total'].apply(lambda x: round(x, 2)))
+        df = df.sort_values(by='total')
+
+        data = df.to_dict('list')
 
         return HttpResponse(json.dumps(data))
     return HttpResponse(status=400)

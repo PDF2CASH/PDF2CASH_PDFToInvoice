@@ -14,4 +14,8 @@ urlpatterns = [
     path(r'chart_total_value_per_time/', views.chart_total_value_per_time),
     path(r'chart_qtd_per_time/', views.chart_qtd_per_time),
     path(r'chart_total_value_per_chosen_date/', views.chart_total_value_per_chosen_date),
+    path(r'chart_total_value_per_category/', views.chart_total_value_per_category),
+    path(r'chart_freight_value_per_date/', views.chart_freight_value_per_date),
+    path(r'chart_total_valueBySeller/', views.chart_total_valueBySeller),
+    path(r'chart_total_value_current/', views.chart_total_value_current),
 ]
