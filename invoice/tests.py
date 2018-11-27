@@ -271,6 +271,5 @@ class InvoiceTest(TestCase):
         response = self.client.post('/api/invoice/invoice/', json_test, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
-
     def tearDown(self):
         Invoice.objects.all().delete()
