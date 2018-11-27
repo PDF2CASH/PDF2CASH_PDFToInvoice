@@ -1023,7 +1023,7 @@ def chart_total_valueBySeller(request):
             total.append(invoice.total_invoice_value)
 
         for i, seller in enumerate(sellers):
-            sellers[i] = seller.name
+            sellers[i] = seller.cnpj
 
         df = pd.DataFrame({'total': total, 'seller': sellers})
         df = df.sort_values(by='total')
@@ -1033,6 +1033,86 @@ def chart_total_valueBySeller(request):
         df = df.sort_values(by='total')
 
         data = df.to_dict('list')
+
+        return HttpResponse(json.dumps(data))
+    return HttpResponse(status=400)
+
+
+def information_invoices(request):
+    if request.method == 'GET':
+        invoices = Invoice.objects.all()
+        date = []
+        total = []
+        for invoice in invoices:
+            date.append(invoice.emission_date)
+            total.append(invoice.total_invoice_value)
+
+        df = pd.DataFrame({'date': date, 'total': total})
+        df = df.sort_values(by='date')
+        sf = df.groupby('date')['total'].sum()
+        df = pd.DataFrame({'date': sf.index, 'total': sf.values})
+
+        current_month = dt.date(dt.datetime.now().year, dt.datetime.now().month, 1)
+
+        df = df.groupby('date').filter(lambda x: (x['date'] > current_month))
+        total = 0
+        for x in df['total']:
+            total += x
+
+        total = round(total, 2)
+        data = {}
+        data['totalM'] = total
+
+        df = pd.DataFrame({'date': date, 'total': total})
+        df = df.sort_values(by='date')
+        sf = df.groupby('date')['total'].sum()
+        df = pd.DataFrame({'date': sf.index, 'total': sf.values})
+
+        current_year = dt.date(dt.datetime.now().year,1,1)
+
+        df = df.groupby('date').filter(lambda x: (x['date'] > current_year))
+        sf = df.groupby('date')['total'].mean()
+
+        df = pd.DataFrame({'date': sf.index, 'total': sf.values})
+
+        sf = df.groupby('date').size()
+        df = pd.DataFrame({'date': sf.index, 'count': sf.values})
+
+        total_qtd_year = 0
+        for x in df['count']:
+            total_qtd_year += x
+
+        df = df.groupby('date').filter(lambda x: (x['date'] > current_month))
+
+        total_qtd_month = 0
+        for x in df['count']:
+            total_qtd_month += x
+
+        data['total_qtd_year'] = total_qtd_year
+        data['total_qtd_month'] = total_qtd_month
+
+        sellers = []
+        for invoice in invoices:
+            sellers.append(invoice.seller)
+
+        for i, seller in enumerate(sellers):
+            sellers[i] = seller.cnpj
+
+        df = pd.DataFrame({'sellers': sellers})
+        df = df.sort_values(by='sellers')
+        sf = df.groupby('sellers').size()
+        df = pd.DataFrame({'sellers': sf.index, 'count': sf.values})
+
+        sellersA = []
+        countA = []
+        for x in df['sellers']:
+            sellersA.append(x)
+
+        for x in df['count']:
+            countA.append(x)
+
+        data['sellers'] = sellersA
+        data['count'] = countA
 
         return HttpResponse(json.dumps(data))
     return HttpResponse(status=400)

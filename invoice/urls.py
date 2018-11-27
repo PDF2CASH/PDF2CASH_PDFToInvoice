@@ -18,4 +18,5 @@ urlpatterns = [
     path(r'chart_freight_value_per_date/', views.chart_freight_value_per_date),
     path(r'chart_total_valueBySeller/', views.chart_total_valueBySeller),
     path(r'chart_total_value_current/', views.chart_total_value_current),
+    path(r'information_invoices/', views.information_invoices),
 ]
