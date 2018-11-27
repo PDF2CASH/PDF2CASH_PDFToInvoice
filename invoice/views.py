@@ -11,10 +11,8 @@ from .serializers import (
         ReceiverSerializer,
         )
 import re
-from rest_framework.parsers import MultiPartParser
 from django.views import View
 from django.http import Http404
-from rest_framework.decorators import parser_classes
 
 
 def get_object_invoice(pk):
@@ -269,7 +267,7 @@ class InvoiceCreateList(View):
                     status=400
                 )
             dict_invoice['receiver'] = receiver_serializer.data['id']
-            
+
         if Seller.objects.filter(cnpj=cnpj_seller).count() == 1:
             seller = Seller.objects.get(cnpj=cnpj_seller)
             dict_invoice['seller'] = seller.pk
