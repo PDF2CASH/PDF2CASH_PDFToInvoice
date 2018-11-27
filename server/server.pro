@@ -1,39 +1,50 @@
-QT          += core network
-QT          -= gui
-CONFIG      += console
-osx:CONFIG  -= app_bundle
+# This project demonstrates how to use QtWebAppLib by including the
+# sources into this project.
 
-PRJDIR       = ./
-include($$PRJDIR/commondir.pri)
+TARGET = Server
+TEMPLATE = app
+QT = core network
+CONFIG += console
 
-TARGET = ParserServer
+HEADERS += \
+           src/requestmapper.h \
+           src/controller/dumpcontroller.h \
+           src/controller/templatecontroller.h \
+           src/controller/formcontroller.h \
+           src/controller/fileuploadcontroller.h \
+           src/controller/sessioncontroller.h \
+           src/controller/parsercontroller.h \
+           src/parser/Parser.h \
+           src/parser/Search.h \
+           src/parser/Utils.h \
+           src/documentcache.h \
 
-# The following define makes your compiler emit warnings if you use
-# any feature of Qt which as been marked deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
-# deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
+SOURCES += src/main.cpp \
+           src/requestmapper.cpp \
+           src/controller/dumpcontroller.cpp \
+           src/controller/templatecontroller.cpp \
+           src/controller/formcontroller.cpp \
+           src/controller/fileuploadcontroller.cpp \
+           src/controller/sessioncontroller.cpp \
+           src/controller/parsercontroller.cpp \
+           src/parser/Parser.cpp \
+           src/parser/Search.cpp \
+           src/parser/Utils.cpp \
 
-# You can also make your code fail to compile if you use deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+OTHER_FILES += etc/* etc/docroot/* etc/templates/* etc/ssl/* logs/* ../readme.txt
 
-SOURCES += \
-    HTTPServer.cpp \
-    parser/Parser.cpp \
-    parser/Search.cpp \
-    parser/Utils.cpp \
-    CHandler.cpp
+#---------------------------------------------------------------------------------------
+# The following lines include the sources of the QtWebAppLib library
+#---------------------------------------------------------------------------------------
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+include(../3rdparty/QtWebApp/QtWebApp/logging/logging.pri)
+include(../3rdparty/QtWebApp/QtWebApp/httpserver/httpserver.pri)
+include(../3rdparty/QtWebApp/QtWebApp/templateengine/templateengine.pri)
+# Not used: include(../QtWebApp/qtservice/qtservice.pri)
 
-########################################################
-# Poppler Include & Library configuration.             #
-########################################################
+#---------------------------------------------------------------------------------------
+# The following lines include the library of the poppler-library
+#---------------------------------------------------------------------------------------
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../3rdparty/poppler-library/build/lib/release/ -lpoppler-library
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../3rdparty/poppler-library/build/lib/debug/ -lpoppler-library
@@ -47,15 +58,4 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../3rdparty
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../3rdparty/poppler-library/build/lib/release/poppler-library.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../3rdparty/poppler-library/build/lib/debug/poppler-library.lib
 else:unix: PRE_TARGETDEPS += $$PWD/../3rdparty/poppler-library/build/lib/libpoppler-library.a
-
-########################################################
-# QHTTP Include & Library configuration.               #
-########################################################
-LIBS        += -lqhttp
-
-HEADERS += \
-    parser/Parser.h \
-    parser/Search.h \
-    parser/Utils.h \
-    CHandler.h
 
