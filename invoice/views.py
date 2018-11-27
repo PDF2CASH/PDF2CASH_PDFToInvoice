@@ -854,6 +854,15 @@ def chart_qtd_per_time(request):
 
         data = df.to_dict('list')
 
+        dfY = pd.DataFrame({'dateY': date})
+        dfY = dfY.sort_values(by='dateY')
+        dfY['dateY'] = pd.to_datetime(dfY['dateY']).apply(lambda x: x.strftime('%Y'))
+        sf = dfY.groupby('dateY').size()
+        dfY = pd.DataFrame({'dateY': sf.index, 'countY': sf.values})
+
+        data['dateY'] = dfY.to_dict('list')['dateY']
+        data['countY'] = dfY.to_dict('list')['countY']
+
         return HttpResponse(json.dumps(data))
     return HttpResponse(status=400)
 
@@ -952,7 +961,6 @@ def chart_total_value_current(request):
         dfM['date'] = pd.to_datetime(dfM['date']).apply(lambda x: x.strftime('%d/%m/%Y'))
 
         data = df.to_dict('list')
-        print(dfM)
         data['dateM'] = dfM.to_dict('list')['date']
         data['totalM'] = dfM.to_dict('list')['total']
 
