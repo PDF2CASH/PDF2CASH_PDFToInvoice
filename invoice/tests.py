@@ -237,7 +237,6 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 405)
 
     def test_invoice_object_create(self):
-        file = open("invoice/test.pdf", 'rb')
         json_test = {
                     "number": '000441407',
                     "main_nature_operation": 'DFVENDA ACESSORIOS EM VN',
@@ -267,9 +266,10 @@ class InvoiceTest(TestCase):
                     "sender_uf": self.receiver1.uf,
                     "sender_phone_fax": self.receiver1.phone,
                 }
-        json_test['file'] = file
-        response = self.client.post('/api/invoice/invoice/', json_test, format='multipart')
+        response = self.client.post('/api/invoice/invoice/', json_test, content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        response = self.client.post('/api/invoice/invoice/', json_test, content_type='application/json')
+        self.assertEqual(response.status_code, 400)
 
     def tearDown(self):
         Invoice.objects.all().delete()

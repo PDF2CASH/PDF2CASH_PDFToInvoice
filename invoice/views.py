@@ -11,10 +11,8 @@ from .serializers import (
         ReceiverSerializer,
         )
 import re
-from rest_framework.parsers import MultiPartParser
 from django.views import View
 from django.http import Http404
-from rest_framework.decorators import parser_classes
 
 
 def get_object_invoice(pk):
@@ -59,7 +57,6 @@ class InvoiceCreateList(View):
         serializer = InvoiceSerializer(invoices, many=True)
         return HttpResponse(json.dumps(serializer.data))
 
-    @parser_classes((MultiPartParser,))
     def post(self, request):
 
         dict_invoice = {}
@@ -68,9 +65,7 @@ class InvoiceCreateList(View):
 
         dict_receiver = {}
 
-        dict_invoice['file'] = request.FILES['file']
-
-        json_dict = request.POST
+        json_dict = json.loads(request.body)
 
         # access_key, uf_code_seller, cnpj_seller, number
 
@@ -256,24 +251,40 @@ class InvoiceCreateList(View):
         dict_receiver['phone'] = json_dict['sender_phone_fax']
 
         # ------------------------
-
-        seller_serializer = SellerSerializer(data=dict_seller)
-        receiver_serializer = ReceiverSerializer(data=dict_receiver)
-
-        if seller_serializer.is_valid() and receiver_serializer.is_valid():
-            seller_serializer.save()
-            receiver_serializer.save()
+        if Receiver.objects.filter(cpf_cnpj=cpf_cnpj_receiver).count() == 1:
+            receiver = Receiver.objects.get(cpf_cnpj=cpf_cnpj_receiver)
+            dict_invoice['receiver'] = receiver.pk
         else:
-            return HttpResponse(
-                json.dumps([
-                    seller_serializer.errors,
-                    receiver_serializer.errors,
-                    ]),
-                status=400
-            )
+            receiver_serializer = ReceiverSerializer(data=dict_receiver)
 
-        dict_invoice['seller'] = seller_serializer.data['id']
-        dict_invoice['receiver'] = receiver_serializer.data['id']
+            if receiver_serializer.is_valid():
+                receiver_serializer.save()
+            else:
+                return HttpResponse(
+                    json.dumps([
+                        receiver_serializer.errors,
+                        ]),
+                    status=400
+                )
+            dict_invoice['receiver'] = receiver_serializer.data['id']
+
+        if Seller.objects.filter(cnpj=cnpj_seller).count() == 1:
+            seller = Seller.objects.get(cnpj=cnpj_seller)
+            dict_invoice['seller'] = seller.pk
+        else:
+            seller_serializer = SellerSerializer(data=dict_seller)
+
+            if seller_serializer.is_valid():
+                seller_serializer.save()
+            else:
+                return HttpResponse(
+                    json.dumps([
+                        seller_serializer.errors,
+                        ]),
+                    status=400
+                )
+
+            dict_invoice['seller'] = seller_serializer.data['id']
 
         invoice_serializer = InvoiceSerializer(data=dict_invoice)
 
@@ -290,8 +301,6 @@ class InvoiceCreateList(View):
         return HttpResponse(
             json.dumps([
                 invoice_serializer.data,
-                seller_serializer.data,
-                receiver_serializer.data
             ]),
             status=200
         )
