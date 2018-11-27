@@ -43,13 +43,12 @@ class MigrationQuestioner:
         except ImportError:
             return self.defaults.get("ask_initial", False)
         else:
-            # getattr() needed on PY36 and older (replace with attribute access).
-            if getattr(migrations_module, "__file__", None):
+            if hasattr(migrations_module, "__file__"):
                 filenames = os.listdir(os.path.dirname(migrations_module.__file__))
             elif hasattr(migrations_module, "__path__"):
                 if len(migrations_module.__path__) > 1:
                     return False
-                filenames = os.listdir(list(migrations_module.__path__)[0])
+                filenames = os.listdir(migrations_module.__path__[0])
             return not any(x.endswith(".py") for x in filenames if x != "__init__.py")
 
     def ask_not_null_addition(self, field_name, model_name):
@@ -86,7 +85,7 @@ class InteractiveMigrationQuestioner(MigrationQuestioner):
         result = input("%s " % question)
         if not result and default is not None:
             return default
-        while not result or result[0].lower() not in "yn":
+        while len(result) < 1 or result[0].lower() not in "yn":
             result = input("Please answer yes or no: ")
         return result[0].lower() == "y"
 

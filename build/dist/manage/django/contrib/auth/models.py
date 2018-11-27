@@ -276,7 +276,7 @@ class PermissionsMixin(models.Model):
     def has_module_perms(self, app_label):
         """
         Return True if the user has any permissions in the given app label.
-        Use similar logic as has_perm(), above.
+        Use simlar logic as has_perm(), above.
         """
         # Active superusers have all permissions.
         if self.is_active and self.is_superuser:
@@ -358,7 +358,7 @@ class User(AbstractUser):
     Users within the Django authentication system are represented by this
     model.
 
-    Username and password are required. Other fields are optional.
+    Username, password and email are required. Other fields are optional.
     """
     class Meta(AbstractUser.Meta):
         swappable = 'AUTH_USER_MODEL'
@@ -413,7 +413,10 @@ class AnonymousUser:
         return _user_has_perm(self, perm, obj=obj)
 
     def has_perms(self, perm_list, obj=None):
-        return all(self.has_perm(perm, obj) for perm in perm_list)
+        for perm in perm_list:
+            if not self.has_perm(perm, obj):
+                return False
+        return True
 
     def has_module_perms(self, module):
         return _user_has_module_perms(self, module)
