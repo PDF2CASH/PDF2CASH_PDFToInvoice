@@ -65,7 +65,11 @@ class InvoiceCreateList(View):
 
         dict_receiver = {}
 
-        json_dict = json.loads(request.body)
+        json_dict = None
+        if request.body:
+            json_dict = json.loads(request.body)
+        elif request.POST:
+            json_dict = request.POST
 
         # access_key, uf_code_seller, cnpj_seller, number
 
