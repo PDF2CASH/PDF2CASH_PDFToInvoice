@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -47,7 +48,6 @@ MIDDLEWARE = [
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
-        'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -125,8 +125,15 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+if 'HOST_DOMAIN' in os.environ:
+    HOST_DOMAIN = os.environ['HOST_DOMAIN']
+else:
+    HOST_DOMAIN = 'localhost:3000'
+
 CORS_ORIGIN_WHITELIST = (
+    '0.0.0.0:3000',
     'localhost:3000',
+    '127.0.0.1:3000'
 )
 
 CORS_ALLOW_METHODS = (

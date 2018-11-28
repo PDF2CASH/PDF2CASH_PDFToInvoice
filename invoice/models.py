@@ -3,23 +3,19 @@ from django.db import models
 
 class Invoice(models.Model):
 
-    file = models.FileField(upload_to='invoice/images/', blank=True)
-
-    text = models.TextField()
-
-    number = models.CharField(max_length=9, blank=True)
+    number = models.CharField(max_length=9, blank=True, null=True)
 
     operation_nature = models.CharField(
-        max_length=255, blank=True)  # NATUREZA DA OPERAÇÃO
+        max_length=255, blank=True, null=True)  # NATUREZA DA OPERAÇÃO
 
     authorization_protocol = models.CharField(
-        max_length=255, blank=True)  # PROTOCOLO DE AUTORIZAÇÃO
+        max_length=255, blank=True, null=True)  # PROTOCOLO DE AUTORIZAÇÃO
 
     access_key = models.CharField(
         max_length=44, unique=True)  # CHAVE DE ACESSO
 
     state_registration = models.CharField(
-        max_length=255, blank=True)  # INSCRIÇÃO ESTADUAL
+        max_length=255, blank=True, null=True)  # INSCRIÇÃO ESTADUAL
 
     receiver = models.ForeignKey(
         'invoice.Receiver', related_name='invoices', on_delete=models.CASCADE)
@@ -27,73 +23,58 @@ class Invoice(models.Model):
     seller = models.ForeignKey(
         'invoice.Seller', related_name='invoices', on_delete=models.CASCADE)
 
-    emission_date = models.DateField(blank=True)
+    emission_date = models.DateField(blank=True, null=True)
 
-    entry_exit_datetime = models.DateTimeField(blank=True)
+    entry_exit_datetime = models.DateTimeField(blank=True, null=True)
 
-    # total_products_value = models.FloatField(max_length=30, blank=True)
+    total_products_value = models.FloatField(max_length=30, blank=True, null=True)
 
-    total_invoice_value = models.FloatField(blank=True)
+    total_invoice_value = models.FloatField(blank=True, null=True)
 
-    basis_calculation_icms = models.FloatField(blank=True)
+    basis_calculation_icms = models.FloatField(blank=True, null=True)
 
-    freight_value = models.FloatField(blank=True)
+    freight_value = models.FloatField(blank=True, null=True)
 
-    insurance_value = models.FloatField(blank=True)
+    insurance_value = models.FloatField(blank=True, null=True)
 
-    icms_value = models.FloatField(blank=True)
+    icms_value = models.FloatField(blank=True, null=True)
 
-    discount_value = models.FloatField(blank=True)
+    discount_value = models.FloatField(blank=True, null=True)
 
-    basis_calculation_icms_st = models.FloatField(blank=True)
+    basis_calculation_icms_st = models.FloatField(blank=True, null=True)
 
-    icms_value_st = models.FloatField(blank=True)
+    icms_value_st = models.FloatField(blank=True, null=True)
 
-    other_expenditure = models.FloatField(blank=True)
+    other_expenditure = models.FloatField(blank=True, null=True)
 
-    ipi_value = models.FloatField(blank=True)
+    ipi_value = models.FloatField(blank=True, null=True)
 
 
 class Seller(models.Model):
 
-    name = models.CharField(max_length=255, blank=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
 
-    cnpj = models.CharField(max_length=14, blank=True)
+    cnpj = models.CharField(max_length=14, blank=True, null=True)
 
-    cep = models.CharField(max_length=8, blank=True)
+    cep = models.CharField(max_length=8, blank=True, null=True)
 
-    uf_code = models.IntegerField(blank=True)
+    uf_code = models.IntegerField(blank=True, null=True)
 
 
 class Receiver(models.Model):
 
-    name = models.CharField(max_length=255, blank=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
 
-    cpf_cnpj = models.CharField(max_length=14, unique=True)
+    cpf_cnpj = models.CharField(max_length=14, unique=True, null=True)
 
-    address = models.CharField(max_length=255, blank=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
 
-    neighborhood = models.CharField(max_length=255, blank=True)
+    neighborhood = models.CharField(max_length=255, blank=True, null=True)
 
-    cep = models.CharField(max_length=8, blank=True)
+    cep = models.CharField(max_length=8, blank=True, null=True)
 
-    county = models.CharField(max_length=255, blank=True)
+    county = models.CharField(max_length=255, blank=True, null=True)
 
-    uf = models.CharField(max_length=2, blank=True)
+    uf = models.CharField(max_length=2, blank=True, null=True)
 
-    phone = models.CharField(max_length=13, blank=True)
-
-
-class Product_Service(models.Model):
-
-    code = models.CharField(max_length=100)
-
-    description = models.CharField(max_length=255)
-
-    qtd = models.IntegerField()
-
-    unity_value = models.FloatField(max_length=30)
-
-    total_value = models.FloatField(max_length=30)
-
-    discount_value = models.FloatField(max_length=30)
+    phone = models.CharField(max_length=30, blank=True, null=True)

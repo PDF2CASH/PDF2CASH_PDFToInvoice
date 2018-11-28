@@ -4,224 +4,15 @@ from .models import (
         Invoice,
         Seller,
         Receiver,
-        Product_Service
         )
 from .serializers import (
         InvoiceSerializer,
         SellerSerializer,
         ReceiverSerializer,
-        ProductServiceSerializer
         )
-import PyPDF2
 import re
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-from pdfminer.converter import TextConverter
-from pdfminer.layout import LAParams
-from pdfminer.pdfpage import PDFPage
-from io import StringIO
-from rest_framework.parsers import MultiPartParser
 from django.views import View
 from django.http import Http404
-from rest_framework.decorators import parser_classes
-import pandas as pd
-import datetime as dt
-
-
-def convert_pdf_to_txt(file):
-
-    rsrcmgr = PDFResourceManager()
-    retstr = StringIO()
-    codec = 'utf-8'
-    laparams = LAParams()
-    device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
-    fp = file
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
-    password = ""
-    maxpages = 0
-    caching = True
-    pagenos = set()
-    for page in PDFPage.get_pages(
-        fp,
-        pagenos,
-        maxpages=maxpages,
-        password=password,
-        caching=caching,
-        check_extractable=True
-    ):
-
-        interpreter.process_page(page)
-
-    text = retstr.getvalue()
-
-    device.close()
-    retstr.close()
-    return text
-
-
-def search_create_receiver(cpnj_cpf_receiver, text):
-
-    if Receiver.objects.filter(cpf_cnpj=cpnj_cpf_receiver).count() == 1:
-        receiver = Receiver.objects.get(cpf_cnpj=cpnj_cpf_receiver)
-    else:
-        # Procurar os atributos do Receiver
-
-        name_receiver = re.search(r'NOME\/RAZÃO\s+SOCIAL\s+([\w+| |\.]+\w)', text, re.M | re.I)
-
-        name_receiver = str(name_receiver.group()).replace('NOME/RAZÃO SOCIAL', '')
-        name_receiver = name_receiver.replace('\n', '')
-
-        print("---------------")
-        print(name_receiver)
-        print("---------------")
-
-        address_receiver = re.search(r'ENDEREÇO\s+(.+)', text, re.M | re.I)
-        address_receiver = str(address_receiver.group()).replace('ENDEREÇO', '')
-        address_receiver = address_receiver.replace('\n', '')
-
-        print("---------------")
-        print(address_receiver)
-        print("---------------")
-
-        neighborhood_receiver = re.search(r'BAIRRO\/DISTRITO\s+(.+)', text, re.M | re.I)
-        neighborhood_receiver = str(neighborhood_receiver.group()).replace('BAIRRO/DISTRITO', '')
-        neighborhood_receiver = neighborhood_receiver.replace('\n', '')
-
-        print("---------------")
-        print(neighborhood_receiver)
-        print("---------------")
-
-        cep_receiver = re.search(
-            r'DESTINATÁRIO[\W|\w]+CEP[\W|\w]+\s(\d{5}\-\d{3}|\d{2}\.\d{3}\-\d{3}|\d{8})\s[\W|\w]+CÁLCULO DO IMPOSTO',
-            text,
-            re.M | re.I
-        )
-        cep_receiver = str(cep_receiver.group())
-        cep_receiver = re.search(r'CEP[\W|\w]+\s(\d{5}\-\d{3}|\d{2}\.\d{3}\-\d{3}|\d{8})', cep_receiver, re.M | re.I)
-        cep_receiver = str(cep_receiver.group()).replace('\n', '')
-        cep_receiver = cep_receiver.replace('-', '')
-        cep_receiver = cep_receiver.replace('.', '')
-        cep_receiver = cep_receiver.replace('/', '')
-        cep_receiver = cep_receiver.replace(' ', '')
-        cep_receiver = cep_receiver.replace('CEP', '')
-        cep_receiver = cep_receiver[-8:]
-
-        print("---------------")
-        print(cep_receiver)
-        print("---------------")
-
-        county_receiver = re.search(r'MUNICÍPIO\s+(FONE\/FAX\s+)?(.+)', text, re.M | re.I)
-        county_receiver = str(county_receiver.group()).replace('MUNICÍPIO', '')
-        county_receiver = county_receiver.replace('\n', '')
-        county_receiver = county_receiver.replace('FONE/FAX', '')
-
-        print("---------------")
-        print(county_receiver)
-        print("---------------")
-
-        uf_receiver = re.search(
-            r'DESTINATÁRIO[\W|\w]+UF\s+([a-zA-Z]{2})\s[\W|\w]+CÁLCULO DO IMPOSTO',
-            text,
-            re.M | re.I
-        )
-        uf_receiver = str(uf_receiver.group())
-        uf_receiver = re.search(r'UF\s+([a-zA-Z]{2})', uf_receiver, re.M | re.I)
-        uf_receiver = str(uf_receiver.group()).replace('\n', '')
-        uf_receiver = uf_receiver.replace('\n', '')
-        uf_receiver = uf_receiver.replace('UF', '')
-        uf_receiver = uf_receiver[-2:]
-
-        print("---------------")
-        print(uf_receiver)
-        print("---------------")
-
-        re_p1 = r'DESTINATÁRIO[\W|\w]+FONE\/FAX[\W|\w]*\s(\(\d{2}\)\s?\d{5}\-\d{3}|'
-        re_p2 = r'\(\d{2}\)\s?\d{5}\-\d{4}|\d{10})\s[\W|\w]+CÁLCULO DO IMPOSTO'
-        phone_receiver = re.search(
-            re_p1+re_p2,
-            text,
-            re.M | re.I
-        )
-        if phone_receiver:
-            phone_receiver = str(phone_receiver.group()).replace('FONE/FAX', '')
-            phone_receiver = re.search(
-                r'(\(\d{2}\)\s?\d{5}\-\d{3}|\(\d{2}\)\s?\d{5}\-\d{4}|\d{10})',
-                phone_receiver,
-                re.M | re.I
-            )
-            phone_receiver = str(phone_receiver.group()).replace('\n', '')
-            phone_receiver = phone_receiver.replace('(', '')
-            phone_receiver = phone_receiver.replace(')', '')
-            phone_receiver = phone_receiver.replace('-', '')
-            phone_receiver = phone_receiver.replace(' ', '')
-            phone_receiver = phone_receiver[-10:]
-        else:
-            phone_receiver = ''
-
-        print("---------------")
-        print(phone_receiver)
-        print("---------------")
-
-        receiver = Receiver.objects.create(
-            cpf_cnpj=cpnj_cpf_receiver,
-            name=name_receiver,
-            address=address_receiver,
-            neighborhood=neighborhood_receiver,
-            cep=cep_receiver,
-            county=county_receiver,
-            uf=uf_receiver,
-            phone=phone_receiver,
-        )
-
-    return receiver
-
-
-def search_create_seller(cnpj_seller, text, uf_code_seller):
-
-    if Seller.objects.filter(cnpj=cnpj_seller).count() == 1:
-        seller = Seller.objects.get(cnpj=cnpj_seller)
-    else:
-        # Procurar os atributos do Seller
-
-        name_seller = re.search(r'SÉRIE[0-9\:\s]+([a-zA-Z ]+)', text, re.M | re.I)
-        name_seller = str(name_seller.group())
-        name_seller = re.search(r'(\s[a-zA-Z ]+\s)', name_seller, re.M | re.I)
-        name_seller = str(name_seller.group()).replace('\n', '')
-        name_seller = name_seller.replace('SÉRIE', '')
-        name_seller = name_seller.replace('LTDA', '')
-
-        print("-------------------")
-        print(name_seller)
-        print("-------------------")
-
-        cep_seller = re.search(
-            r'SÉRIE[\W|\w]+\s(\d{5}\-\d{3}|\d{2}\.\d{3}\-\d{3}|\d{8})\s[\W|\w]+NATUREZA DA OPERAÇÃO',
-            text,
-            re.M | re.I
-        )
-        cep_seller = str(cep_seller.group())
-        cep_seller = re.search(
-            r'\s(\d{5}\-\d{3}|\d{2}\.\d{3}\-\d{3}|\d{8})\s',
-            cep_seller,
-            re.M | re.I
-        )
-        cep_seller = str(cep_seller.group()).replace('\n', '')
-        cep_seller = cep_seller.replace('-', '')
-        cep_seller = cep_seller.replace('.', '')
-        cep_seller = cep_seller.replace('/', '')
-        cep_seller = cep_seller.replace(' ', '')
-
-        print("-------------------")
-        print(cep_seller)
-        print("-------------------")
-
-        seller = Seller.objects.create(
-            cnpj=cnpj_seller,
-            name=name_seller,
-            cep=cep_seller,
-            uf_code=uf_code_seller,
-        )
-
-    return seller
 
 
 def get_object_invoice(pk):
@@ -242,13 +33,6 @@ def get_object_receiver(pk):
     try:
         return Receiver.objects.get(pk=pk)
     except Receiver.DoesNotExist:
-        raise Http404
-
-
-def get_object_product_service(pk):
-    try:
-        return Product_Service.objects.get(pk=pk)
-    except Product_Service.DoesNotExist:
         raise Http404
 
 
@@ -273,56 +57,23 @@ class InvoiceCreateList(View):
         serializer = InvoiceSerializer(invoices, many=True)
         return HttpResponse(json.dumps(serializer.data))
 
-    @parser_classes((MultiPartParser,))
     def post(self, request):
 
         dict_invoice = {}
 
-        pdf = request.FILES['file']
+        dict_seller = {}
 
-        dict_invoice['file'] = pdf
+        dict_receiver = {}
 
-        pdfReader = PyPDF2.PdfFileReader(pdf)
+        json_dict = None
+        if request.body:
+            json_dict = json.loads(request.body)
+        elif request.POST:
+            json_dict = request.POST
 
-        num_pages = pdfReader.numPages
-        count = 0
-        text1 = ""
+        # access_key, uf_code_seller, cnpj_seller, number
 
-        while count < num_pages:
-            pageObj = pdfReader.getPage(count)
-            count += 1
-            text1 += pageObj.extractText()
-
-        text = convert_pdf_to_txt(pdf)
-
-        # VALIDAÇÃO-PDF/NF
-
-        if text != "":
-            text = text
-        else:
-            return HttpResponse(status=400)
-
-        dict_invoice['text'] = text
-
-        # Parser AccessKey
-
-        new_text = text.replace('\n', '')
-
-        print(text)
-
-        access_key = re.search(
-                r'\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}\s+\d{4}',
-                new_text,
-                re.M | re.I
-                )
-
-        if not access_key:
-            return HttpResponse(
-                json.dumps({'error': 'Chave de acesso da nota fiscal não encontrada no pdf!'}),
-                status=400
-            )
-
-        access_key = str(access_key.group()).replace(' ', '')
+        access_key = json_dict['main_access_key'].replace(' ', '')
 
         uf_code_seller = access_key[0:2]
 
@@ -333,419 +84,230 @@ class InvoiceCreateList(View):
         dict_invoice['access_key'] = access_key
         dict_invoice['number'] = number
 
-        print("-------------------")
-        print(access_key)
-        print("-------------------")
+        dict_seller['uf_code'] = uf_code_seller
+        dict_seller['cnpj'] = cnpj_seller
 
-        # Parser CNPJ/CPF reveiver
+        # cpf_cnpj_receiver
 
-        cpnj_cpf_receiver = re.findall(
-                r'([\s+|\n]\d{11}\s+|[\s+|\n]\d{14}\s+|\d{3}\.\d{3}\.\d{3}\-\d{2}|\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2})',
-                text,
+        cpf_cnpj_receiver = json_dict['sender_cnpj_cpf']
+
+        cpf_cnpj_receiver = re.search(
+                r'\d{11}|\d{14}|\d{3}\.\d{3}\.\d{3}\-\d{2}|\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}',
+                cpf_cnpj_receiver,
                 re.M | re.I
                 )
 
-        if not cpnj_cpf_receiver or len(cpnj_cpf_receiver) < 2:
-            return HttpResponse(
-                json.dumps({'error': 'Cnpj ou cpf do destinatário da nota fiscal não encontrado no pdf!'}),
-                status=400
-            )
+        cpf_cnpj_receiver = str(cpf_cnpj_receiver.group())
+        cpf_cnpj_receiver = cpf_cnpj_receiver.replace('-', '')
+        cpf_cnpj_receiver = cpf_cnpj_receiver.replace('.', '')
+        cpf_cnpj_receiver = cpf_cnpj_receiver.replace('/', '')
+        cpf_cnpj_receiver = cpf_cnpj_receiver.replace(' ', '')
 
-        for i in range(len(cpnj_cpf_receiver)):
-            cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('-', '')
-            cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('.', '')
-            cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('/', '')
-            cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace('\n', '')
-            cpnj_cpf_receiver[i] = cpnj_cpf_receiver[i].replace(' ', '')
+        dict_receiver['cpf_cnpj'] = cpf_cnpj_receiver
 
-        if cnpj_seller in cpnj_cpf_receiver:
-            cpnj_cpf_receiver.remove(cnpj_seller)
+        # operation_nature
 
-        cpnj_cpf_receiver = cpnj_cpf_receiver[0]
+        dict_invoice['operation_nature'] = json_dict['main_nature_operation']
 
-        print("-------------------")
-        print(cpnj_cpf_receiver)
-        print("-------------------")
+        # authorization_protocol
 
-        # Verifica existencia de entidades
+        dict_invoice['authorization_protocol'] = json_dict['main_protocol_authorization_use']
 
-        receiver = search_create_receiver(cpnj_cpf_receiver, text)
-        if not receiver:
-            return HttpResponse(
-                    json.dumps({'error': 'Atributos referentes ao destinatário da nota fiscal não encontrados!'}),
-                    status=400
-                    )
+        # state_registration
 
-        dict_invoice['receiver'] = receiver.pk
+        dict_invoice['state_registration'] = json_dict['main_state_registration']
 
-        seller = search_create_seller(cnpj_seller, text, uf_code_seller)
-        if not seller:
-            return HttpResponse(
-                    json.dumps({'error': 'Atributos referentes ao emitente da nota fiscal não encontrados no pdf!'}),
-                    status=400
-                    )
+        # emission_date
 
-        dict_invoice['seller'] = seller.pk
+        emission_date = json_dict['sender_emission_date']
 
-        # NATUREZA DA OPERAÇÃO Parser
+        emission_date = re.search(r'\d{2}\/\d{2}\/\d{4}', emission_date, re.M | re.I)
 
-        operation_nature = re.search(
-                r'NATUREZA DA OPERAÇÃO\s+(.+)',
-                text,
-                re.M | re.I
-                )
-        if not operation_nature:
-            return HttpResponse(
-                    json.dumps({'error': 'Naturaza da operação da nota fiscal não encontrada no pdf!'}),
-                    status=400
-            )
-        operation_nature = str(operation_nature.group()).replace('NATUREZA DA OPERAÇÃO', '')
-        operation_nature = operation_nature.replace('\n', '')
+        emission_date = str(emission_date.group())
 
-        print("-------------------")
-        print(operation_nature)
-        print("-------------------")
+        emission_date = emission_date.split('/')
 
-        dict_invoice['operation_nature'] = operation_nature
+        emission_date = emission_date[2] + '-' + emission_date[1] + '-' + emission_date[0]
 
-        # PROTOCOLO DE AUTORIZAÇÃO Parser
+        dict_invoice['emission_date'] = emission_date
 
-        authorization_protocol = re.search(
-                r'(\d{15}(\s|\s\-\s)\d{2}\/\d{2}\/\d{4} \d{2}\:\d{2}(\:\d{2})?)',
-                text,
-                re.M | re.I
-                )
-        if not authorization_protocol:
-            return HttpResponse(
-                    json.dumps({'error': 'Protocolo de autorização da nota fiscal não encontrado no pdf!'}),
-                    status=400
-                    )
-        authorization_protocol = str(authorization_protocol.group())
-        authorization_protocol = authorization_protocol.replace(' -', '')
+        # entry_exit_datetime
 
-        print("-------------------")
-        print(authorization_protocol)
-        print("-------------------")
+        entry_exit_datetime = json_dict['sender_out_input_date']
 
-        dict_invoice['authorization_protocol'] = authorization_protocol
+        entry_exit_datetime = entry_exit_datetime.split('/')
 
-        # INSCRIÇÃO ESTADUAL Parser
+        time = json_dict['sender_output_time']
 
-        state_registration = re.search(r'INSCRIÇÃO ESTADUAL\s+(\d+)\s', text, re.M | re.I)
-        if not state_registration:
-            return HttpResponse(
-                json.dumps({'error': 'Inscrição estadual da nota fiscal não encontrada no pdf!'}),
-                status=400
-            )
-        state_registration = str(state_registration.group())
-        state_registration = state_registration.replace('INSCRIÇÃO ESTADUAL', '')
-        state_registration = state_registration.replace(' ', '')
-        state_registration = state_registration.replace('\n', '')
+        u = entry_exit_datetime[2] + '-' + entry_exit_datetime[1] + '-' + entry_exit_datetime[0] + 'T' + time
 
-        print("-------------------")
-        print(state_registration)
-        print("-------------------")
+        entry_exit_datetime = u
 
-        dict_invoice['state_registration'] = state_registration
+        dict_invoice['entry_exit_datetime'] = entry_exit_datetime
 
-        # VALOR DOS IMPOSTOS
+        # total_products_value
 
-        basis_calculation_icms = re.search(
-            r'BASE DE CÁLCULO DE ICMS\s+([\d+|\.]+\,\d{2})\s', text,
-            re.M | re.I)
-        if not basis_calculation_icms:
-            return HttpResponse(json.dumps({
-                'error':
-                'Base do cálculo de ICMS da nota fiscal não encontrada no pdf!'
-            }),
-                            status=400)
-        basis_calculation_icms = str(basis_calculation_icms.group(1))
-        basis_calculation_icms = basis_calculation_icms.replace(
-            'BASE DE CÁLCULO DE ICMS', '')
-        basis_calculation_icms = basis_calculation_icms.replace(' ', '')
-        basis_calculation_icms = basis_calculation_icms.replace('.', '')
-        basis_calculation_icms = basis_calculation_icms.replace('\n', '')
-        basis_calculation_icms = basis_calculation_icms.replace(',', '.')
-        basis_calculation_icms = float(basis_calculation_icms)
+        total_products_value = json_dict['tax_total_cost_products']
 
-        print("-------------------")
-        print(basis_calculation_icms)
-        print("-------------------")
+        total_products_value = total_products_value.replace('.', '')
+        total_products_value = total_products_value.replace(',', '.')
 
-        dict_invoice['basis_calculation_icms'] = basis_calculation_icms
+        dict_invoice['total_products_value'] = float(total_products_value)
 
-        freight_value = re.search(
-            r'VALOR DO FRETE\s+.*\s+([\d+|\.]+\,\d{2})\s', text, re.M | re.I)
-        if not freight_value:
-            return HttpResponse(json.dumps({
-                'error':
-                'Valor do Frete da nota fiscal não encontrada no pdf!'
-            }),
-                            status=400)
-        freight_value = str(freight_value.group(1))
-        freight_value = freight_value.replace('VALOR DO FRETE', '')
-        freight_value = freight_value.replace('VALOR DO SEGURO', '')
-        freight_value = freight_value.replace(' ', '')
-        freight_value = freight_value.replace('.', '')
-        freight_value = freight_value.replace('\n', '')
-        freight_value = freight_value.replace(',', '.')
-        freight_value = float(freight_value)
+        # total_invoice_value
 
-        print("-------------------")
-        print(freight_value)
-        print("-------------------")
+        total_invoice_value = json_dict['tax_cost_total_note']
 
-        dict_invoice['freight_value'] = freight_value
-
-        insurance_value = re.search(
-            r'VALOR DO SEGURO\s+.*\s+([\d+|\.]+\,\d{2})\s', text, re.M | re.I)
-        if not insurance_value:
-            return HttpResponse(json.dumps({
-                'error':
-                'Valor do Seguro da nota fiscal não encontrada no pdf!'
-            }),
-                            status=400)
-        insurance_value = str(insurance_value.group(1))
-        insurance_value = insurance_value.replace('VALOR DO SEGURO', '')
-        insurance_value = insurance_value.replace(' ', '')
-        insurance_value = insurance_value.replace('.', '')
-        insurance_value = insurance_value.replace('\n', '')
-        insurance_value = insurance_value.replace(',', '.')
-        insurance_value = float(insurance_value)
-
-        print("-------------------")
-        print(insurance_value)
-        print("-------------------")
-
-        dict_invoice['insurance_value'] = insurance_value
-
-        icms_value = re.search(
-            r'VALOR DO ICMS\n.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})\s', text,
-            re.M | re.I)
-        if not icms_value:
-            return HttpResponse(json.dumps({
-                'error':
-                'Valor do ICMS da nota fiscal não encontrada no pdf!'
-            }),
-                            status=400)
-        icms_value = str(icms_value.group(1))
-        icms_value = icms_value.replace(' ', '')
-        icms_value = icms_value.replace('.', '')
-        icms_value = icms_value.replace('\n', '')
-        icms_value = icms_value.replace(',', '.')
-        icms_value = float(icms_value)
-        print("-------------------")
-        print(icms_value)
-        print("-------------------")
-
-        dict_invoice['icms_value'] = icms_value
-
-        discount_value = re.search(r'DESCONTO\s+([\d+|\.]+\,\d{2})\s', text,
-                                   re.M | re.I)
-        if not discount_value:
-            return HttpResponse(
-                json.dumps({
-                    'error': 'Desconto da nota fiscal não encontrada no pdf!'
-                }),
-                status=400)
-        discount_value = str(discount_value.group(1))
-        discount_value = discount_value.replace(' ', '')
-        discount_value = discount_value.replace('.', '')
-        discount_value = discount_value.replace('\n', '')
-        discount_value = discount_value.replace(',', '.')
-        discount_value = float(discount_value)
-        print("-------------------")
-        print(discount_value)
-        print("-------------------")
-
-        dict_invoice['discount_value'] = discount_value
-
-        basis_calculation_icms_st = re.search(
-            r'BASE DE CÁLCULO ICMS S.*\s+.*\s+.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})',
-            text, re.M | re.I)
-        if not basis_calculation_icms_st:
-            return HttpResponse(json.dumps({
-                'error':
-                'Base do cálculo de ICMS ST da nota fiscal não encontrada no pdf!'
-            }),
-                            status=400)
-        basis_calculation_icms_st = str(basis_calculation_icms_st.group(1))
-        basis_calculation_icms_st = basis_calculation_icms_st.replace(' ', '')
-        basis_calculation_icms_st = basis_calculation_icms_st.replace('.', '')
-        basis_calculation_icms_st = basis_calculation_icms_st.replace('\n', '')
-        basis_calculation_icms_st = basis_calculation_icms_st.replace(',', '.')
-        basis_calculation_icms_st = float(basis_calculation_icms_st)
-
-        print("-------------------")
-        print(basis_calculation_icms_st)
-        print("-------------------")
-
-        dict_invoice['basis_calculation_icms_st'] = basis_calculation_icms_st
-
-        icms_value_st = re.search(
-            r'VALOR DO ICMS S.*\s+.*\s+.*\s+.*\s+.*\s+.*\s+([\d+|\.]+\,\d{2})',
-            text, re.M | re.I)
-        if not icms_value_st:
-            return HttpResponse(json.dumps({
-                'error':
-                'Valor do ICMS ST da nota fiscal não encontrada no pdf!'
-            }),
-                            status=400)
-        icms_value_st = str(icms_value_st.group(1))
-        icms_value_st = icms_value_st.replace(' ', '')
-        icms_value_st = icms_value_st.replace('.', '')
-        icms_value_st = icms_value_st.replace('\n', '')
-        icms_value_st = icms_value_st.replace(',', '.')
-        icms_value_st = float(icms_value_st)
-
-        print("-------------------")
-        print(icms_value_st)
-        print("-------------------")
-
-        dict_invoice['icms_value_st'] = icms_value_st
-
-        other_expenditure = re.search(
-            r'DESPESAS ACESSÓRIAS.*\s+.*\s+([\d+|\.]+\,\d{2})', text,
-            re.M | re.I)
-        if not other_expenditure:
-            return HttpResponse(json.dumps({
-                'error':
-                'Despesas Acessórias da nota fiscal não encontrada no pdf!'
-            }),
-                            status=400)
-        other_expenditure = str(other_expenditure.group(1))
-        other_expenditure = other_expenditure.replace(' ', '')
-        other_expenditure = other_expenditure.replace('.', '')
-        other_expenditure = other_expenditure.replace('\n', '')
-        other_expenditure = other_expenditure.replace(',', '.')
-        other_expenditure = float(other_expenditure)
-
-        print("-------------------")
-        print(other_expenditure)
-        print("-------------------")
-
-        dict_invoice['other_expenditure'] = other_expenditure
-
-        ipi_value = re.search(r'VALOR DO IPI.*\s+([\d+|\.]+\,\d{2})', text,
-                              re.M | re.I)
-        if not ipi_value:
-            return HttpResponse(json.dumps({
-                'error':
-                'Valor do IPI da nota fiscal não encontrada no pdf!'
-            }),
-                            status=400)
-        ipi_value = str(ipi_value.group(1))
-        ipi_value = ipi_value.replace(' ', '')
-        ipi_value = ipi_value.replace('.', '')
-        ipi_value = ipi_value.replace('\n', '')
-        ipi_value = ipi_value.replace(',', '.')
-        ipi_value = float(ipi_value)
-
-        print("-------------------")
-        print(ipi_value)
-        print("-------------------")
-
-        dict_invoice['ipi_value'] = ipi_value
-
-        # VALOR TOTAL DOS PRODUTOS Parser
-
-        values = re.findall(r'\s([\d+|\.]+\,\d{2})\s', text, re.M | re.I)
-
-        re_nfv1 = r'(\d{7}\.\d{3}\s+(\d{2}\/\d{2}\/\d{4})'
-        re_nfv2 = r'\s+([\d+|\.]+\,\d{2})\s)|(VALOR NOTA\s+((R\$\s)?[\d+|\.]+\,\d{2})\s)'
-        total_invoice_value = re.search(
-                re_nfv1+re_nfv2,
-                text,
-                re.M | re.I
-                )
-        if not total_invoice_value or not values:
-            return HttpResponse(json.dumps({'error': 'Valor da nota fiscal não encontrada no pdf!'}), status=400)
-        total_invoice_value = str(total_invoice_value.group())
-        total_invoice_value = total_invoice_value.replace(' ', '')
-        total_invoice_value = total_invoice_value.replace('/', '')
         total_invoice_value = total_invoice_value.replace('.', '')
-
-        if "VALORNOTA" in total_invoice_value:
-            total_invoice_value = total_invoice_value.replace('VALORNOTA', '')
-            total_invoice_value = total_invoice_value.replace('R$', '')
-        else:
-            total_invoice_value = total_invoice_value[18:]
-
-        total_invoice_value = total_invoice_value.replace('\n', '.')
         total_invoice_value = total_invoice_value.replace(',', '.')
-
-        if total_invoice_value[0] == '.':
-            total_invoice_value = total_invoice_value[1:]
-        if total_invoice_value[-1] == '.':
-            total_invoice_value = total_invoice_value[:-1]
-
-        total_invoice_value = float(total_invoice_value)
-
-        print("-------------------")
-        print(total_invoice_value)
-        print("-------------------")
 
         dict_invoice['total_invoice_value'] = float(total_invoice_value)
 
-        i = 0
+        # basis_calculation_icms
 
-        print("-------------------")
-        print(values)
-        print("-------------------")
+        basis_calculation_icms = json_dict['tax_icms_basis']
 
-        for value in values:
-            values[i] = value.replace('.', '')
-            values[i] = values[i].replace(',', '.')
-            values[i] = float(values[i])
-            i += 1
+        basis_calculation_icms = basis_calculation_icms.replace('.', '')
+        basis_calculation_icms = basis_calculation_icms.replace(',', '.')
 
-        bigger = 0.0
+        dict_invoice['basis_calculation_icms'] = float(basis_calculation_icms)
 
-        for value in values:
-            if value > bigger:
-                bigger = value
+        # freight_value
 
-        # DATAS E HORAS Parser
+        freight_value = json_dict['tax_cost_freight']
 
-        dates = re.findall(r'(\d{2}\/\d{2}\/\d{4})', text1, re.M | re.I)
-        hours = re.findall(r'(\d{2}\:\d{2}(\:\d{2})?)', text, re.M | re.I)
-        if not dates or not hours:
-            return HttpResponse(json.dumps({'error': 'Datas não encontradas no pdf!'}), status=400)
+        freight_value = freight_value.replace('.', '')
+        freight_value = freight_value.replace(',', '.')
 
-        print("-------------------")
-        print(dates)
-        print(hours)
-        print("-------------------")
+        dict_invoice['freight_value'] = float(freight_value)
 
-        emission_date = dates[1]
-        entry_exit_datetime = str(dates[2] + ' ' + hours[1][0])
+        #  insurance_value
 
-        print("-------------------")
-        print(emission_date)
-        print(entry_exit_datetime)
-        print("-------------------")
+        insurance_value = json_dict['tax_cost_insurance']
 
-        emission_date = emission_date.split('/')
-        entry_exit_datetime = entry_exit_datetime.split(' ')
-        time = entry_exit_datetime[1]
-        entry_exit_datetime = entry_exit_datetime[0].split('/')
+        insurance_value = insurance_value.replace('.', '')
+        insurance_value = insurance_value.replace(',', '.')
 
-        emission_date = emission_date[2] + '-' + emission_date[1] + '-' + emission_date[0]
-        x = entry_exit_datetime[2] + '-' + entry_exit_datetime[1] + '-' + entry_exit_datetime[0] + ' ' + time
-        entry_exit_datetime = x
+        dict_invoice['insurance_value'] = float(insurance_value)
 
-        dict_invoice['emission_date'] = emission_date
-        dict_invoice['entry_exit_datetime'] = entry_exit_datetime
+        # icms_value
 
-        serializer = InvoiceSerializer(data=dict_invoice)
+        icms_value = json_dict['tax_cost_icms']
 
-        print(dict_invoice)
+        icms_value = icms_value.replace('.', '')
+        icms_value = icms_value.replace(',', '.')
 
-        if serializer.is_valid():
-            serializer.save()
-            return HttpResponse(json.dumps(serializer.data), status=200)
+        dict_invoice['icms_value'] = float(icms_value)
+
+        # discount_value
+
+        discount_value = json_dict['tax_discount']
+
+        discount_value = discount_value.replace('.', '')
+        discount_value = discount_value.replace(',', '.')
+
+        dict_invoice['discount_value'] = float(discount_value)
+
+        # basis_calculation_icms_st
+
+        basis_calculation_icms_st = json_dict['tax_icms_basis_st']
+
+        basis_calculation_icms_st = basis_calculation_icms_st.replace('.', '')
+        basis_calculation_icms_st = basis_calculation_icms_st.replace(',', '.')
+
+        dict_invoice['basis_calculation_icms_st'] = float(basis_calculation_icms_st)
+
+        # icms_value_st
+
+        icms_value_st = json_dict['tax_cost_icms_replacement']
+
+        icms_value_st = icms_value_st.replace('.', '')
+        icms_value_st = icms_value_st.replace(',', '.')
+
+        dict_invoice['icms_value_st'] = float(icms_value_st)
+
+        # other_expenditure
+
+        other_expenditure = json_dict['tax_other_expenditure']
+
+        other_expenditure = other_expenditure.replace('.', '')
+        other_expenditure = other_expenditure.replace(',', '.')
+
+        dict_invoice['other_expenditure'] = float(other_expenditure)
+
+        # ipi_value
+
+        ipi_value = json_dict['tax_cost_ipi']
+
+        ipi_value = ipi_value.replace('.', '')
+        ipi_value = ipi_value.replace(',', '.')
+
+        dict_invoice['ipi_value'] = float(ipi_value)
+
+        # receiver
+
+        dict_receiver['name'] = json_dict['sender_name_social']
+        dict_receiver['address'] = json_dict['sender_address']
+        dict_receiver['neighborhood'] = json_dict['sender_neighborhood_district']
+        dict_receiver['cep'] = json_dict['sender_cep'].replace('-', '')
+        dict_receiver['county'] = json_dict['sender_county']
+        dict_receiver['uf'] = json_dict['sender_uf']
+        dict_receiver['phone'] = json_dict['sender_phone_fax']
+
+        # ------------------------
+        if Receiver.objects.filter(cpf_cnpj=cpf_cnpj_receiver).count() == 1:
+            receiver = Receiver.objects.get(cpf_cnpj=cpf_cnpj_receiver)
+            dict_invoice['receiver'] = receiver.pk
         else:
-            return HttpResponse(json.dumps(serializer.errors), status=400)
+            receiver_serializer = ReceiverSerializer(data=dict_receiver)
+
+            if receiver_serializer.is_valid():
+                receiver_serializer.save()
+            else:
+                return HttpResponse(
+                    json.dumps([
+                        receiver_serializer.errors,
+                        ]),
+                    status=400
+                )
+            dict_invoice['receiver'] = receiver_serializer.data['id']
+
+        if Seller.objects.filter(cnpj=cnpj_seller).count() == 1:
+            seller = Seller.objects.get(cnpj=cnpj_seller)
+            dict_invoice['seller'] = seller.pk
+        else:
+            seller_serializer = SellerSerializer(data=dict_seller)
+
+            if seller_serializer.is_valid():
+                seller_serializer.save()
+            else:
+                return HttpResponse(
+                    json.dumps([
+                        seller_serializer.errors,
+                        ]),
+                    status=400
+                )
+
+            dict_invoice['seller'] = seller_serializer.data['id']
+
+        invoice_serializer = InvoiceSerializer(data=dict_invoice)
+
+        if invoice_serializer.is_valid():
+            invoice_serializer.save()
+        else:
+            return HttpResponse(
+                json.dumps(
+                    invoice_serializer.errors
+                    ),
+                status=400
+            )
+
+        return HttpResponse(
+            json.dumps([
+                invoice_serializer.data,
+            ]),
+            status=200
+        )
 
 
 def sellerShow(request, pk):
@@ -760,14 +322,6 @@ def receiverShow(request, pk):
     if request.method == 'GET':
         receiver = get_object_receiver(pk)
         serializer = ReceiverSerializer(receiver)
-        return HttpResponse(json.dumps(serializer.data), status=200)
-    return HttpResponse(status=400)
-
-
-def productShow(request, pk):
-    if request.method == 'GET':
-        product_service = get_object_product_service(pk)
-        serializer = ProductServiceSerializer(product_service)
         return HttpResponse(json.dumps(serializer.data), status=200)
     return HttpResponse(status=400)
 
