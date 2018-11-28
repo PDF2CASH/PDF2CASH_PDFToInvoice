@@ -13,6 +13,8 @@ from .serializers import (
 import re
 from django.views import View
 from django.http import Http404
+import pandas as pd
+import datetime as dt
 
 
 def get_object_invoice(pk):
@@ -567,7 +569,7 @@ def chart_freight_value_per_date(request):
     return HttpResponse(status=400)
 
 
-def chart_total_valueBySeller(request):
+def chart_total_value_by_seller(request):
     if request.method == 'GET':
         invoices = Invoice.objects.all()
         sellers = []

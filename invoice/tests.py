@@ -271,5 +271,37 @@ class InvoiceTest(TestCase):
         response = self.client.post('/api/invoice/invoice/', json_test, content_type='application/json')
         self.assertEqual(response.status_code, 400)
 
+    def test_chart_total_value_per_time(self):
+        response = self.client.get('/api/invoice/chart_total_value_per_time/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_qtd_per_time(self):
+        response = self.client.get('/api/invoice/chart_qtd_per_time/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_total_value_per_chosen_date(self):
+        response = self.client.get('/api/invoice/chart_total_value_per_chosen_date/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_total_value_per_category(self):
+        response = self.client.get('/api/invoice/chart_total_value_per_category/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_freight_value_per_date(self):
+        response = self.client.get('/api/invoice/chart_freight_value_per_date/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_total_value_by_seller(self):
+        response = self.client.get('/api/invoice/chart_total_value_by_seller/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_total_value_current(self):
+        response = self.client.get('/api/invoice/chart_total_value_current/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_information_invoices(self):
+        response = self.client.get('/api/invoice/information_invoices/')
+        self.assertEqual(response.status_code, 200)
+
     def tearDown(self):
         Invoice.objects.all().delete()
