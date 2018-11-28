@@ -344,14 +344,6 @@ def receiverList(request):
     return HttpResponse(status=400)
 
 
-def productList(request):
-    if request.method == 'GET':
-        product_service = Product_Service.objects.all()
-        serializer = ProductServiceSerializer(product_service, many=True)
-        return HttpResponse(json.dumps(serializer.data))
-    return HttpResponse(status=400)
-
-
 def chart_total_value_per_time(request):
     if request.method == 'GET':
         invoices = Invoice.objects.all()
@@ -624,7 +616,7 @@ def information_invoices(request):
         sf = df.groupby('date')['total'].sum()
         df = pd.DataFrame({'date': sf.index, 'total': sf.values})
 
-        current_year = dt.date(dt.datetime.now().year,1,1)
+        current_year = dt.date(dt.datetime.now().year, 1, 1)
 
         df = df.groupby('date').filter(lambda x: (x['date'] > current_year))
         sf = df.groupby('date')['total'].mean()
