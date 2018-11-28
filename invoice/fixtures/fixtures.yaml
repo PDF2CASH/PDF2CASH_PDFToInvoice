@@ -61,8 +61,6 @@
 - model: invoice.invoice
   pk: 1
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/clean1.pdf
-    text: RECEBEMOS DA CLEAN HOUSE EXPRESS OS PRODUTOS/SERVIÇOS CONSTANTES
     number: 947385625
     operation_nature: Venda a vista
     authorization_protocol: 369241002778264 15/06/2018 10:10:24
@@ -86,8 +84,6 @@
 - model: invoice.invoice
   pk: 2
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/clean2.pdf
-    text: RECEBEMOS DA CLEAN HOUSE EXPRESS OS PRODUTOS/SERVIÇOS CONSTANTES
     number: 767385634
     operation_nature: Venda a vista
     authorization_protocol: 269241003478263 14/05/2018 08:24:25
@@ -111,8 +107,6 @@
 - model: invoice.invoice
   pk: 3
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/clean3.pdf
-    text: RECEBEMOS DA CLEAN HOUSE EXPRESS OS PRODUTOS/SERVIÇOS CONSTANTES
     number: 877385664
     operation_nature: Venda a vista
     authorization_protocol: 649241002778235 13/05/2018 07:09:23
@@ -136,8 +130,6 @@
 - model: invoice.invoice
   pk: 4
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/clean4.pdf
-    text: RECEBEMOS DA CLEAN HOUSE EXPRESS OS PRODUTOS/SERVIÇOS CONSTANTES
     number: 677385645
     operation_nature: Venda a vista
     authorization_protocol: 369241002778264 13/09/2018 04:02:22
@@ -161,8 +153,6 @@
 - model: invoice.invoice
   pk: 5
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/clean5.pdf
-    text: RECEBEMOS DA CLEAN HOUSE EXPRESS OS PRODUTOS/SERVIÇOS CONSTANTES
     number: 977385656
     operation_nature: Venda a vista
     authorization_protocol: 439241002778245 16/06/2018 05:08:22
@@ -186,8 +176,6 @@
 - model: invoice.invoice
   pk: 6
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/forum1.pdf
-    text: RECEBEMOS DA FORUM PURILE AMERICAN EXPRESS OS PRODUTOS/SERVIÇOS
     number: 757385636
     operation_nature: Venda a vista
     authorization_protocol: 529241002778245 23/04/2018 11:05:22
@@ -211,8 +199,6 @@
 - model: invoice.invoice
   pk: 7
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/forum2.pdf
-    text: RECEBEMOS DA FORUM PURILE AMERICAN EXPRESS OS PRODUTOS/SERVIÇOS
     number: 457385687
     operation_nature: Venda a vista
     authorization_protocol: 329241002778242 15/06/2018 12:01:20
@@ -236,8 +222,6 @@
 - model: invoice.invoice
   pk: 8
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/forum3.pdf
-    text: RECEBEMOS DA FORUM PURILE AMERICAN EXPRESS OS PRODUTOS/SERVIÇOS
     number: 677385636
     operation_nature: Venda a vista
     authorization_protocol: 769241002778245 15/06/2018 13:04:28
@@ -261,8 +245,6 @@
 - model: invoice.invoice
   pk: 9
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/forum4.pdf
-    text: RECEBEMOS DA FORUM PURILE AMERICAN EXPRESS OS PRODUTOS/SERVIÇOS
     number: 687385643
     operation_nature: Venda a vista
     authorization_protocol: 359241002778275 15/06/2018 16:16:25
@@ -286,8 +268,6 @@
 - model: invoice.invoice
   pk: 10
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/forum5.pdf
-    text: RECEBEMOS DA FORUM PURILE AMERICAN EXPRESS OS PRODUTOS/SERVIÇOS
     number: 537385697
     operation_nature: Venda a vista
     authorization_protocol: 459241002778264 15/06/2018 17:09:10
@@ -311,8 +291,6 @@
 - model: invoice.invoice
   pk: 11
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/star1.pdf
-    text: OS PRODUTOS DA STAR LIMP FORAM RECEBIDOS EM PERFEITO ESTADO
     number: 687385646
     operation_nature: Venda a vista
     authorization_protocol: 879241002778246 22/04/2018 07:43:45
@@ -336,8 +314,6 @@
 - model: invoice.invoice
   pk: 12
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/star2.pdf
-    text: OS PRODUTOS DA STAR LIMP FORAM RECEBIDOS EM PERFEITO ESTADO
     number: 987385674
     operation_nature: Venda a vista
     authorization_protocol: 369241002778264 30/08/2018 10:20:30
@@ -361,8 +337,6 @@
 - model: invoice.invoice
   pk: 13
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/star3.pdf
-    text: OS PRODUTOS DA STAR LIMP FORAM RECEBIDOS EM PERFEITO ESTADO
     number: 477385663
     operation_nature: Venda a vista
     authorization_protocol: 769241002778245 26/01/2018 11:14:13
@@ -386,8 +360,6 @@
 - model: invoice.invoice
   pk: 14
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/star4.pdf
-    text: OS PRODUTOS DA STAR LIMP FORAM RECEBIDOS EM PERFEITO ESTADO
     number: 757346694
     operation_nature: Venda a vista
     authorization_protocol: 879241002778254 08/04/2018 12:15:40
@@ -411,8 +383,6 @@
 - model: invoice.invoice
   pk: 15
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/star5.pdf
-    text: OS PRODUTOS DA STAR LIMP FORAM RECEBIDOS EM PERFEITO ESTADO
     number: 657355663
     operation_nature: Venda a vista
     authorization_protocol: 369241002778264 09/04/2018 12:15:30
@@ -436,8 +406,6 @@
 - model: invoice.invoice
   pk: 16
   fields:       
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/nilfisk1.pdf
-    text: RECEBIDOS OS PRODUTOS E SERVIÇOS DA NILFISK
     number: 234545242
     operation_nature: Prestacao de Servico
     authorization_protocol: 612324987409813 29/11/2018 14:36:18
@@ -461,8 +429,6 @@
 - model: invoice.invoice
   pk: 17
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/nilfisk2.pdf
-    text: RECEBIDOS OS PRODUTOS E SERVIÇOS DA NILFISK
     number: 982458613
     operation_nature: Venda
     authorization_protocol: 470498172310246 06/11/2018 17:10:45
@@ -486,8 +452,6 @@
 - model: invoice.invoice
   pk: 18
   fields:    
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/nilfisk3.pdf
-    text: RECEBIDOS OS PRODUTOS E SERVIÇOS DA NILFISK
     number: 852934575
     operation_nature: Compra
     authorization_protocol: 593987466928698 18/08/2018 14:05:23
@@ -511,8 +475,6 @@
 - model: invoice.invoice
   pk: 19
   fields:    
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/nilfisk4.pdf
-    text: RECEBIDOS OS PRODUTOS E SERVIÇOS DA NILFISK
     number: 474756322
     operation_nature: Devolucao
     authorization_protocol: 826478395026179 10/04/2017 16:25:57
@@ -536,8 +498,6 @@
 - model: invoice.invoice
   pk: 20
   fields:    
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/nilfisk5.pdf
-    text: RECEBIDOS OS PRODUTOS E SERVIÇOS DA NILFISK
     number: 375455463
     operation_nature: Remessa
     authorization_protocol: 664122367884252 25/01/2017 15:32:08
@@ -561,8 +521,6 @@
 - model: invoice.invoice
   pk: 21
   fields: 
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/suprimax1.pdf
-    text: RECEBEMOS DA SUPRIMAX OS PRODUTOS/SERVIÇOS
     number: 983475204
     operation_nature: Importacao
     authorization_protocol: 741204097807984 15/05/2016 11:49:14
@@ -586,8 +544,6 @@
 - model: invoice.invoice
   pk: 22
   fields: 
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/suprimax2.pdf
-    text: RECEBEMOS DA SUPRIMAX OS PRODUTOS/SERVIÇOS
     number: 551473394
     operation_nature: Prestacao de Servico
     authorization_protocol: 237566398462857 24/09/2015 10:18:18
@@ -611,8 +567,6 @@
 - model: invoice.invoice
   pk: 23
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/suprimax3.pdf
-    text: RECEBEMOS DA SUPRIMAX OS PRODUTOS/SERVIÇOS
     number: 174109384
     operation_nature: Venda
     authorization_protocol: 328937409934762 04/09/2015 09:35:52
@@ -636,8 +590,6 @@
 - model: invoice.invoice
   pk: 24
   fields: 
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/suprimax4.pdf
-    text: RECEBEMOS DA SUPRIMAX OS PRODUTOS/SERVIÇOS
     number: 485792035
     operation_nature: Compra
     authorization_protocol: 146588400984621 05/05/2008 15:14:49
@@ -661,8 +613,6 @@
 - model: invoice.invoice
   pk: 25
   fields:    
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/suprimax5.pdf
-    text: RECEBEMOS DA SUPRIMAX OS PRODUTOS/SERVIÇOS
     number: 984756322
     operation_nature: Devolucao
     authorization_protocol: 568490502613548 11/01/2008 17:08:32
@@ -686,8 +636,6 @@
 - model: invoice.invoice
   pk: 26
   fields: 
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/higinet1.pdf
-    text: OS PRODUTOS DA HIGINET FORAM RECEBIDOS EM PERFEITO ESTADO
     number: 204198708
     operation_nature: Remessa
     authorization_protocol: 668795523548976 31/08/2007 11:57:25
@@ -711,8 +659,6 @@
 - model: invoice.invoice
   pk: 27
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/higinet2.pdf
-    text: OS PRODUTOS DA HIGINET FORAM RECEBIDOS EM PERFEITO ESTADO
     number: 701928374
     operation_nature: Importacao
     authorization_protocol: 908734108750709 23/06/2007 08:23:05
@@ -736,8 +682,6 @@
 - model: invoice.invoice
   pk: 28
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/higinet3.pdf
-    text: OS PRODUTOS DA HIGINET FORAM RECEBIDOS EM PERFEITO ESTADO
     number: 657575293
     operation_nature: Venda
     authorization_protocol: 700947266590526 29/11/2018 18:40:18
@@ -761,8 +705,6 @@
 - model: invoice.invoice
   pk: 29
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/higinet4.pdf
-    text: OS PRODUTOS DA HIGINET FORAM RECEBIDOS EM PERFEITO ESTADO
     number: 101893748
     operation_nature: Prestacao de Servico
     authorization_protocol: 345768790352755 16/03/2006 10:45:10
@@ -786,8 +728,6 @@
 - model: invoice.invoice
   pk: 30
   fields:
-    file: http://localhost:8000/api/invoice/invoice/invoice/images/higinet5.pdf
-    text: OS PRODUTOS DA HIGINET FORAM RECEBIDOS EM PERFEITO ESTADO
     number: 646837644
     operation_nature: Exportacao
     authorization_protocol: 856487297951685 02/10/2016 08:52:35
@@ -808,302 +748,3 @@
     other_expenditure: 53.46
     ipi_value: 35.11
     
-- model: invoice.Product_Service
-  pk: 1
-  fields:
-    code: 0948
-    description: PRODUTO DE ÓTIMA QUALIDADE
-    qtd: 3
-    unity_value: 12.31
-    total_value: 2309.12
-    discount_value: 312.12
-
-- model: invoice.Product_Service
-  pk: 2
-  fields:
-    code: 2093
-    description: MELHOR PRODUTO DO MERCADO
-    qtd: 3
-    unity_value: 39.31
-    total_value: 1131.32
-    discount_value: 23.32
-
-- model: invoice.Product_Service
-  pk: 3
-  fields:
-    code: 5432
-    description: PRODUTO SEM COMPARAÇÃO
-    qtd: 2
-    unity_value: 39.07
-    total_value: 1223.12
-    discount_value: 23.12
-
-- model: invoice.Product_Service
-  pk: 4
-  fields:
-    code: 9875
-    description: PRODUTO DE ÓTIMA QUALIDADE
-    qtd: 3
-    unity_value: 3209.07
-    total_value: 2149.31
-    discount_value: 39.42
-
-- model: invoice.Product_Service
-  pk: 5
-  fields:
-    code: 2654
-    description: MELHOR PRODUTO DO MERCADO
-    qtd: 2
-    unity_value: 23.09
-    total_value: 543.98
-    discount_value: 234.90
-
-- model: invoice.Product_Service
-  pk: 6
-  fields:
-    code: 9576
-    description: PRODUTO SEM COMPARAÇÃO
-    qtd: 687
-    unity_value: 20.10
-    total_value: 9780.98
-    discount_value: 90.09
-
-- model: invoice.Product_Service
-  pk: 7
-  fields:
-    code: 0574
-    description: MELHOR PRODUTO DO MERCADO
-    qtd: 76
-    unity_value: 123
-    total_value: 8708.78
-    discount_value: 107.98
-
-- model: invoice.Product_Service
-  pk: 8
-  fields:
-    code: 8576
-    description: MELHOR PRODUTO DO MERCADO
-    qtd: 67
-    unity_value: 98.00
-    total_value: 890.00
-    discount_value: 56.87
-
-- model: invoice.Product_Service
-  pk: 9
-  fields:
-    code: 1645
-    description: PRODUTO DE ÓTIMA QUALIDADE
-    qtd: 867
-    unity_value: 09.89
-    total_value: 8675.76
-    discount_value: 800.00
-
-- model: invoice.Product_Service
-  pk: 10
-  fields:
-    code: 7845
-    description: MELHOR PRODUTO DO MERCADO
-    qtd: 46
-    unity_value: 56.87
-    total_value: 786.00
-    discount_value: 90.87
-
-- model: invoice.Product_Service
-  pk: 11
-  fields:
-    code: 7956
-    description: PRODUTO DE ÓTIMA QUALIDADE
-    qtd: 97
-    unity_value: 09.88
-    total_value: 7986.00
-    discount_value: 780.00
-
-- model: invoice.Product_Service
-  pk: 12
-  fields:
-    code: 7845
-    description: MELHOR PRODUTO DO MERCADO
-    qtd: 198
-    unity_value: 1.09
-    total_value: 8765.09
-    discount_value: 79.66
-
-- model: invoice.Product_Service
-  pk: 13
-  fields:
-    code: 3753
-    description: PRODUTO DE ÓTIMA QUALIDADE
-    qtd: 978
-    unity_value: 2.09
-    total_value: 8686.68
-    discount_value: 675.00
-
-- model: invoice.Product_Service
-  pk: 14
-  fields:
-    code: 8653
-    description: MELHOR PRODUTO DO MERCADO
-    qtd: 967
-    unity_value: 3.19
-    total_value: 4563.09
-    discount_value: 309.08
-
-- model: invoice.Product_Service
-  pk: 15
-  fields:
-    code: 2353
-    description: PRODUTO DE ÓTIMA QUALIDADE
-    qtd: 109
-    unity_value: 23.09
-    total_value: 1293.43
-    discount_value: 87.00
-
-- model: invoice.Product_Service
-  pk: 16
-  fields:
-    code: 0344
-    description: SUA MELHOR OPCAO
-    qtd: 6
-    unity_value: 21.13
-    total_value: 3209.21
-    discount_value: 123.12
-
-- model: invoice.Product_Service
-  pk: 17
-  fields:
-    code: 3039
-    description: QUALIDADE E INOVACAO
-    qtd: 5
-    unity_value: 49.13
-    total_value: 3112.23
-    discount_value: 32.32
-
-- model: invoice.Product_Service
-  pk: 18
-  fields:
-    code: 5582
-    description: PRODUTOS E SERVICOS DIFERENCIADOS
-    qtd: 4
-    unity_value: 36.70
-    total_value: 2123.21
-    discount_value: 42.12
-
-- model: invoice.Product_Service
-  pk: 19
-  fields:
-    code: 8957
-    description: SUA MELHOR OPCAO
-    qtd: 6
-    unity_value: 2309.70
-    total_value: 1294.13
-    discount_value: 53.32
-
-- model: invoice.Product_Service
-  pk: 20
-  fields:
-    code: 4692
-    description: QUALIDADE E INOVACAO
-    qtd: 2
-    unity_value: 32.06
-    total_value: 453.92
-    discount_value: 326.90
-
-- model: invoice.Product_Service
-  pk: 21
-  fields:
-    code: 6579
-    description: PRODUTOS E SERVICOS DIFERENCIADOS
-    qtd: 786
-    unity_value: 23.50
-    total_value: 7908.89
-    discount_value: 80.09
-
-- model: invoice.Product_Service
-  pk: 22
-  fields:
-    code: 0774
-    description: QUALIDADE E INOVACAO
-    qtd: 86
-    unity_value: 321
-    total_value: 7808.87
-    discount_value: 142.89
-
-- model: invoice.Product_Service
-  pk: 23
-  fields:
-    code: 8576
-    description: QUALIDADE E INOVACAO
-    qtd: 67
-    unity_value: 89.00
-    total_value: 990.00
-    discount_value: 52.27
-
-- model: invoice.Product_Service
-  pk: 24
-  fields:
-    code: 1425
-    description: SUA MELHOR OPCAO
-    qtd: 837
-    unity_value: 19.89
-    total_value: 8875.76
-    discount_value: 700.00
-
-- model: invoice.Product_Service
-  pk: 25
-  fields:
-    code: 6845
-    description: QUALIDADE E INOVACAO
-    qtd: 64
-    unity_value: 66.87
-    total_value: 486.00
-    discount_value: 80.87
-
-- model: invoice.Product_Service
-  pk: 26
-  fields:
-    code: 9765
-    description: SUA MELHOR OPCAO
-    qtd: 79
-    unity_value: 08.99
-    total_value: 9786.00
-    discount_value: 870.00
-
-- model: invoice.Product_Service
-  pk: 27
-  fields:
-    code: 8754
-    description: QUALIDADE E INOVACAO
-    qtd: 398
-    unity_value: 11.09
-    total_value: 6785.09
-    discount_value: 69.67
-
-- model: invoice.Product_Service
-  pk: 28
-  fields:
-    code: 7335
-    description: SUA MELHOR OPCAO
-    qtd: 879
-    unity_value: 5.09
-    total_value: 6982.68
-    discount_value: 765.00
-
-- model: invoice.Product_Service
-  pk: 29
-  fields:
-    code: 6853
-    description: QUALIDADE E INOVACAO
-    qtd: 796
-    unity_value: 7.31
-    total_value: 5436.90
-    discount_value: 390.80
-
-- model: invoice.Product_Service
-  pk: 30
-  fields:
-    code: 3532
-    description: SUA MELHOR OPCAO
-    qtd: 124
-    unity_value: 34.90
-    total_value: 2404.34
-    discount_value: 92.00

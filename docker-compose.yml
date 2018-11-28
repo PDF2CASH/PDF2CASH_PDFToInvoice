@@ -7,6 +7,6 @@ services:
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "4001:8000"
     environment:
       - HOST_DOMAIN=localhost:3000
