@@ -7,7 +7,6 @@ from .models import (
     Invoice,
     Seller,
     Receiver,
-    Product_Service,
 )
 
 # Create your tests here.
@@ -37,25 +36,6 @@ class SellerTest(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(json.loads(response.content)), 1)
-
-    def test_seller_object_post(self):
-        data = {
-            'name': "PRISMA DISTRIBUIDORA LTDA ME",
-            'cnpj': "12123544000104",
-            'cep': "41852690",
-            'uf_code': 55
-        }
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 201)
-        data['id'] = json.loads(response.content)['id']
-        self.assertEqual(json.loads(response.content), data)
-
-    def test_seller_object_delete(self):
-        self.url += '{}/'.format(self.seller1.id)
-        response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, 204)
-        response = self.client.get('/api/invoice/seller/')
-        self.assertEqual(len(json.loads(response.content)), 0)
 
     def test_seller_object_read(self):
         self.url += '{}/'.format(self.seller1.id)
@@ -118,29 +98,6 @@ class ReceiverTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(json.loads(response.content)), 1)
 
-    def test_receiver_object_post(self):
-        data = {
-            'name': 'Rafael Teodosio',
-            'cpf_cnpj': '39403757102',
-            'address': 'Qr 400 conjunto K casa 20',
-            'neighborhood': 'Gama',
-            'cep': '68394002',
-            'county': 'BRASILIA',
-            'uf': 'DF',
-            'phone': '6133420214'
-        }
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 201)
-        data['id'] = json.loads(response.content)['id']
-        self.assertEqual(json.loads(response.content), data)
-
-    def test_receiver_object_delete(self):
-        self.url += '{}/'.format(self.receiver1.id)
-        response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, 204)
-        response = self.client.get('/api/invoice/receiver/')
-        self.assertEqual(len(json.loads(response.content)), 0)
-
     def test_receiver_object_read(self):
         self.url += '{}/'.format(self.receiver1.id)
         response = self.client.get(self.url)
@@ -167,84 +124,6 @@ class ReceiverTest(TestCase):
 
     def tearDown(self):
         Receiver.objects.all().delete()
-
-
-class ProductServiceTest(TestCase):
-    url = '/api/invoice/product-service/'
-
-    def setUp(self):
-        self.product_service1 = Product_Service.objects.create(
-            code='1232123',
-            description='PLACA VEICULO',
-            qtd=1,
-            unity_value='146,00',
-            total_value='146,00',
-            discount_value=',00'
-        )
-
-    def as_dict(self):
-        return {
-            'id': self.product_service1.id,
-            'code': self.product_service1.code,
-            'description': self.product_service1.description,
-            'qtd': self.product_service1.qtd,
-            'unity_value': self.product_service1.unity_value,
-            'total_value': self.product_service1.total_value,
-            'discount_value': self.product_service1.discount_value
-        }
-
-    def test_product_service_object_get(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(json.loads(response.content)), 1)
-
-    def test_product_service_object_post(self):
-        data = {
-            'code': '123213214',
-            'description': 'Pneu',
-            'qtd': 2,
-            'unity_value': '50,00',
-            'total_value': '100,00',
-            'discount_value': ',00'
-        }
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 201)
-        data['id'] = json.loads(response.content)['id']
-        self.assertEqual(json.loads(response.content), data)
-
-    def test_product_service_object_delete(self):
-        self.url += '{}/'.format(self.product_service1.id)
-        response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, 204)
-        response = self.client.get('/api/invoice/product-service/')
-        self.assertEqual(len(json.loads(response.content)), 0)
-
-    def test_product_service_object_read(self):
-        self.url += '{}/'.format(self.product_service1.id)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertAlmostEqual(json.loads(response.content), self.as_dict())
-
-    def test_product_service_object_update(self):
-        self.url += '{}/'.format(self.product_service1.id)
-        response = self.client.put(
-            self.url,
-            data={},
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 400)
-
-    def test_product_service_object_partial_update(self):
-        self.url += '{}/'.format(self.product_service1.id)
-        response = self.client.patch(
-            self.url,
-            data={},
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 400)
-
-    def tearDown(self):
-        Product_Service.objects.all().delete()
 
 
 class InvoiceTest(TestCase):
@@ -274,7 +153,6 @@ class InvoiceTest(TestCase):
         )
 
         self.invoice1 = Invoice.objects.create(
-            text='QualquerCoisa - Pegar com o Matias',
             number='000441407',
             operation_nature='DFVENDA ACESSORIOS EM VN',
             authorization_protocol='353180007787599 27/02/2018 16:54',
@@ -284,18 +162,23 @@ class InvoiceTest(TestCase):
             receiver=self.receiver1,
             emission_date=datetime.date(2018, 2, 27),
             entry_exit_datetime=datetime.datetime(2018, 2, 27, 16, 20, 55),
-            total_products_value='146,00',
-            total_invoice_value='146,00',
-            freight_value=',00',
-            icms_value=',00',
-            discount_value=',00')
+            total_products_value=146.00,
+            total_invoice_value=146.00,
+            basis_calculation_icms=0.0,
+            freight_value=0.0,
+            insurance_value=0.0,
+            icms_value=0.0,
+            discount_value=0.0,
+            basis_calculation_icms_st=0.0,
+            icms_value_st=0.0,
+            other_expenditure=0.0,
+            ipi_value=0.0
+            )
 
     def as_dict(self):
         return {
             'id': self.invoice1.id,
-            'text': self.invoice1.text,
             'number': self.invoice1.number,
-            'file': None,
             'operation_nature': self.invoice1.operation_nature,
             'authorization_protocol': self.invoice1.authorization_protocol,
             'access_key': self.invoice1.access_key,
@@ -304,11 +187,17 @@ class InvoiceTest(TestCase):
             'receiver': self.receiver1.id,
             'emission_date': self.invoice1.emission_date.strftime('%Y-%m-%d'),
             'entry_exit_datetime': self.invoice1.entry_exit_datetime.strftime('%Y-%m-%dT%H:%M:%SZ'),
-            'total_products_value': self.invoice1.total_products_value,
+            # 'total_products_value': self.invoice1.total_products_value,
             'total_invoice_value': self.invoice1.total_invoice_value,
+            'basis_calculation_icms': self.invoice1.basis_calculation_icms,
             'freight_value': self.invoice1.freight_value,
+            'insurance_value': self.invoice1.insurance_value,
             'icms_value': self.invoice1.icms_value,
-            'discount_value': self.invoice1.discount_value
+            'discount_value': self.invoice1.discount_value,
+            'basis_calculation_icms_st': self.invoice1.basis_calculation_icms_st,
+            'icms_value_st': self.invoice1.icms_value_st,
+            'other_expenditure': self.invoice1.other_expenditure,
+            'ipi_value': self.invoice1.ipi_value
         }
 
     def test_invoice_object_get(self):
@@ -327,7 +216,7 @@ class InvoiceTest(TestCase):
         self.url += '{}/'.format(self.invoice1.id)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content), self.as_dict())
+        self.assertDictContainsSubset(self.as_dict(), json.loads(response.content))
 
     def test_invoice_object_update(self):
         self.url += '{}/'.format(self.invoice1.id)
@@ -336,7 +225,7 @@ class InvoiceTest(TestCase):
             data={},
             content_type='application/json'
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 405)
 
     def test_invoice_object_partial_update(self):
         self.url += '{}/'.format(self.invoice1.id)
@@ -345,11 +234,73 @@ class InvoiceTest(TestCase):
             data={},
             content_type='application/json'
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 405)
 
     def test_invoice_object_create(self):
-        file = open("invoice/test.pdf", 'rb')
-        response = self.client.post('/api/invoice/invoice/', {'file': file}, format='multipart')
+        json_test = {
+                    "number": '000441407',
+                    "main_nature_operation": 'DFVENDA ACESSORIOS EM VN',
+                    "main_protocol_authorization_use": '353180007787599 27/02/2018 16:54',
+                    "main_access_key": '53180204621724000187550000004414071007026370',
+                    "main_state_registration": '0742544700104',
+                    "sender_cnpj_cpf": "12345678911",
+                    "sender_emission_date": "27/02/2018",
+                    "sender_out_input_date": "27/02/2018",
+                    "sender_output_time": "16:20:55",
+                    "tax_total_cost_products": "146,00",
+                    "tax_cost_total_note": "146,00",
+                    "tax_icms_basis": "0,0",
+                    "tax_cost_freight": "0,0",
+                    "tax_cost_insurance": "0,0",
+                    "tax_cost_icms": "0,0",
+                    "tax_discount": "0,0",
+                    "tax_icms_basis_st": "0,0",
+                    "tax_cost_icms_replacement": "0,0",
+                    "tax_other_expenditure": "0,0",
+                    "tax_cost_ipi": "0,0",
+                    "sender_name_social": self.receiver1.name,
+                    "sender_address": self.receiver1.address,
+                    "sender_neighborhood_district":  self.receiver1.neighborhood,
+                    "sender_cep": self.receiver1.cep,
+                    "sender_county": self.receiver1.county,
+                    "sender_uf": self.receiver1.uf,
+                    "sender_phone_fax": self.receiver1.phone,
+                }
+        response = self.client.post('/api/invoice/invoice/', json_test, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post('/api/invoice/invoice/', json_test, content_type='application/json')
+        self.assertEqual(response.status_code, 400)
+
+    def test_chart_total_value_per_time(self):
+        response = self.client.get('/api/invoice/chart_total_value_per_time/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_qtd_per_time(self):
+        response = self.client.get('/api/invoice/chart_qtd_per_time/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_total_value_per_chosen_date(self):
+        response = self.client.get('/api/invoice/chart_total_value_per_chosen_date/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_total_value_per_category(self):
+        response = self.client.get('/api/invoice/chart_total_value_per_category/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_freight_value_per_date(self):
+        response = self.client.get('/api/invoice/chart_freight_value_per_date/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_total_value_by_seller(self):
+        response = self.client.get('/api/invoice/chart_total_value_by_seller/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_total_value_current(self):
+        response = self.client.get('/api/invoice/chart_total_value_current/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_information_invoices(self):
+        response = self.client.get('/api/invoice/information_invoices/')
         self.assertEqual(response.status_code, 200)
 
     def tearDown(self):

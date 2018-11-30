@@ -9,5 +9,5 @@ do
 done
 
 rm -rf mydatabase
-python manage.py makemigrations
-python manage.py migrate
+sudo docker-compose run web ./manage.py makemigrations
+sudo docker-compose run web ./manage.py migrate
